@@ -1,4 +1,4 @@
-package com.kostenko.pp.pp;
+package com.kostenko.pp;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

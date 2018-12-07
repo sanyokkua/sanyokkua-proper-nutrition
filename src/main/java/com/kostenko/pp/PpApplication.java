@@ -1,4 +1,4 @@
-package com.kostenko.pp.pp;
+package com.kostenko.pp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

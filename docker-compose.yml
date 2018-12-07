@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_DB: pp
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: welcome
+    volumes:
+    - ./db:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+    - 8082:8080
