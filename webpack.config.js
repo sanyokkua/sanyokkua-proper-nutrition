@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: path.join(__dirname, '.'),
+        test: path.resolve(__dirname, '.'),
         exclude: /(node_modules)/,
         use: [{
           loader: 'babel-loader',
@@ -22,5 +22,12 @@ module.exports = {
         }]
       }
     ]
-  }
+  },
+  resolve: {
+    modules: [
+      "node_modules",
+      path.resolve(__dirname, ".")
+    ],
+    extensions: [".js", ".json", ".jsx", ".css"],
+  },
 };

@@ -1,35 +1,40 @@
+import {Navbar, NavItem} from 'react-materialize'
+import {HashRouter, NavLink, Route} from "react-router-dom";
+import Dishes from './Dishes';
+import Products from './Products';
+import User from './User';
+
 const React = require('react');
 const ReactDOM = require('react-dom');
-import {Footer, Navbar, NavItem} from 'react-materialize'
 
 class MainContent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      header: 'User info'
+    };
+  }
+
   render() {
-    return <div>
-      <Navbar brand='PP' right>
-        <NavItem onClick={() => console.log('test click')}>Getting started</NavItem>
-        <NavItem href='#user'>User info</NavItem>
-        <NavItem href='#products'>Products</NavItem>
-        <NavItem href='#dishes'>Dishes</NavItem>
-        <NavItem href='#dishes'>Logout</NavItem>
-      </Navbar>
-      <div className='container indigo lighten-2'>
-        content
-        <br/>
+    return <HashRouter>
+      <div>
 
-        <br/>
-        ggg
-        <br/>
+        <Navbar className='red darken-1' brand={this.state.header} right>
+          <li><NavLink onClick={() => this.setState({header: 'User info'})} to='/'>User info</NavLink></li>
+          <li><NavLink onClick={() => this.setState({header: 'Products'})} to='/products'>Products</NavLink></li>
+          <li><NavLink onClick={() => this.setState({header: 'Dishes'})} to='/dishes'>Dishes</NavLink></li>
+          <NavItem href='/logout'>Logout</NavItem>
+        </Navbar>
 
-        <br/>
-
-
-        very big content
+        <div className='container'>
+          <Route exact path="/" component={User}/>
+          <Route path="/user" component={User}/>
+          <Route path="/products" component={Products}/>
+          <Route path="/dishes" component={Dishes}/>
+        </div>
 
       </div>
-      <Footer copyrights="2018 Copyright Text">
-        <h5 className="white-text">Site about PP</h5>
-      </Footer>
-    </div>
+    </HashRouter>
   }
 }
 
