@@ -1,5 +1,6 @@
 package com.kostenko.pp.data.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 @Slf4j
 @Data
+@AllArgsConstructor
 @Entity
 @Table(schema = "products", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product {

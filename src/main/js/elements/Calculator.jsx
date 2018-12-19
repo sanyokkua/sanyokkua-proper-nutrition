@@ -116,7 +116,7 @@ class Calculator extends React.Component {
             <option value='mifflin'>Mifflin</option>
           </Input>
           <div>
-            <Button disabled={this.state.submitState} className='red darken-1' onClick={this.handleSubmit}>Calculate</Button>
+            <Button waves='light' disabled={this.state.submitState} className='red darken-1' onClick={this.handleSubmit}>Calculate</Button>
             <Modal id='calcResultModal' header='Calculated result'>
               <p>The result is: {this.state.result}</p>
             </Modal>

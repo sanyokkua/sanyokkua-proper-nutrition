@@ -1,8 +1,8 @@
 import {Navbar, NavItem} from 'react-materialize'
 import {HashRouter, NavLink, Route} from "react-router-dom";
-import Dishes from './Dishes';
-import Products from './Products';
-import User from './User';
+import Dishes from './elements/dishes/Dishes';
+import Products from './elements/products/Products';
+import User from './elements/users/User';
 
 const React = require('react');
 const ReactDOM = require('react-dom');
