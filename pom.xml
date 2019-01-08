@@ -122,6 +122,8 @@
                 <version>1.6</version>
                 <configuration>
                     <installDirectory>target</installDirectory>
+                    <nodeVersion>v10.11.0</nodeVersion>
+                    <npmVersion>6.4.1</npmVersion>
                 </configuration>
                 <executions>
                     <execution>
@@ -129,10 +131,6 @@
                         <goals>
                             <goal>install-node-and-npm</goal>
                         </goals>
-                        <configuration>
-                            <nodeVersion>v10.11.0</nodeVersion>
-                            <npmVersion>6.4.1</npmVersion>
-                        </configuration>
                     </execution>
                     <execution>
                         <id>npm install</id>
