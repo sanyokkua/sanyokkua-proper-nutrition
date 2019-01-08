@@ -37,6 +37,6 @@ public interface Formula {
 
   enum Gender {
     MALE,
-    FEMALE;
+    FEMALE
   }
 }

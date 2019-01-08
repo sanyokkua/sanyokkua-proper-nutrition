@@ -1,4 +1,5 @@
-import {Button, Collection, CollectionItem, Pagination} from 'react-materialize';
+import {Button, Input, Modal, Pagination, Row, Table, Col} from 'react-materialize';
+import ProductEdit from "./ProductEdit";
 
 const React = require('react');
 
@@ -12,11 +13,13 @@ class ProductsList extends React.Component {
   handleEdit(product, event) {
     console.log(product);
     console.log(event);
+    this.props.onEditList(this.props.productsList, product, event);
   }
 
   handleDelete(product, event) {
     console.log(product);
     console.log(event);
+    this.props.onDeleteFromList(this.props.productsList, product, event);
   }
 
   componentDidMount() {
@@ -25,19 +28,41 @@ class ProductsList extends React.Component {
   render() {
     return !this.props.productsList || this.props.productsList.length < 1 ? ('') :
         (<div className="black-text">
-          <Collection>
-            {this.props.productsList.map((product) => {
-              return <div key={product.id} className="black-text">
-                <CollectionItem>
-                  <div className="black-text"> {product.name} -- {product.energy}</div>
-                  {this.props.editable ? (<div className='right-align'>
-                    <Button waves='green' className='green darken-1' onClick={(e) => this.handleEdit(product, e)}>Edit</Button>
-                    <Button waves='purple' className='red darken-1' onClick={(e) => this.handleDelete(product, e)}>Delete</Button>
-                  </div>) : ''}
-                </CollectionItem>
-              </div>
+          <Table hoverable={true} responsive={true}>
+            <thead>
+            {this.props.editable ? (<tr>
+              <th data-field="name">Name</th>
+              <th data-field="energy">Energy</th>
+              <th data-field="edit">Actions</th>
+            </tr>) : (<tr>
+              <th data-field="name">Name</th>
+              <th data-field="energy">Energy</th>
+            </tr>)}
+            </thead>
+            <tbody>
+            {this.props.editable ? (this.props.productsList.map((product) => {
+              return <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.energy}</td>
+                <td>
+                  <Row >
+                    <Col s={3}>
+                      <ProductEdit isCreation={false} onEditClick={this.handleEdit} modalTrigger={<Button waves='green' className='green darken-1'>Edit</Button>} currentProduct={product}/>
+                    </Col>
+                    <Col s={3}>
+                      <Button waves='purple' className='red darken-1' onClick={(e) => this.handleDelete(product, e)}>Delete</Button>
+                    </Col>
+                  </Row>
+                </td>
+              </tr>
+            })) : this.props.productsList.map((product) => {
+              return <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.energy}</td>
+              </tr>
             })}
-          </Collection>
+            </tbody>
+          </Table>
           <div className='container black-text '>
             <Pagination className='center-align' items={10} activePage={1} maxButtons={this.props.productsList.length / 10}/>
           </div>
