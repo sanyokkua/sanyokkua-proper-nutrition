@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(schema = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "login"),
-        @UniqueConstraint(columnNames = "email")})
+                                              @UniqueConstraint(columnNames = "email")})
 public class User {
     @Id
     @GeneratedValue

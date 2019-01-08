@@ -1,6 +1,7 @@
 class ProductEntity {
-  id;
-  name;
-  energy;
+    id;
+    name;
+    energy;
 }
+
 export default ProductEntity;

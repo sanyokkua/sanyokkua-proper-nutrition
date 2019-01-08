@@ -20,16 +20,16 @@ public class ProductsService {
         this.productRepository = productRepository;
     }
 
-    private boolean isValid(Product product) {
-        Preconditions.checkNotNull(product, "Product is null");
-        return product.getEnergy() >= 0 && StringUtils.isNotBlank(product.getName());
-    }
-
     public void createProduct(Product product) {
         if (!isValid(product)) {
             throw new IllegalArgumentException("Product has invalid fields: " + product.toString());
         }
         productRepository.save(product);
+    }
+
+    private boolean isValid(Product product) {
+        Preconditions.checkNotNull(product, "Product is null");
+        return product.getEnergy() >= 0 && StringUtils.isNotBlank(product.getName());
     }
 
     public void updateProduct(Product product) {

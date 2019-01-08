@@ -37,6 +37,17 @@ public class UserService {
         }
     }
 
+    private boolean isValid(User user) {
+        Preconditions.checkNotNull(user, "isValid argument is null");
+        return !isBlank(user.getEmail())
+                && !isBlank(user.getLogin())
+                && !isBlank(user.getPassword())
+                && user.getRoleId() > 0
+                && user.getAge() > 0
+                && user.getHeight() > 0
+                && user.getWeight() > 0;
+    }
+
     public void updateUser(User user) {
         if (!isValid(user)) {
             log.warn("UpdateUser. User has incorrect fields. User: {}", user);
@@ -90,16 +101,5 @@ public class UserService {
         } else {
             log.warn("deleteUser. Incorrect id: {} in user with email: {} and login: {}", user.getId(), user.getEmail(), user.getLogin());
         }
-    }
-
-    private boolean isValid(User user) {
-        Preconditions.checkNotNull(user, "isValid argument is null");
-        return !isBlank(user.getEmail())
-                && !isBlank(user.getLogin())
-                && !isBlank(user.getPassword())
-                && user.getRoleId() > 0
-                && user.getAge() > 0
-                && user.getHeight() > 0
-                && user.getWeight() > 0;
     }
 }

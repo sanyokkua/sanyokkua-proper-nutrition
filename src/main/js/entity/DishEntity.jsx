@@ -1,5 +1,6 @@
 class DishEntity {
-  id;
-  name;
+    id;
+    name;
 }
+
 export default DishEntity;
