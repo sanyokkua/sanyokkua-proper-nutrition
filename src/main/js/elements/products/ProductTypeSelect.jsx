@@ -15,7 +15,7 @@ class ProductTypeSelect extends React.Component {
 
     render() {
         return this.props.valuesList && this.props.valuesList.length > 0 ? (
-            <Input s={ 6 } type='select' label="Product type" defaultValue='1' onChange={ this.onChange }>
+            <Input s={ 6 } type='select' label="Product type" defaultValue='0' onChange={ this.onChange }>
                 { this.props.valuesList && this.props.valuesList.length > 0 ? (this.props.valuesList.map((type) => {
                     return (<option key={ type.id } value={ type.id }>{ type.name }</option>)
                 })) : '' }
