@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Slf4j
 @Data
 @Entity
-@Table(schema = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "login"),
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "login"),
                                               @UniqueConstraint(columnNames = "email")})
 public class User {
     @Id

@@ -56,7 +56,7 @@ public class ProductsService {
             throw new IllegalArgumentException("Product name is blank");
         }
         log.info("searchProduct. Looking for product: {}", name);
-        return productRepository.findAllByNameLike(name);
+        return productRepository.findAllByNameIsStartingWith(name);
     }
 
     public List<Product> getAllProducts() {

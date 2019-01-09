@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Slf4j
 @Data
 @Entity
-@Table(schema = "dishes", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(name = "dishes", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Dish {
     @Id
     @GeneratedValue
