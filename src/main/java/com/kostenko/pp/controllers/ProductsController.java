@@ -36,7 +36,8 @@ public class ProductsController {
 
     @GetMapping("/products")
     public ResultPage<Product> getAllProductsLike(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "page", required = false) Integer pageNumber,
-                                                  @RequestParam(value = "currentType", required = false) Long currentType) {
+                                                  @RequestParam(value = "currentType", required = false) Long currentType,
+                                                  @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         final int currentPage = pageNumber == null ? 0 : pageNumber;
         final int normalizedPage = currentPage > 0 ? currentPage - 1 : currentPage;
         Page<Product> page;
@@ -45,17 +46,18 @@ public class ProductsController {
             final Optional<ProductType> type = productTypeRepository.findById(currentType);
             productType = type.orElse(null);
         }
+        int pageSize = numberOfRecords != null && numberOfRecords > 0 ? numberOfRecords : PAGE_SIZE;
         if (StringUtils.isBlank(name)) {
             if (productType == null) {
-                page = productRepository.findAll(PageRequest.of(normalizedPage, PAGE_SIZE));
+                page = productRepository.findAll(PageRequest.of(normalizedPage, pageSize));
             } else {
-                page = productRepository.findAllByTypeId(PageRequest.of(normalizedPage, PAGE_SIZE), productType.getId());
+                page = productRepository.findAllByTypeId(PageRequest.of(normalizedPage, pageSize), productType.getId());
             }
         } else {
             if (productType == null) {
-                page = productRepository.findAllByNameIsContaining(PageRequest.of(normalizedPage, PAGE_SIZE), name);
+                page = productRepository.findAllByNameIsContaining(PageRequest.of(normalizedPage, pageSize), name);
             } else {
-                page = productRepository.findAllByNameIsContainingAndTypeId(PageRequest.of(normalizedPage, PAGE_SIZE), name, productType.getId());
+                page = productRepository.findAllByNameIsContainingAndTypeId(PageRequest.of(normalizedPage, pageSize), name, productType.getId());
             }
         }
         final int totalPagesFromDb = page.getTotalPages();

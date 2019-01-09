@@ -33,7 +33,7 @@ class Products extends React.Component {
     }
 
     loadAllData() {
-        axios.get('/products', {params: {page: this.state.currentPage, name: this.state.search, currentType: this.state.currentType}})
+        axios.get('/products', {params: {page: this.state.currentPage, name: this.state.search, currentType: this.state.currentType, numberOfRecords: this.state.numberOfRecords}})
              .then(response => {
                  let current = response.data.currentPage;
                  let total = response.data.totalPages;
@@ -107,7 +107,7 @@ class Products extends React.Component {
     }
 
     handleChangeNumberOfRecords(event, value) {
-        this.setState({numberOfRecords: value});
+        this.setState({numberOfRecords: value}, this.loadAllData);
     }
 
     handleChangeProductType(value) {
