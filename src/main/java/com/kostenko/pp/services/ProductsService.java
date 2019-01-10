@@ -36,7 +36,7 @@ public class ProductsService {
         if (!isValid(product)) {
             throw new IllegalArgumentException("Product has invalid fields: " + product.toString());
         }
-        final Product byName = productRepository.findByName(product.getName());
+        final Product byName = productRepository.findByNameAndTypeId(product.getName(), product.getTypeId());
         product.setId(byName.getId());
         productRepository.save(product);
     }

@@ -1,8 +1,6 @@
 import { Button, CardPanel, Input, Modal, Row } from 'react-materialize';
 import axios                                    from 'axios';
-
-const React = require('react');
-const ReactDOM = require('react-dom');
+import React                                    from 'react';
 
 class Calculator extends React.Component {
     constructor(props) {

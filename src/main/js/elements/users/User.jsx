@@ -1,7 +1,5 @@
 import Calculator from "../Calculator";
-
-const React = require('react');
-const ReactDOM = require('react-dom');
+import React      from 'react';
 
 class User extends React.Component {
     render() {

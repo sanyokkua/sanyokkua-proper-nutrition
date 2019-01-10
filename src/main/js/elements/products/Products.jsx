@@ -1,19 +1,24 @@
-import axios                                               from "axios";
 import React                                               from "react";
 import { Button, CardPanel, Col, Input, ProgressBar, Row } from "react-materialize";
 import ProductsList                                        from "./ProductsList"
 import ProductEdit                                         from "./ProductEdit";
 import UploadService                                       from "../../services/UploadService";
-import ProductTypeSelect                                   from "./ProductTypeSelect";
+import ProductTypeSelect                                   from "../product_types/ProductTypeSelect";
+import ProductsService                                     from '../../services/ProductsService'
+import ProductTypesService                                 from '../../services/ProductTypesService'
+import ProductTypes                                        from "../product_types/ProductTypes";
 
 class Products extends React.Component {
     constructor(props) {
         super(props);
+        this.productService = new ProductsService();
+        this.productTypeService = new ProductTypesService();
+        let editable = true;
         this.state = {
-            list: [],
-            types: [],
+            productsList: [],
+            typesList: [],
             currentType: '',
-            editable: true,
+            editable: editable,
             isLoading: false,
             currentPage: 0,
             totalPages: 0,
@@ -30,28 +35,20 @@ class Products extends React.Component {
         this.handlePageSelect = this.handlePageSelect.bind(this);
         this.handleChangeNumberOfRecords = this.handleChangeNumberOfRecords.bind(this);
         this.handleChangeProductType = this.handleChangeProductType.bind(this);
+        this.handleRowClick = this.handleRowClick.bind(this);
+        this.handleTypeCreate = this.handleTypeCreate.bind(this);
+        this.handleTypeEdit = this.handleTypeEdit.bind(this);
+        this.handleTypeDelete = this.handleTypeDelete.bind(this);
     }
 
     loadAllData() {
-        axios.get('/products', {params: {page: this.state.currentPage, name: this.state.search, currentType: this.state.currentType, numberOfRecords: this.state.numberOfRecords}})
-             .then(response => {
-                 let current = response.data.currentPage;
-                 let total = response.data.totalPages;
-                 let content = response.data.content;
-                 this.setState({list: content, currentPage: current, totalPages: total});
-             }).catch(function (error) {
-            console.log(error);
-        });
+        this.productService.getProducts({currentPage: this.state.currentPage, search: this.state.search, currentType: this.state.currentType, numberOfRecords: this.state.numberOfRecords},
+                                        result => this.setState({productsList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
+                                        error => console.log(error));
     }
 
-    loadTypes(){
-        axios.get('/types')
-             .then(response => {
-                 let current = response.data
-                 this.setState({types: current});
-             }).catch(function (error) {
-            console.log(error);
-        });
+    loadTypes() {
+        this.productTypeService.getProductTypes(result => this.setState({typesList: result}), error => console.log(error));
     }
 
     handleSearch(event, value) {
@@ -61,28 +58,21 @@ class Products extends React.Component {
     }
 
     handleCreate(product) {
-        let newList = this.state.list;
-        newList.push(product);
-        this.setState({list: newList});
+        this.productService.createProduct(product, () => {
+            this.loadAllData();
+        }, error => console.log(error));
     }
 
-    handleEditList(productsList, product) {
-        let list = productsList;
-        list.forEach((element, index) => {
-            if (element.id === product.id) {
-                list[index] = product;
-            }
-        });
-        this.setState({list: list});
+    handleEditList(product) {
+        this.productService.updateProduct(product, () => {
+            this.loadAllData();
+        }, error => console.log(error));
     }
 
-    handleDeleteFromList(productsList, product) {
-        let filtered = productsList.filter(function (value) {
-            if (value.id !== product.id) {
-                return value;
-            }
-        });
-        this.setState({list: filtered});
+    handleDeleteFromList(product) {
+        this.productService.deleteProduct(product, () => {
+            this.loadAllData();
+        }, error => console.log(error));
     }
 
     handleLoadCsv(event) {
@@ -116,6 +106,46 @@ class Products extends React.Component {
         }
     }
 
+    handleRowClick(product) {
+        if (product) {
+            if (this.props.onProductRowClick) {
+                this.props.onProductRowClick(product);
+            } else {
+                window.Materialize.toast(product.name, 1000);
+            }
+        }
+    }
+
+    handleTypeCreate(type, successCallback, failCallback) {
+        this.productTypeService.createProductType(type, () => {
+            this.loadTypes();
+            successCallback();
+        }, (error) => {
+            console.log(error);
+            failCallback();
+        });
+    }
+
+    handleTypeEdit(type, successCallback, failCallback) {
+        this.productTypeService.updateProductType(type, () => {
+            this.loadTypes();
+            successCallback();
+        }, (error) => {
+            console.log(error);
+            failCallback();
+        });
+    }
+
+    handleTypeDelete(type, successCallback, failCallback) {
+        this.productTypeService.deleteProductType(type, () => {
+            this.loadTypes();
+            successCallback();
+        }, (error) => {
+            console.log(error);
+            failCallback();
+        });
+    }
+
     render() {
         return <div>
             <CardPanel className="z-depth-4">
@@ -130,23 +160,31 @@ class Products extends React.Component {
                 </div>
                 { this.state.editable ? (
                     <Row>
-                        <Col s={ 2 }><ProductEdit isCreation={ true } onEditClick={ this.handleCreate } modalTrigger={ <Button large={ true } waves='green' className='green darken-1'>Create</Button> } currentProduct={ null }/></Col>
+                        <Col s={ 2 }><ProductEdit typesList={ this.state.typesList } isCreation={ true } onEditClick={ this.handleCreate } modalTrigger={ <Button large={ true } waves='green' className='green darken-1'>Create</Button> }
+                                                  currentProduct={ null }/></Col>
                         <Col s={ 10 }><Input waves='light' type="file" label="Load CSV" s={ 12 } onChange={ this.handleLoadCsv }/></Col>
                     </Row>) : '' }
                 <Row/>
                 { this.state.isLoading ? (<Row><Col s={ 12 }> <ProgressBar/> </Col></Row>) : '' }
                 <Row>
                     <Input s={ 6 } type="number" min="1" onChange={ this.handleChangeNumberOfRecords } label="Number of records for page" defaultValue={ this.state.numberOfRecords }/>
-                    <ProductTypeSelect valuesList={ this.state.types } onValueSelected={ this.handleChangeProductType }/>
+                    <ProductTypeSelect valuesList={ this.state.typesList } onValueSelected={ this.handleChangeProductType }/>
                 </Row>
+                { this.state.editable ? (
+                    <Row>
+                        <ProductTypes onCreate={ this.handleTypeCreate } onSave={ this.handleTypeEdit } onDelete={ this.handleTypeDelete } productTypes={ this.state.typesList }
+                                      modalTrigger={ <Button s={ 12 } waves='green' className='green darken-2'>Product Types</Button> }/>
+                    </Row>) : '' }
                 <Row/>
-                { this.state.list && this.state.list.length > 0 ? (<ProductsList onDeleteFromList={ this.handleDeleteFromList }
-                                                                                 onEditList={ this.handleEditList }
-                                                                                 onPageChange={ this.handlePageSelect }
-                                                                                 productsList={ this.state.list }
-                                                                                 editable={ this.state.editable }
-                                                                                 totalPages={ this.state.totalPages }
-                                                                                 currentPage={ this.state.currentPage }/>) : '' }
+                { this.state.productsList && this.state.productsList.length > 0 ? (<ProductsList onDeleteFromList={ this.handleDeleteFromList }
+                                                                                                 onEditList={ this.handleEditList }
+                                                                                                 onPageChange={ this.handlePageSelect }
+                                                                                                 onRowClick={ this.handleRowClick }
+                                                                                                 productsList={ this.state.productsList }
+                                                                                                 typesList={ this.state.typesList }
+                                                                                                 editable={ this.state.editable }
+                                                                                                 totalPages={ this.state.totalPages }
+                                                                                                 currentPage={ this.state.currentPage }/>) : '' }
             </CardPanel>
         </div>
     }

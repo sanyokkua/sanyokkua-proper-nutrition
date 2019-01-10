@@ -1,5 +1,4 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
+import React from 'react';
 
 class Dishes extends React.Component {
     render() {

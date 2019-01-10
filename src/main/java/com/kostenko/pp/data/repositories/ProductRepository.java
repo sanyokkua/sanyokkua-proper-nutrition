@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends CrudRepository<Product, Long> {
 
+    Product findByNameAndTypeId(String name, Long typeID);
+
     Product findByName(String name);
 
     List<Product> findAllByNameIsStartingWith(String name);
@@ -20,6 +22,8 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     Page<Product> findAll(Pageable pageable);
 
     Page<Product> findAllByTypeId(Pageable pageable, Long typeId);
+
+    long countAllByTypeId(Long typeId);
 
     Page<Product> findAllByNameIsContainingAndTypeId(Pageable pageable, String name, Long typeId);
 
