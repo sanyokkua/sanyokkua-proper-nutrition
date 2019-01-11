@@ -1,16 +1,19 @@
 import React                         from 'react';
 import { Button, Input, Modal, Row } from 'react-materialize';
+import ProductTypeSelect             from "./ProductTypeSelect";
 import Utils                         from '../../utils/Utils'
-import ProductTypeSelect             from "../product_types/ProductTypeSelect";
+import PropTypes                     from "prop-types";
 
 class ProductEdit extends React.Component {
     constructor(props) {
         super(props);
-        let utils = new Utils();
-        utils.checkCallback(this.props.onEditClick, "onEditClick");
-        utils.checkRequiredProperty(this.props.typesList, "type list");
+        Utils.checkRequiredProperty(this.props.text, "text");
+        Utils.checkRequiredProperty(this.props.isCreation, "isCreation");
+        Utils.checkRequiredProperty(this.props.typesList, "type list");
+        Utils.checkCallback(this.props.onEditClick, "onEditClick");
         let currentProd = this.props.currentProduct ? this.props.currentProduct : {id: null, name: '', energy: ''};
-        this.state = {product: currentProd, editorType: this.props.isCreation ? 'Create' : 'Edit'};
+        this.state = {product: currentProd};
+        this.editorName = this.props.isCreation ? this.props.text.productButtonCreate : this.props.text.productButtonEdit;
         this.onConfirmEditButtonClick = this.onConfirmEditButtonClick.bind(this);
         this.onEditName = this.onEditName.bind(this);
         this.onEditEnergy = this.onEditEnergy.bind(this);
@@ -42,19 +45,28 @@ class ProductEdit extends React.Component {
     }
 
     render() {
-        return <Modal header={ this.state.editorType } trigger={ this.props.modalTrigger } actions={
+        return <Modal header={ this.editorName } trigger={ this.props.modalTrigger } actions={
             <div>
-                <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.state.editorType }</Button>
-                <Button flat modal="close" waves="light">Cancel</Button>
+                <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.editorName }</Button>
+                <Button flat modal="close" waves="light">{ this.props.text.modalProductCancel }</Button>
             </div>
         }>
             <Row>
-                <Input s={ 3 } label="Name" onChange={ this.onEditName } defaultValue={ this.state.product.name }/>
-                <Input s={ 3 } type="number" min="0" onChange={ this.onEditEnergy } label="Energy" defaultValue={ this.state.product.energy }/>
-                <ProductTypeSelect valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={this.state.product.typeId}/>
+                <Input s={ 3 } label={ this.props.text.modalProductInputName } onChange={ this.onEditName } defaultValue={ this.state.product.name }/>
+                <Input s={ 3 } type="number" min="0" onChange={ this.onEditEnergy } label={ this.props.text.modalProductInputEnergy } defaultValue={ this.state.product.energy }/>
+                <ProductTypeSelect text={ this.props.text } valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={ this.state.product.typeId }/>
             </Row>
         </Modal>
     }
 }
 
+ProductEdit.propTypes = {
+    onEditClick: PropTypes.func.isRequired,
+    text: PropTypes.object.isRequired,
+    isCreation: PropTypes.bool.isRequired,
+    typesList: PropTypes.array.isRequired,
+    currentProduct: PropTypes.object,
+    modalTrigger: PropTypes.node.isRequired
+
+};
 export default ProductEdit;

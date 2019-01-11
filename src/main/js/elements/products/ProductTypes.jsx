@@ -1,24 +1,24 @@
 import React                                from 'react';
 import { Button, Input, Modal, Row, Table } from 'react-materialize';
-import Utils                                from '../../utils/Utils'
+import Utils                                from '../../utils/Utils';
+import PropTypes                            from "prop-types";
 
 class ProductTypes extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            newProductType: ''
-        };
-        let utils = new Utils();
-        utils.checkCallback(this.props.onCreate, "onCreate");
-        utils.checkCallback(this.props.onSave, "onSave");
-        utils.checkCallback(this.props.onDelete, "onDelete");
+        Utils.checkCallback(this.props.onCreate, "onCreate");
+        Utils.checkCallback(this.props.onSave, "onSave");
+        Utils.checkCallback(this.props.onDelete, "onDelete");
+        Utils.checkRequiredProperty(this.props.text, "text");
+        Utils.checkRequiredProperty(this.props.productTypes, "productTypes");
+        this.state = {newProductType: ''};
         this.onCreateClick = this.onCreateClick.bind(this);
-        this.onEditNewProductNameClick = this.onEditNewProductNameClick.bind(this);
+        this.onEditName = this.onEditName.bind(this);
         this.onProductTypeSaveClick = this.onProductTypeSaveClick.bind(this);
         this.onDeleteClick = this.onDeleteClick.bind(this);
     }
 
-    onEditNewProductNameClick(event, value) {
+    onEditName(event, value) {
         this.setState({newProductType: value});
     }
 
@@ -52,20 +52,20 @@ class ProductTypes extends React.Component {
 
     render() {
         return !this.props.productTypes || this.props.productTypes.length < 1 ? '' : (
-            <Modal header={ "ProductType" } trigger={ this.props.modalTrigger } actions={
+            <Modal header={ this.props.text.modalProdTypeHeader } trigger={ this.props.modalTrigger } actions={
                 <Button flat modal="close" waves="light">Cancel</Button>
             }>
                 <div>
                     <Row>
-                        <Input s={ 9 } required label="Name" onChange={ this.onEditNewProductNameClick }/>
-                        <Button s={ 3 } large={ true } waves='green' className='green darken-1' onClick={ this.onCreateClick }>Create</Button>
+                        <Input s={ 9 } required label={ this.props.text.modalProdTypeInputName } onChange={ this.onEditName }/>
+                        <Button s={ 3 } large={ true } waves='green' className='green darken-1' onClick={ this.onCreateClick }>{ this.props.text.modalProdTypeBtnCreate }</Button>
                     </Row>
                     <Table hoverable={ true } responsive={ true } bordered={ true }>
                         <thead>
                         <tr>
-                            <th data-field="name">Name</th>
-                            <th data-field="edit">Edit</th>
-                            <th data-field="delete">Delete</th>
+                            <th data-field="name">{ this.props.text.modalProdTypeTableName }</th>
+                            <th data-field="edit">{ this.props.text.modalProdTypeTableEdit }</th>
+                            <th data-field="delete">{ this.props.text.modalProdTypeTableDelete }</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -76,10 +76,10 @@ class ProductTypes extends React.Component {
                                         <Input s={ 3 } onChange={ (event, value) => productType.name = value } defaultValue={ productType.name }/>
                                     </td>
                                     <td>
-                                        <Button waves='red' className='yellow darken-1' onClick={ () => this.onProductTypeSaveClick(productType) }>Save</Button>
+                                        <Button waves='red' className='yellow darken-1' onClick={ () => this.onProductTypeSaveClick(productType) }>{ this.props.text.modalProdTypeBtnSave }</Button>
                                     </td>
                                     <td>
-                                        <Button waves='purple' className='red darken-1' onClick={ () => this.onDeleteClick(productType) }>Delete</Button>
+                                        <Button waves='purple' className='red darken-1' onClick={ () => this.onDeleteClick(productType) }>{ this.props.text.modalProdTypeBtnDelete }</Button>
                                     </td>
                                 </tr>
                             )
@@ -92,5 +92,14 @@ class ProductTypes extends React.Component {
         )
     }
 }
+
+ProductTypes.propTypes = {
+    onCreate: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    text: PropTypes.object.isRequired,
+    productTypes: PropTypes.array.isRequired,
+    modalTrigger: PropTypes.element.isRequired
+};
 
 export default ProductTypes;

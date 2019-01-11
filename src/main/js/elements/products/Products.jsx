@@ -2,23 +2,25 @@ import React                                               from "react";
 import { Button, CardPanel, Col, Input, ProgressBar, Row } from "react-materialize";
 import ProductsList                                        from "./ProductsList"
 import ProductEdit                                         from "./ProductEdit";
+import ProductTypeSelect                                   from "./ProductTypeSelect";
+import ProductTypes                                        from "./ProductTypes";
 import UploadService                                       from "../../services/UploadService";
-import ProductTypeSelect                                   from "../product_types/ProductTypeSelect";
 import ProductsService                                     from '../../services/ProductsService'
 import ProductTypesService                                 from '../../services/ProductTypesService'
-import ProductTypes                                        from "../product_types/ProductTypes";
+import Utils                                               from "../../utils/Utils";
+import PropTypes                                           from "prop-types";
 
 class Products extends React.Component {
     constructor(props) {
         super(props);
+        Utils.checkRequiredProperty(this.props.text, "text");
+        Utils.checkRequiredProperty(this.props.editable, "editable");
         this.productService = new ProductsService();
         this.productTypeService = new ProductTypesService();
-        let editable = true;
         this.state = {
             productsList: [],
             typesList: [],
             currentType: '',
-            editable: editable,
             isLoading: false,
             currentPage: 0,
             totalPages: 0,
@@ -78,11 +80,11 @@ class Products extends React.Component {
     handleLoadCsv(event) {
         const file = event.target.files[0];
         console.log("File: ", file);
-        let uploadService = new UploadService();
         this.setState({isLoading: true});
-        uploadService.uploadFile(file, () => {
+        UploadService.uploadFile(file, () => {
             window.Materialize.toast('Uploaded successfully', 3000);
             this.setState({isLoading: false});
+            this.loadTypes();
             this.loadAllData();
         }, () => {
             this.setState({isLoading: false});
@@ -158,36 +160,55 @@ class Products extends React.Component {
                         </div>
                     </form>
                 </div>
-                { this.state.editable ? (
+                { this.props.editable ? (
                     <Row>
-                        <Col s={ 2 }><ProductEdit typesList={ this.state.typesList } isCreation={ true } onEditClick={ this.handleCreate } modalTrigger={ <Button large={ true } waves='green' className='green darken-1'>Create</Button> }
-                                                  currentProduct={ null }/></Col>
-                        <Col s={ 10 }><Input waves='light' type="file" label="Load CSV" s={ 12 } onChange={ this.handleLoadCsv }/></Col>
-                    </Row>) : '' }
+                        <Col s={ 2 }>
+                            <ProductEdit
+                                text={ this.props.text }
+                                typesList={ this.state.typesList }
+                                isCreation={ true }
+                                onEditClick={ this.handleCreate }
+                                modalTrigger={ <Button large={ true } waves='green' className='green darken-1'>{ this.props.text.productButtonCreate }</Button> }
+                                currentProduct={ null }
+                            />
+                        </Col>
+                        <Col s={ 10 }><Input waves='light' type="file" label={ this.props.text.productButtonCsv } s={ 12 } onChange={ this.handleLoadCsv }/></Col>
+                    </Row>) : null }
                 <Row/>
-                { this.state.isLoading ? (<Row><Col s={ 12 }> <ProgressBar/> </Col></Row>) : '' }
+                { this.state.isLoading ? (<Row><Col s={ 12 }> <ProgressBar/> </Col></Row>) : null }
                 <Row>
-                    <Input s={ 6 } type="number" min="1" onChange={ this.handleChangeNumberOfRecords } label="Number of records for page" defaultValue={ this.state.numberOfRecords }/>
-                    <ProductTypeSelect valuesList={ this.state.typesList } onValueSelected={ this.handleChangeProductType }/>
+                    <Input s={ 6 } type="number" min="1" onChange={ this.handleChangeNumberOfRecords } label={ this.props.text.productTipInputNumberRecord } defaultValue={ this.state.numberOfRecords }/>
+                    <ProductTypeSelect text={ this.props.text } valuesList={ this.state.typesList } onValueSelected={ this.handleChangeProductType }/>
                 </Row>
-                { this.state.editable ? (
+                { this.props.editable ? (
                     <Row>
-                        <ProductTypes onCreate={ this.handleTypeCreate } onSave={ this.handleTypeEdit } onDelete={ this.handleTypeDelete } productTypes={ this.state.typesList }
-                                      modalTrigger={ <Button s={ 12 } waves='green' className='green darken-2'>Product Types</Button> }/>
-                    </Row>) : '' }
+                        <ProductTypes
+                            onCreate={ this.handleTypeCreate }
+                            onSave={ this.handleTypeEdit }
+                            onDelete={ this.handleTypeDelete }
+                            text={ this.props.text }
+                            productTypes={ this.state.typesList }
+                            modalTrigger={ <Button s={ 12 } waves='green' className='green darken-2'>{ this.props.text.productButtonTypes }</Button> }/>
+                    </Row>) : null }
                 <Row/>
                 { this.state.productsList && this.state.productsList.length > 0 ? (<ProductsList onDeleteFromList={ this.handleDeleteFromList }
                                                                                                  onEditList={ this.handleEditList }
                                                                                                  onPageChange={ this.handlePageSelect }
                                                                                                  onRowClick={ this.handleRowClick }
+                                                                                                 text={ this.props.text }
                                                                                                  productsList={ this.state.productsList }
                                                                                                  typesList={ this.state.typesList }
-                                                                                                 editable={ this.state.editable }
+                                                                                                 editable={ this.props.editable }
                                                                                                  totalPages={ this.state.totalPages }
-                                                                                                 currentPage={ this.state.currentPage }/>) : '' }
+                                                                                                 currentPage={ this.state.currentPage }/>) : null }
             </CardPanel>
         </div>
     }
 }
 
+Products.propTypes = {
+    editable: PropTypes.bool.isRequired,
+    text: PropTypes.object.isRequired,
+    onProductRowClick: PropTypes.func
+};
 export default Products;

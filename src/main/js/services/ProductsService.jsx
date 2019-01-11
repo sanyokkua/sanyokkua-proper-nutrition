@@ -3,13 +3,12 @@ import Utils from '../utils/Utils'
 
 export default class ProductsService {
     constructor() {
-        this.utils = new Utils();
         this.token = $("meta[name='_csrf']").attr("content");
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
     createProduct(product, successCallback, failCallback) {
-        this.utils.checkDefaultCallbacks(successCallback, failCallback);
+        Utils.checkDefaultCallbacks(successCallback, failCallback);
         axios.post('/products', product, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
              .then(() => {
                  successCallback();
@@ -19,7 +18,7 @@ export default class ProductsService {
     }
 
     getProducts(loadParams, successCallback, failCallback) {
-        this.utils.checkDefaultCallbacks(successCallback, failCallback);
+        Utils.checkDefaultCallbacks(successCallback, failCallback);
         axios.get('/products', {
                  headers: {[this.header]: this.token},
                  params: {
@@ -44,7 +43,7 @@ export default class ProductsService {
     }
 
     updateProduct(product, successCallback, failCallback) {
-        this.utils.checkDefaultCallbacks(successCallback, failCallback);
+        Utils.checkDefaultCallbacks(successCallback, failCallback);
         axios.put('/products/' + product.id, product, {headers: {[this.header]: this.token}})
              .then(() => {
                  successCallback();
@@ -53,7 +52,7 @@ export default class ProductsService {
     }
 
     deleteProduct(product, successCallback, failCallback) {
-        this.utils.checkDefaultCallbacks(successCallback, failCallback);
+        Utils.checkDefaultCallbacks(successCallback, failCallback);
         axios.delete('/products/' + product.id, {
                  headers: {[this.header]: this.token}
              })

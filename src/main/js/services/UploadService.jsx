@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default class UploadService {
 
-    uploadFile(csvFile, successCallback, failCallback) {
+    static uploadFile(csvFile, successCallback, failCallback) {
         if (csvFile) {
             let formData = new FormData();
             formData.append("csv", csvFile);
