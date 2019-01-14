@@ -1,7 +1,6 @@
 package com.kostenko.pp.controllers;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.kostenko.pp.data.ProductUIView;
 import com.kostenko.pp.data.entity.Product;
 import com.kostenko.pp.data.entity.ProductType;
@@ -66,8 +65,6 @@ public class ProductsController {
                                                 .collect(Collectors.toList());
         return new ResultPage<>(currentPage, totalPages, collect);
     }
-
-
 
     @PostMapping("/products")
     @ResponseBody

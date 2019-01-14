@@ -9,6 +9,7 @@ import ProductsService                                     from '../../services/
 import ProductTypesService                                 from '../../services/ProductTypesService'
 import Utils                                               from "../../utils/Utils";
 import PropTypes                                           from "prop-types";
+import SearchForm                                          from "../other/SearchForm";
 
 class Products extends React.Component {
     constructor(props) {
@@ -53,7 +54,7 @@ class Products extends React.Component {
         this.productTypeService.getProductTypes(result => this.setState({typesList: result}), error => console.log(error));
     }
 
-    handleSearch(event, value) {
+    handleSearch(value) {
         this.setState({search: value, currentPage: 0, totalPages: 0}, () => {
             this.loadAllData();
         });
@@ -151,15 +152,8 @@ class Products extends React.Component {
     render() {
         return <div>
             <CardPanel className="z-depth-4">
-                <div className="red darken-1 nav-wrapper">
-                    <form>
-                        <div className="input-field">
-                            <Input id="search" type="search" required onChange={ this.handleSearch }>
-                                <label className="label-icon" htmlFor="search"><i className="material-icons large black-text">Search</i></label>
-                                <i className="material-icons indigo darken-4">close</i></Input>
-                        </div>
-                    </form>
-                </div>
+                <SearchForm onChange={ this.handleSearch }/>
+                <Row/>
                 { this.props.editable ? (
                     <Row>
                         <Col s={ 2 }>
@@ -168,11 +162,20 @@ class Products extends React.Component {
                                 typesList={ this.state.typesList }
                                 isCreation={ true }
                                 onEditClick={ this.handleCreate }
-                                modalTrigger={ <Button large={ true } waves='green' className='green darken-1'>{ this.props.text.productButtonCreate }</Button> }
+                                modalTrigger={ <Button large={ true } waves='green' className='green darken-2'>{ this.props.text.productButtonCreate }</Button> }
                                 currentProduct={ null }
                             />
                         </Col>
-                        <Col s={ 10 }><Input waves='light' type="file" label={ this.props.text.productButtonCsv } s={ 12 } onChange={ this.handleLoadCsv }/></Col>
+                        <Col s={ 4 }>
+                            <ProductTypes
+                                onCreate={ this.handleTypeCreate }
+                                onSave={ this.handleTypeEdit }
+                                onDelete={ this.handleTypeDelete }
+                                text={ this.props.text }
+                                productTypes={ this.state.typesList }
+                                modalTrigger={ <Button s={ 12 } large={ true } waves='green' className='green darken-2'>{ this.props.text.productButtonTypes }</Button> }/>
+                        </Col>
+                        <Col s={ 6 }><Input waves='light' type="file" label={ this.props.text.productButtonCsv } s={ 12 } onChange={ this.handleLoadCsv }/></Col>
                     </Row>) : null }
                 <Row/>
                 { this.state.isLoading ? (<Row><Col s={ 12 }> <ProgressBar/> </Col></Row>) : null }
@@ -180,16 +183,6 @@ class Products extends React.Component {
                     <Input s={ 6 } type="number" min="1" onChange={ this.handleChangeNumberOfRecords } label={ this.props.text.productTipInputNumberRecord } defaultValue={ this.state.numberOfRecords }/>
                     <ProductTypeSelect text={ this.props.text } valuesList={ this.state.typesList } onValueSelected={ this.handleChangeProductType }/>
                 </Row>
-                { this.props.editable ? (
-                    <Row>
-                        <ProductTypes
-                            onCreate={ this.handleTypeCreate }
-                            onSave={ this.handleTypeEdit }
-                            onDelete={ this.handleTypeDelete }
-                            text={ this.props.text }
-                            productTypes={ this.state.typesList }
-                            modalTrigger={ <Button s={ 12 } waves='green' className='green darken-2'>{ this.props.text.productButtonTypes }</Button> }/>
-                    </Row>) : null }
                 <Row/>
                 { this.state.productsList && this.state.productsList.length > 0 ? (<ProductsList onDeleteFromList={ this.handleDeleteFromList }
                                                                                                  onEditList={ this.handleEditList }

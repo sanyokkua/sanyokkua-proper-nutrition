@@ -55,7 +55,7 @@ class MainContent extends React.Component {
     render() {
         return this.state.isLangLoaded ? (<HashRouter>
             <div>
-                <Navbar className='red darken-1' brand={ this.state.header } right>
+                <Navbar className='light-blue darken-2' brand={ this.state.header } right>
                     <li><Input onChange={ (event, value) => {this.onEditModeChange(value)} } name='group1' type='checkbox' value='white' label={ this.state.text.mainEditMode }/></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabUserName') } to='/'>{ this.state.text.tabUserName }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabProductsName') } to='/products'>{ this.state.text.tabProductsName }</NavLink></li>
@@ -73,7 +73,7 @@ class MainContent extends React.Component {
                     <Route exact path="/" render={ () => { return <User text={ this.state.text }/>} }/>
                     <Route path="/user" render={ () => {return <User text={ this.state.text }/>} }/>
                     <Route path="/products" render={ () => {return <Products text={ this.state.text } editable={ this.state.isEditMode }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.state.text }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.state.text } editable={ true }/>} }/>
                 </div>
             </div>
         </HashRouter>) : null

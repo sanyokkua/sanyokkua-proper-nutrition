@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-//import java.util.List;
 
 @Slf4j
 @Data
@@ -17,6 +16,6 @@ public class Dish {
     private long id;
     @Column(name = "name", nullable = false)
     private String name;
-    //@Column(name = "products", nullable = false)
-    //private List<Product> products;
+    @Column(name = "products", nullable = false, length = 1024000)
+    private String products;
 }
