@@ -41,23 +41,31 @@ export default class DishService {
              .catch(error => failCallback(error));
     }
 
-    updateDish(product, successCallback, failCallback) {
+    updateDish(dish, successCallback, failCallback) {
         Utils.checkDefaultCallbacks(successCallback, failCallback);
-        axios.put('/dishes/' + product.id, product, {headers: {[this.header]: this.token}})
+        axios.put('/dishes/' + dish.id, dish, {headers: {[this.header]: this.token}})
              .then(() => {
                  successCallback();
              })
              .catch(error => failCallback(error));
     }
 
-    deleteDish(product, successCallback, failCallback) {
+    deleteDish(dish, successCallback, failCallback) {
         Utils.checkDefaultCallbacks(successCallback, failCallback);
-        axios.delete('/dishes/' + product.id, {
+        axios.delete('/dishes/' + dish.id, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {
                  successCallback();
              })
              .catch(error => failCallback(error));
+    }
+
+    static calculateTotalEnergy(productsList) {
+        let totalValue = 0;
+        productsList.filter(product => product.amount > 0).forEach(product => {
+            totalValue += product.energy * (product.amount / 100);
+        });
+        return totalValue;
     }
 }

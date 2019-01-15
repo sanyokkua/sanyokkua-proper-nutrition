@@ -67,7 +67,7 @@ class Dishes extends React.Component {
 
     render() {
         return <div>
-            <CardPanel className="green lighten-1 black-text z-depth-4">
+            <CardPanel className="white lighten-1 black-text z-depth-4">
                 <Row>
                     <Col s={ this.props.editable ? 9 : 12 }>
                         <SearchForm onChange={ this.onDishSearch }/>

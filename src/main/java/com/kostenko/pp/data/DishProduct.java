@@ -4,15 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DishUIView {
-    private Long id;
+public class DishProduct {
+    private long id;
     private String name;
-    private List<DishProduct> products;
-    private int totalEnergy;
-
+    private int energy;
+    private long typeId;
+    private String typeName;
+    private int amount;
 }

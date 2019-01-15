@@ -1,7 +1,10 @@
 package com.kostenko.pp.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
+import com.kostenko.pp.data.DishProduct;
 import com.kostenko.pp.data.DishUIView;
 import com.kostenko.pp.data.entity.Dish;
 import com.kostenko.pp.data.repositories.DishRepository;
@@ -57,22 +60,17 @@ public class DishesController {
         final int totalPagesFromDb = page.getTotalPages();
         final List<DishUIView> collect = page.stream()
                                              .map(dish -> {
-                                                 Map<String, Integer> result = null;
+                                                 List<DishProduct> result = null;
                                                  try {
-                                                     result = new ObjectMapper().readValue(dish.getProducts(), HashMap.class);
+                                                     result = new ObjectMapper().readValue(dish.getProducts(), new TypeReference<List<DishProduct>>(){});
                                                  } catch (IOException e) {
                                                      log.error(e.getMessage(), e);
                                                  }
-                                                 AtomicInteger totalEnergy = new AtomicInteger();
-                                                 result.values().forEach(totalEnergy::addAndGet);
-                                                 final List<Object> collect1 = result.entrySet().stream().map(stringIntegerEntry -> {
-                                                     Map<String, Object> map = new HashMap<>();
-                                                     map.put("name", stringIntegerEntry.getKey());
-                                                     map.put("energy", stringIntegerEntry.getValue());
-                                                     return map;
-                                                 }).collect(Collectors.toList());
-
-                                                 return new DishUIView(dish.getId(), dish.getName(), collect1, totalEnergy.get());
+                                                 int totalEnergy = 0;
+                                                 for (DishProduct product : result){
+                                                     totalEnergy+=product.getEnergy();
+                                                 }
+                                                 return new DishUIView(dish.getId(), dish.getName(), result, totalEnergy);
                                              })
                                              .collect(Collectors.toList());
         return new ResultPage<>(currentPage, totalPagesFromDb, collect);
@@ -90,12 +88,14 @@ public class DishesController {
 
     @PutMapping("/dishes/{id}")
     @ResponseBody
-    public Dish updateProduct(@PathVariable Long id, @RequestBody Dish dish) {
+    public Dish updateProduct(@PathVariable Long id, @RequestBody Map<String, String> dish) throws JsonProcessingException {
         Dish dishFromDb = dishRepository.findById(id).orElse(null);
         if (dishFromDb == null) {
-            throw new IllegalArgumentException("Dish with id " + dish.getId() + " doesn't exists. Update can't be done");
+            throw new IllegalArgumentException("Dish with id " + dish.get("id") + " doesn't exists. Update can't be done");
         } else {
-            dishFromDb = dishRepository.save(dish);
+//            final String products = new ObjectMapper().writeValueAsString(dish.getProducts()); //TODO:
+//            Dish toSave = new Dish(dish.getId(), dish.getName(), products);
+//            dishFromDb = dishRepository.save(toSave);
         }
         return dishFromDb;
     }
