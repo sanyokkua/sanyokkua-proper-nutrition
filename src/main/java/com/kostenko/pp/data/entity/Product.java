@@ -21,7 +21,7 @@ public class Product {
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "energy", nullable = false)
-    private int energy;
+    private Double energy;
     @Column(name = "typeId", nullable = false)
     private Long typeId;
 }

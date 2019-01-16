@@ -33,9 +33,9 @@ public class ProductTypeController {
     @PostMapping("/types")
     @ResponseBody
     public ProductType createProductType(@RequestBody ProductType productType) {
-        final ProductType exProd = productTypeRepository.findByName(productType.getName());
+        ProductType exProd = productTypeRepository.findByName(productType.getName());
         if (exProd == null) {
-            productTypeRepository.save(productType);
+            exProd = productTypeRepository.save(productType);
         } else {
             throw new IllegalArgumentException("Type already exists");
         }

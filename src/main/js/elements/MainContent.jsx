@@ -46,10 +46,7 @@ class MainContent extends React.Component {
     }
 
     onNavLinkClick(lastTab) {
-        this.setState({
-                          currentTab: lastTab,
-                          header: TextService.text[lastTab]
-                      })
+        this.setState({currentTab: lastTab, header: TextService.text[lastTab]});
     }
 
     render() {

@@ -41,8 +41,12 @@ class ProductsList extends React.Component {
         this.props.onRowClick(product);
     }
 
+    isProductListExist() {
+        return this.props.productsList && this.props.productsList.length > 0;
+    }
+
     render() {
-        return !this.props.productsList || this.props.productsList.length < 1 ? '' : (
+        return this.isProductListExist() ? (
             <div className="black-text">
                 <Table hoverable={ true } responsive={ true } bordered={ true }>
                     <thead>
@@ -78,7 +82,7 @@ class ProductsList extends React.Component {
                 </Table>
                 <Pagination className='center-align' items={ this.props.totalPages } activePage={ this.props.currentPage } maxButtons={ 10 } onSelect={ this.handlePageChange }/>
             </div>
-        )
+        ) : null;
     }
 }
 

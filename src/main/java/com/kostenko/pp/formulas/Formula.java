@@ -9,7 +9,7 @@ public interface Formula {
         HIGH(1.55),
         VERY_HIGH(1.9);
 
-        private double coefficient;
+        private final double coefficient;
 
         Activity(double coefficient) {
             this.coefficient = coefficient;
@@ -30,7 +30,7 @@ public interface Formula {
             }
         }
 
-        public double getCoefficient() {
+        double getCoefficient() {
             return coefficient;
         }
     }

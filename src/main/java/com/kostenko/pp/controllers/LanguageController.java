@@ -15,11 +15,11 @@ import java.util.Map;
 @RestController
 public class LanguageController {
 
+    @SuppressWarnings("unchecked")
     @GetMapping("/lang/{lang}")
     public Map<String, String> getTranslations(@PathVariable String lang) throws IOException {
         File file = new ClassPathResource("./translations/" + lang + ".json").getFile();
         String JSON_SOURCE = FileUtils.readFileToString(file, "UTF-8");
-        Map<String, String> result = new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
-        return result;
+        return new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
     }
 }

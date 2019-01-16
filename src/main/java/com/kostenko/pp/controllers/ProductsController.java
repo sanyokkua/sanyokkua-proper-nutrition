@@ -1,102 +1,75 @@
 package com.kostenko.pp.controllers;
 
 import com.google.common.base.Preconditions;
-import com.kostenko.pp.data.ProductUIView;
 import com.kostenko.pp.data.entity.Product;
-import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.data.repositories.ProductRepository;
 import com.kostenko.pp.data.repositories.ProductTypeRepository;
-import org.apache.commons.lang3.StringUtils;
+import com.kostenko.pp.json.JsonProduct;
+import com.kostenko.pp.services.DBService;
+import com.kostenko.pp.services.page.PageInfo;
+import com.kostenko.pp.services.page.ResultPage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class ProductsController {
-    private static final int PAGE_SIZE = 10;
-    private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final DBService<Product> productDBService;
 
     @Autowired
-    public ProductsController(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
-        Preconditions.checkNotNull(productRepository);
+    public ProductsController(ProductTypeRepository productTypeRepository, @Qualifier("ProductDBService") DBService<Product> productDBService) {
         Preconditions.checkNotNull(productTypeRepository);
-        this.productRepository = productRepository;
+        Preconditions.checkNotNull(productDBService);
+        this.productDBService = productDBService;
         this.productTypeRepository = productTypeRepository;
     }
 
     @GetMapping("/products")
-    public ResultPage<ProductUIView> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
-                                                        @RequestParam(value = "page", required = false) Integer pageNumber,
-                                                        @RequestParam(value = "currentType", required = false) Long currentType,
-                                                        @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
-        final int currentPage = pageNumber == null ? 0 : pageNumber;
-        final int normalizedPage = currentPage > 0 ? currentPage - 1 : currentPage;
-        Page<Product> page;
-        ProductType productType = null;
-        if (currentType != null && currentType != 0) {
-            final Optional<ProductType> type = productTypeRepository.findById(currentType);
-            productType = type.orElse(null);
-        }
-        int pageSize = numberOfRecords != null && numberOfRecords > 0 ? numberOfRecords : PAGE_SIZE;
-        if (StringUtils.isBlank(name)) {
-            if (productType == null) {
-                page = productRepository.findAll(PageRequest.of(normalizedPage, pageSize));
-            } else {
-                page = productRepository.findAllByTypeId(PageRequest.of(normalizedPage, pageSize), productType.getId());
-            }
-        } else {
-            if (productType == null) {
-                page = productRepository.findAllByNameIsContaining(PageRequest.of(normalizedPage, pageSize), name);
-            } else {
-                page = productRepository.findAllByNameIsContainingAndTypeId(PageRequest.of(normalizedPage, pageSize), name, productType.getId());
-            }
-        }
-        final int totalPagesFromDb = page.getTotalPages();
-        final int totalPages = totalPagesFromDb;
-        final List<ProductUIView> collect = page.stream()
-                                                .map(product -> new ProductUIView(product.getId(), product.getName(), product.getEnergy(), product.getTypeId(), productTypeRepository.findById(product.getTypeId()).orElse(new ProductType()).getName()))
-                                                .collect(Collectors.toList());
-        return new ResultPage<>(currentPage, totalPages, collect);
+    public ResultPage<JsonProduct> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
+                                                      @RequestParam(value = "page", required = false) Integer pageNumber,
+                                                      @RequestParam(value = "currentType", required = false) Long currentType,
+                                                      @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+        Map<String, String> params = new HashMap<>();
+        params.put(PageInfo.SEARCH_STRING, name);
+        params.put(PageInfo.TYPE_ID, String.valueOf(currentType));
+
+        PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
+        Page<Product> page = productDBService.getAll(pageInfo);
+
+        return ResultPage.getResultPage(page, product -> JsonProduct.mapFromProduct(product, productTypeRepository));
     }
 
     @PostMapping("/products")
     @ResponseBody
     public Product createProduct(@RequestBody Product product) {
-        final Product exProd = productRepository.findByNameAndTypeId(product.getName(), product.getTypeId());
-        if (exProd == null) {
-            productRepository.save(product);
-        }
-        return exProd;
+        return productDBService.create(product);
     }
 
     @PutMapping("/products/{id}")
     @ResponseBody
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product exProd = productRepository.findById(id).orElse(null);
-        if (exProd == null) {
-            throw new IllegalArgumentException("Product with id " + product.getId() + " doesn't exists. Update can't be done");
+        if (id.equals(product.getId())) {
+            return productDBService.update(product);
         } else {
-            exProd = productRepository.save(product);
+            throw new IllegalArgumentException("Id from path and in object are different");
         }
-        return exProd;
+
     }
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity deleteProduct(@PathVariable Long id) {
-        final Product exProd = productRepository.findById(id).orElse(null);
-        if (exProd == null) {
+        Product product = productDBService.findById(id);
+        if (product == null) {
             throw new IllegalArgumentException("Product with id " + id + " doesn't exists. Delete can't be done");
         } else {
-            productRepository.delete(exProd);
+            productDBService.delete(product);
         }
-        return ResponseEntity.ok(exProd);
+        return ResponseEntity.ok("OK");
     }
 
 }

@@ -3,8 +3,10 @@ package com.kostenko.pp.services;
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.User;
 import com.kostenko.pp.data.repositories.UserRepository;
+import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Service
-public class UserService {
+public class UserService implements DBService<User> {
     private final UserRepository userRepository;
 
     @Autowired
@@ -101,5 +103,30 @@ public class UserService {
         } else {
             log.warn("deleteUser. Incorrect id: {} in user with email: {} and login: {}", user.getId(), user.getEmail(), user.getLogin());
         }
+    }
+
+    @Override
+    public User findById(Long id) {
+        return null;
+    }
+
+    @Override
+    public User create(User data) {
+        return null;
+    }
+
+    @Override
+    public User update(User data) {
+        return null;
+    }
+
+    @Override
+    public Page<User> getAll(PageInfo pageInfo) {
+        return null;
+    }
+
+    @Override
+    public void delete(User data) {
+
     }
 }

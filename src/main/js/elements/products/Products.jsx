@@ -1,5 +1,6 @@
 import React                                               from "react";
 import { Button, CardPanel, Col, Input, ProgressBar, Row } from "react-materialize";
+import PropTypes                                           from "prop-types";
 import ProductsList                                        from "./ProductsList"
 import ProductEdit                                         from "./ProductEdit";
 import ProductTypeSelect                                   from "./ProductTypeSelect";
@@ -8,7 +9,6 @@ import UploadService                                       from "../../services/
 import ProductsService                                     from '../../services/ProductsService'
 import ProductTypesService                                 from '../../services/ProductTypesService'
 import Utils                                               from "../../utils/Utils";
-import PropTypes                                           from "prop-types";
 import SearchForm                                          from "../other/SearchForm";
 
 class Products extends React.Component {
@@ -26,7 +26,7 @@ class Products extends React.Component {
             currentPage: 0,
             totalPages: 0,
             search: '',
-            numberOfRecords: 10
+            numberOfRecords: this.props.numberOfRecords
         };
         this.loadTypes();
         this.loadAllData();
@@ -105,7 +105,7 @@ class Products extends React.Component {
 
     handleChangeProductType(value) {
         if (value) {
-            this.setState({currentType: value}, this.loadAllData);
+            this.setState({currentType: value, currentPage: 0, totalPages: 0}, this.loadAllData);
         }
     }
 
@@ -202,6 +202,7 @@ class Products extends React.Component {
 Products.propTypes = {
     editable: PropTypes.bool.isRequired,
     text: PropTypes.object.isRequired,
+    numberOfRecords: PropTypes.number,
     onProductRowClick: PropTypes.func
 };
 export default Products;

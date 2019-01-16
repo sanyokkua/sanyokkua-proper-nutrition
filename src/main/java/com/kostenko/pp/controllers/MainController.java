@@ -34,6 +34,7 @@ public class MainController {
         this.productTypeRepository = productTypeRepository;
     }
 
+    @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = "/")
     public String index() {
         return "index";
@@ -47,7 +48,7 @@ public class MainController {
             for (CSVRecord record : records) {
                 String type = record.get("type");
                 String name = record.get("name");
-                int energy = Integer.valueOf(record.get("energy"));
+                double energy = Double.valueOf(record.get("energy"));
                 ProductType productType = productTypeRepository.findByName(type);
                 if (productType == null) {
                     ProductType newProdType = new ProductType();
@@ -66,7 +67,7 @@ public class MainController {
         } catch (IOException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok("OK");
     }
 
 }

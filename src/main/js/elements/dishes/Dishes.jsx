@@ -36,7 +36,6 @@ class Dishes extends React.Component {
 
     onDishSearch(value) {
         this.setState({name: value, currentPage: 0, totalPages: 0}, () => {
-            window.Materialize.toast(value, 1000);
             this.reloadDishes();
         });
     }
@@ -74,12 +73,13 @@ class Dishes extends React.Component {
                     </Col>
                     { this.props.editable ? (
                         <Col s={ 2 }>
-                            <DishesEdit text={ this.props.text } modalTrigger={ <Button large={ true } waves='green' className='green darken-4 white-text'>{ this.props.text.productButtonCreate } </Button> } isCreation={ true }
-                                        onSave={ this.onDishCreate }/>
+                            <DishesEdit text={ this.props.text }
+                                        onSave={ this.onDishCreate }
+                                        modalTrigger={ <Button large={ true } waves='green' className='green darken-4 white-text'>{ this.props.text.productButtonCreate } </Button> }
+                            />
                         </Col>
                     ) : null }
                 </Row>
-
                 <DishesList text={ this.props.text }
                             editable={ this.props.editable }
                             dishList={ this.state.dishList }
@@ -90,7 +90,6 @@ class Dishes extends React.Component {
                             onDishEdit={ this.onDishEdit }
                             onDishDelete={ this.onDishDelete }
                 />
-
             </CardPanel>
         </div>
     }

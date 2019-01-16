@@ -7,6 +7,14 @@ export default class DishService {
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
+    static calculateTotalEnergy(productsList) {
+        let totalValue = 0;
+        productsList.filter(product => product.amount > 0).forEach(product => {
+            totalValue += product.energy * (product.amount / 100);
+        });
+        return totalValue;
+    }
+
     createDish(product, successCallback, failCallback) {
         Utils.checkDefaultCallbacks(successCallback, failCallback);
         axios.post('/dishes', product, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
@@ -59,13 +67,5 @@ export default class DishService {
                  successCallback();
              })
              .catch(error => failCallback(error));
-    }
-
-    static calculateTotalEnergy(productsList) {
-        let totalValue = 0;
-        productsList.filter(product => product.amount > 0).forEach(product => {
-            totalValue += product.energy * (product.amount / 100);
-        });
-        return totalValue;
     }
 }

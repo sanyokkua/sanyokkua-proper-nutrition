@@ -3,16 +3,16 @@ package com.kostenko.pp.services;
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Product;
 import com.kostenko.pp.data.repositories.ProductRepository;
+import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Service
 @Slf4j
-public class ProductsService {
+@Service("ProductDBService")
+public class ProductsService implements DBService<Product> {
     private final ProductRepository productRepository;
 
     public ProductsService(ProductRepository productRepository) {
@@ -20,48 +20,82 @@ public class ProductsService {
         this.productRepository = productRepository;
     }
 
-    public void createProduct(Product product) {
+    @Override
+    public Product findById(Long id) {
+        Preconditions.checkNotNull(id, "ID can't be null");
+        return productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Product create(Product data) {
+        validate(data);
+        Product dbProduct = productRepository.findByNameAndTypeId(data.getName(), data.getTypeId());
+        if (dbProduct == null) {
+            dbProduct = productRepository.save(data);
+        } else {
+            throw new IllegalArgumentException("Product with id " + data.getId() + " doesn't exists. Update can't be done");
+        }
+        return dbProduct;
+    }
+
+    @Override
+    public Product update(Product data) {
+        validate(data);
+        Product dbProduct = productRepository.findById(data.getId()).orElse(null);
+        if (dbProduct == null) {
+            throw new IllegalArgumentException("Product with id " + data.getId() + " doesn't exists. Update can't be done");
+        } else {
+            dbProduct = productRepository.save(data);
+        }
+        return dbProduct;
+    }
+
+    @Override
+    public Page<Product> getAll(PageInfo pageInfo) {
+        long typeId = 0;
+        try {
+            typeId = Long.parseLong(pageInfo.getParam(PageInfo.TYPE_ID));
+        } catch (NumberFormatException ex) {
+            log.warn("Problem with parsing typeid", ex);
+        }
+        String searchString = pageInfo.getParam(PageInfo.SEARCH_STRING);
+        Page<Product> page;
+        if (StringUtils.isBlank(searchString)) {
+            if (typeId == 0) {
+                page = productRepository.findAll(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
+            } else {
+                page = productRepository.findAllByTypeId(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), typeId);
+            }
+        } else {
+            if (typeId == 0) {
+                page = productRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), searchString);
+            } else {
+                page = productRepository.findAllByNameIsContainingAndTypeId(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), searchString, typeId);
+            }
+        }
+        return page;
+    }
+
+    @Override
+    public void delete(Product data) {
+        validate(data);
+        final Product dbProduct = productRepository.findById(data.getId()).orElse(null);
+        if (dbProduct == null) {
+            throw new IllegalArgumentException("Product with id " + data.getId() + " doesn't exists. Delete can't be done");
+        } else {
+            productRepository.delete(dbProduct);
+        }
+    }
+
+    private void validate(Product product) {
         if (!isValid(product)) {
             throw new IllegalArgumentException("Product has invalid fields: " + product.toString());
         }
-        productRepository.save(product);
     }
 
     private boolean isValid(Product product) {
-        Preconditions.checkNotNull(product, "Product is null");
-        return product.getEnergy() >= 0 && StringUtils.isNotBlank(product.getName());
+        return product != null && StringUtils.isNotBlank(product.getName()) && product.getEnergy() >= 0 && product.getTypeId() != null;
     }
 
-    public void updateProduct(Product product) {
-        if (!isValid(product)) {
-            throw new IllegalArgumentException("Product has invalid fields: " + product.toString());
-        }
-        final Product byName = productRepository.findByNameAndTypeId(product.getName(), product.getTypeId());
-        product.setId(byName.getId());
-        productRepository.save(product);
-    }
-
-    public Product searchProduct(String name) {
-        if (StringUtils.isBlank(name)) {
-            log.warn("Product name is blank");
-            throw new IllegalArgumentException("Product name is blank");
-        }
-        log.info("searchProduct. Looking for product: {}", name);
-        return productRepository.findByName(name);
-    }
-
-    public List<Product> searchProductsLike(String name) {
-        if (StringUtils.isBlank(name)) {
-            log.warn("Product name is blank");
-            throw new IllegalArgumentException("Product name is blank");
-        }
-        log.info("searchProduct. Looking for product: {}", name);
-        return productRepository.findAllByNameIsStartingWith(name);
-    }
-
-    public List<Product> getAllProducts() {
-        List<Product> products = new ArrayList<>();
-        productRepository.findAll().forEach(products::add);
-        return products;
-    }
 }
+
