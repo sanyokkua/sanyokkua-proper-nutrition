@@ -1,44 +1,26 @@
-const React = require('react');
+import React                                from 'react';
 import { HashRouter, NavLink, Route }       from "react-router-dom";
 import { Dropdown, Input, Navbar, NavItem } from "react-materialize";
+import PropTypes                            from "prop-types";
 import Dishes                               from './dishes/Dishes';
 import Products                             from './products/Products';
 import User                                 from './users/User';
-import TextService                          from '../services/TextService';
+import Utils                                from "../utils/Utils";
 
 class MainContent extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            header: '',
-            currentTab: 'tabUserName',
-            lang: '',
-            isLangLoaded: false,
-            isEditMode: false,
-            text: TextService.text
-        };
-        this.loadLanguage(this.state.lang);
+        Utils.checkCallback(this.props.onLanguageChanged, "onLanguageChanged");
+        Utils.checkRequiredProperty(this.props.text, "text");
+        Utils.checkRequiredProperty(this.props.currentLanguage, "currentLanguage");
+        this.state = {header: this.props.text.general.tabUser, currentTab: 'tabUser', isEditMode: false};
         this.onLangSelect = this.onLangSelect.bind(this);
         this.onNavLinkClick = this.onNavLinkClick.bind(this);
         this.onEditModeChange = this.onEditModeChange.bind(this);
     }
 
-    loadLanguage(lang) {
-        TextService.load(lang, () => {
-            this.setState({
-                              isLangLoaded: true,
-                              lang: TextService.currentLang,
-                              text: TextService.text,
-                              header: TextService.text[this.state.currentTab]
-                          });
-        }, (error, message) => {
-            console.log(message);
-            this.setState({isLangLoaded: false});
-        });
-    }
-
     onLangSelect(lang) {
-        this.loadLanguage(lang);
+        this.props.onLanguageChanged(lang);
     }
 
     onEditModeChange(editMode) {
@@ -46,35 +28,115 @@ class MainContent extends React.Component {
     }
 
     onNavLinkClick(lastTab) {
-        this.setState({currentTab: lastTab, header: TextService.text[lastTab]});
+        this.setState({currentTab: lastTab, header: this.props.text.general[lastTab]});
     }
 
     render() {
-        return this.state.isLangLoaded ? (<HashRouter>
+        return <HashRouter>
             <div>
                 <Navbar className='light-blue darken-2' brand={ this.state.header } right>
-                    <li><Input onChange={ (event, value) => {this.onEditModeChange(value)} } name='group1' type='checkbox' value='white' label={ this.state.text.mainEditMode }/></li>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabUserName') } to='/'>{ this.state.text.tabUserName }</NavLink></li>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabProductsName') } to='/products'>{ this.state.text.tabProductsName }</NavLink></li>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabDishesName') } to='/dishes'>{ this.state.text.tabDishesName }</NavLink></li>
+                    <li><Input onChange={ (event, value) => {this.onEditModeChange(value)} } name='group1' type='checkbox' value='white' label={ this.props.text.general.tabEditMode }/></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabUser') } to='/'>{ this.props.text.general.tabUser }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabProducts') } to='/products'>{ this.props.text.general.tabProducts }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
                     <li>
-                        <Dropdown trigger={ <a> { this.state.lang }</a> }>
-                            <NavItem onClick={ () => {this.onLangSelect("eng")} }>eng</NavItem>
-                            <NavItem onClick={ () => {this.onLangSelect("ru")} }>ru</NavItem>
+                        <Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>
+                            { this.props.langList.map(lang => {
+                                return <NavItem key={ lang } onClick={ () => {this.onLangSelect(lang)} }>{ lang }</NavItem>
+                            }) }
                         </Dropdown>
                     </li>
-                    <NavItem href='/logout'>{ this.state.text.tabLogoutName }</NavItem>
+                    <NavItem href='/logout'>{ this.props.text.general.tabLogout }</NavItem>
                 </Navbar>
 
                 <div className='container'>
-                    <Route exact path="/" render={ () => { return <User text={ this.state.text }/>} }/>
-                    <Route path="/user" render={ () => {return <User text={ this.state.text }/>} }/>
-                    <Route path="/products" render={ () => {return <Products text={ this.state.text } editable={ this.state.isEditMode }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.state.text } editable={ true }/>} }/>
+                    <Route exact path="/" render={ () => { return <User text={ this.props.text }/>} }/>
+                    <Route path="/user" render={ () => {return <User text={ this.props.text }/>} }/>
+                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ this.state.isEditMode } numberOfRecords={ 10 }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true }/>} }/>
                 </div>
             </div>
-        </HashRouter>) : null
+        </HashRouter>
     }
 }
 
+MainContent.propTypes = {
+    text: PropTypes.shape({
+                              general: PropTypes.shape({
+                                                           tabUser: PropTypes.string.isRequired,
+                                                           tabProducts: PropTypes.string.isRequired,
+                                                           tabDishes: PropTypes.string.isRequired,
+                                                           tabLogout: PropTypes.string.isRequired,
+                                                           tabEditMode: PropTypes.string.isRequired
+                                                       }).isRequired,
+                              calculator: PropTypes.shape({
+                                                              age: PropTypes.string.isRequired,
+                                                              height: PropTypes.string.isRequired,
+                                                              weight: PropTypes.string.isRequired,
+                                                              gender: PropTypes.string.isRequired,
+                                                              genderMale: PropTypes.string.isRequired,
+                                                              genderFemale: PropTypes.string.isRequired,
+                                                              activity: PropTypes.string.isRequired,
+                                                              formula: PropTypes.string.isRequired,
+                                                              benedict: PropTypes.string.isRequired,
+                                                              mifflin: PropTypes.string.isRequired,
+                                                              low: PropTypes.string.isRequired,
+                                                              medium: PropTypes.string.isRequired,
+                                                              high: PropTypes.string.isRequired,
+                                                              very_high: PropTypes.string.isRequired,
+                                                              buttonCalculate: PropTypes.string.isRequired,
+                                                              modalHeaderCalculate: PropTypes.string.isRequired,
+                                                              modalResultText: PropTypes.string.isRequired,
+                                                              modalButtonCancel: PropTypes.string.isRequired
+                                                          }).isRequired,
+                              products: PropTypes.shape({
+                                                            buttonCreate: PropTypes.string.isRequired,
+                                                            buttonProductTypes: PropTypes.string.isRequired,
+                                                            buttonLoadCsv: PropTypes.string.isRequired,
+                                                            buttonEdit: PropTypes.string.isRequired,
+                                                            buttonDelete: PropTypes.string.isRequired,
+                                                            inputRecordsNumber: PropTypes.string.isRequired,
+                                                            selectType: PropTypes.string.isRequired,
+                                                            tableHeadName: PropTypes.string.isRequired,
+                                                            tableHeadEnergy: PropTypes.string.isRequired,
+                                                            tableHeadType: PropTypes.string.isRequired,
+                                                            tableHeadActions: PropTypes.string.isRequired,
+                                                            modalEditProductHeadCreate: PropTypes.string.isRequired,
+                                                            modalEditProductHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditProductInputName: PropTypes.string.isRequired,
+                                                            modalEditProductInputEnergy: PropTypes.string.isRequired,
+                                                            modalEditProductSelectType: PropTypes.string.isRequired,
+                                                            modalEditProductButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeHeader: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeInputName: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCreate: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonSave: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadName: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadDelete: PropTypes.string.isRequired
+                                                        }).isRequired,
+                              dishes: PropTypes.shape({
+                                                          buttonCreate: PropTypes.string.isRequired,
+                                                          tableHeadName: PropTypes.string.isRequired,
+                                                          tableHeadEnergy: PropTypes.string.isRequired,
+                                                          tableHeadAmount: PropTypes.string.isRequired,
+                                                          buttonEdit: PropTypes.string.isRequired,
+                                                          buttonDelete: PropTypes.string.isRequired,
+                                                          modalEditHeader: PropTypes.string.isRequired,
+                                                          modalEditTotalEnergyText: PropTypes.string.isRequired,
+                                                          modalEditInputProductName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderEnergy: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderAmount: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderDelete: PropTypes.string.isRequired,
+                                                          modalEditTableInputAmount: PropTypes.string.isRequired,
+                                                          modalEditButtonCancel: PropTypes.string.isRequired,
+                                                          modalEditButtonSave: PropTypes.string.isRequired
+                                                      }).isRequired
+                          }).isRequired,
+    onLanguageChanged: PropTypes.func.isRequired,
+    currentLanguage: PropTypes.string.isRequired,
+    langList: PropTypes.arrayOf(PropTypes.string).isRequired
+};
 export default MainContent;

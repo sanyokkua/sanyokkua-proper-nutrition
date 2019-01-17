@@ -98,21 +98,21 @@ class DishesEdit extends React.Component {
     render() {
         return <Modal style={ {width: '100%', height: '100%', maxHeight: '90%'} }
                       fixedFooter
-                      header={ "Editor" }
+                      header={ this.props.text.dishes.modalEditHeader }
                       trigger={ this.props.modalTrigger }
                       actions={ <div>
-                          <Button disabled={ !this.state.isReadyForSave } modal="close" waves="light" className="red darken-2" onClick={ this.onDishSave }>{ this.props.text.modalProdTypeBtnSave }</Button>
-                          <Button flat modal="close" waves="light">{ this.props.text.modalProductCancel }</Button>
+                          <Button disabled={ !this.state.isReadyForSave } modal="close" waves="light" className="red darken-2" onClick={ this.onDishSave }>{ this.props.text.dishes.modalEditButtonSave }</Button>
+                          <Button flat modal="close" waves="light">{ this.props.text.dishes.modalEditButtonCancel }</Button>
                       </div>
                       }>
             <CardPanel className="white black-text z-depth-4">
                 <Row>
-                    <Col s={ 6 } className=''>
-                        <Row><Col s={ 12 }><h3 className="">Total energy: { this.state.totalEnergy }</h3></Col> </Row>
+                    <Col s={ 6 }>
+                        <Row><Col s={ 12 }><h3>{ this.props.text.dishes.modalEditTotalEnergyText }{ this.state.totalEnergy }</h3></Col> </Row>
                         <Row>
                             <Col s={ 6 }>
                                 <Input required
-                                       label={ this.props.text.modalProductInputName }
+                                       label={ this.props.text.dishes.modalEditInputProductName }
                                        onChange={ this.onDishNameChange }
                                        defaultValue={ this.state.name }/>
                             </Col>
@@ -122,10 +122,10 @@ class DishesEdit extends React.Component {
                             <Table>
                                 <thead>
                                 <tr>
-                                    <th data-field="name">{ this.props.text.productTableHeadName }</th>
-                                    <th data-field="energy">{ this.props.text.productTableHeadEnergy }</th>
-                                    <th data-field="amount">Amount</th>
-                                    <th data-field="Remove">{ this.props.text.productButtonDelete }</th>
+                                    <th data-field="name">{ this.props.text.dishes.tableHeadName }</th>
+                                    <th data-field="energy">{ this.props.text.dishes.tableHeadEnergy }</th>
+                                    <th data-field="amount">{ this.props.text.dishes.tableHeadAmount }</th>
+                                    <th data-field="Remove">{ this.props.text.dishes.modalEditTableHeaderDelete }</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -137,13 +137,13 @@ class DishesEdit extends React.Component {
                                             <td><Input required
                                                        type="number"
                                                        min="1"
-                                                       label="Size"
+                                                       label={ this.props.text.dishes.modalEditTableInputAmount }
                                                        onChange={ (event, value) => {this.onProductAmountChange(value, product)} }
                                                        defaultValue={ product.amount ? product.amount : null }/>
                                             </td>
                                             <td><Button waves="light"
                                                         className="red darken-2"
-                                                        onClick={ () => this.onProductRemove(product) }>{ this.props.text.productButtonDelete }</Button>
+                                                        onClick={ () => this.onProductRemove(product) }>{ this.props.text.dishes.buttonDelete }</Button>
                                             </td>
                                         </tr>
                                     )
@@ -162,7 +162,80 @@ class DishesEdit extends React.Component {
 }
 
 DishesEdit.propTypes = {
-    text: PropTypes.object.isRequired,
+    text: PropTypes.shape({
+                              general: PropTypes.shape({
+                                                           tabUser: PropTypes.string.isRequired,
+                                                           tabProducts: PropTypes.string.isRequired,
+                                                           tabDishes: PropTypes.string.isRequired,
+                                                           tabLogout: PropTypes.string.isRequired,
+                                                           tabEditMode: PropTypes.string.isRequired
+                                                       }).isRequired,
+                              calculator: PropTypes.shape({
+                                                              age: PropTypes.string.isRequired,
+                                                              height: PropTypes.string.isRequired,
+                                                              weight: PropTypes.string.isRequired,
+                                                              gender: PropTypes.string.isRequired,
+                                                              genderMale: PropTypes.string.isRequired,
+                                                              genderFemale: PropTypes.string.isRequired,
+                                                              activity: PropTypes.string.isRequired,
+                                                              formula: PropTypes.string.isRequired,
+                                                              benedict: PropTypes.string.isRequired,
+                                                              mifflin: PropTypes.string.isRequired,
+                                                              low: PropTypes.string.isRequired,
+                                                              medium: PropTypes.string.isRequired,
+                                                              high: PropTypes.string.isRequired,
+                                                              very_high: PropTypes.string.isRequired,
+                                                              buttonCalculate: PropTypes.string.isRequired,
+                                                              modalHeaderCalculate: PropTypes.string.isRequired,
+                                                              modalResultText: PropTypes.string.isRequired,
+                                                              modalButtonCancel: PropTypes.string.isRequired
+                                                          }).isRequired,
+                              products: PropTypes.shape({
+                                                            buttonCreate: PropTypes.string.isRequired,
+                                                            buttonProductTypes: PropTypes.string.isRequired,
+                                                            buttonLoadCsv: PropTypes.string.isRequired,
+                                                            buttonEdit: PropTypes.string.isRequired,
+                                                            buttonDelete: PropTypes.string.isRequired,
+                                                            inputRecordsNumber: PropTypes.string.isRequired,
+                                                            selectType: PropTypes.string.isRequired,
+                                                            tableHeadName: PropTypes.string.isRequired,
+                                                            tableHeadEnergy: PropTypes.string.isRequired,
+                                                            tableHeadType: PropTypes.string.isRequired,
+                                                            tableHeadActions: PropTypes.string.isRequired,
+                                                            modalEditProductHeadCreate: PropTypes.string.isRequired,
+                                                            modalEditProductHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditProductInputName: PropTypes.string.isRequired,
+                                                            modalEditProductInputEnergy: PropTypes.string.isRequired,
+                                                            modalEditProductSelectType: PropTypes.string.isRequired,
+                                                            modalEditProductButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeHeader: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeInputName: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCreate: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonSave: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadName: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadDelete: PropTypes.string.isRequired
+                                                        }).isRequired,
+                              dishes: PropTypes.shape({
+                                                          buttonCreate: PropTypes.string.isRequired,
+                                                          tableHeadName: PropTypes.string.isRequired,
+                                                          tableHeadEnergy: PropTypes.string.isRequired,
+                                                          tableHeadAmount: PropTypes.string.isRequired,
+                                                          buttonEdit: PropTypes.string.isRequired,
+                                                          buttonDelete: PropTypes.string.isRequired,
+                                                          modalEditHeader: PropTypes.string.isRequired,
+                                                          modalEditTotalEnergyText: PropTypes.string.isRequired,
+                                                          modalEditInputProductName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderEnergy: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderAmount: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderDelete: PropTypes.string.isRequired,
+                                                          modalEditTableInputAmount: PropTypes.string.isRequired,
+                                                          modalEditButtonCancel: PropTypes.string.isRequired,
+                                                          modalEditButtonSave: PropTypes.string.isRequired
+                                                      }).isRequired
+                          }).isRequired,
     modalTrigger: PropTypes.node.isRequired,
     dish: PropTypes.object,
     onSave: PropTypes.func.isRequired

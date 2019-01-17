@@ -1,7 +1,7 @@
 import React                                from 'react';
 import { Button, Input, Modal, Row, Table } from 'react-materialize';
 import Utils                                from '../../utils/Utils';
-import PropTypes                            from "prop-types";
+import PropTypes                            from 'prop-types';
 
 class ProductTypes extends React.Component {
     constructor(props) {
@@ -52,20 +52,20 @@ class ProductTypes extends React.Component {
 
     render() {
         return !this.props.productTypes || this.props.productTypes.length < 1 ? '' : (
-            <Modal header={ this.props.text.modalProdTypeHeader } trigger={ this.props.modalTrigger } actions={
+            <Modal header={ this.props.text.products.modalEditTypeHeader } trigger={ this.props.modalTrigger } actions={
                 <Button flat modal="close" waves="light">Cancel</Button>
             }>
                 <div>
                     <Row>
-                        <Input s={ 9 } required label={ this.props.text.modalProdTypeInputName } onChange={ this.onEditName }/>
-                        <Button s={ 3 } large={ true } waves='green' className='green darken-1' onClick={ this.onCreateClick }>{ this.props.text.modalProdTypeBtnCreate }</Button>
+                        <Input s={ 9 } required label={ this.props.text.products.modalEditTypeInputName } onChange={ this.onEditName }/>
+                        <Button s={ 3 } large={ true } waves='green' className='green darken-1' onClick={ this.onCreateClick }>{ this.props.text.products.modalEditTypeButtonCreate }</Button>
                     </Row>
                     <Table hoverable={ true } responsive={ true } bordered={ true }>
                         <thead>
                         <tr>
-                            <th data-field="name">{ this.props.text.modalProdTypeTableName }</th>
-                            <th data-field="edit">{ this.props.text.modalProdTypeTableEdit }</th>
-                            <th data-field="delete">{ this.props.text.modalProdTypeTableDelete }</th>
+                            <th data-field="name">{ this.props.text.products.modalEditTypeTableHeadName }</th>
+                            <th data-field="edit">{ this.props.text.products.modalEditTypeTableHeadEdit }</th>
+                            <th data-field="delete">{ this.props.text.products.modalEditTypeTableHeadDelete }</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -76,10 +76,10 @@ class ProductTypes extends React.Component {
                                         <Input s={ 3 } onChange={ (event, value) => productType.name = value } defaultValue={ productType.name }/>
                                     </td>
                                     <td>
-                                        <Button waves='red' className='yellow darken-1' onClick={ () => this.onProductTypeSaveClick(productType) }>{ this.props.text.modalProdTypeBtnSave }</Button>
+                                        <Button waves='red' className='yellow darken-1' onClick={ () => this.onProductTypeSaveClick(productType) }>{ this.props.text.products.modalEditTypeButtonSave }</Button>
                                     </td>
                                     <td>
-                                        <Button waves='purple' className='red darken-1' onClick={ () => this.onDeleteClick(productType) }>{ this.props.text.modalProdTypeBtnDelete }</Button>
+                                        <Button waves='purple' className='red darken-1' onClick={ () => this.onDeleteClick(productType) }>{ this.props.text.products.buttonDelete }</Button>
                                     </td>
                                 </tr>
                             )
@@ -97,7 +97,80 @@ ProductTypes.propTypes = {
     onCreate: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    text: PropTypes.object.isRequired,
+    text: PropTypes.shape({
+                              general: PropTypes.shape({
+                                                           tabUser: PropTypes.string.isRequired,
+                                                           tabProducts: PropTypes.string.isRequired,
+                                                           tabDishes: PropTypes.string.isRequired,
+                                                           tabLogout: PropTypes.string.isRequired,
+                                                           tabEditMode: PropTypes.string.isRequired
+                                                       }).isRequired,
+                              calculator: PropTypes.shape({
+                                                              age: PropTypes.string.isRequired,
+                                                              height: PropTypes.string.isRequired,
+                                                              weight: PropTypes.string.isRequired,
+                                                              gender: PropTypes.string.isRequired,
+                                                              genderMale: PropTypes.string.isRequired,
+                                                              genderFemale: PropTypes.string.isRequired,
+                                                              activity: PropTypes.string.isRequired,
+                                                              formula: PropTypes.string.isRequired,
+                                                              benedict: PropTypes.string.isRequired,
+                                                              mifflin: PropTypes.string.isRequired,
+                                                              low: PropTypes.string.isRequired,
+                                                              medium: PropTypes.string.isRequired,
+                                                              high: PropTypes.string.isRequired,
+                                                              very_high: PropTypes.string.isRequired,
+                                                              buttonCalculate: PropTypes.string.isRequired,
+                                                              modalHeaderCalculate: PropTypes.string.isRequired,
+                                                              modalResultText: PropTypes.string.isRequired,
+                                                              modalButtonCancel: PropTypes.string.isRequired
+                                                          }).isRequired,
+                              products: PropTypes.shape({
+                                                            buttonCreate: PropTypes.string.isRequired,
+                                                            buttonProductTypes: PropTypes.string.isRequired,
+                                                            buttonLoadCsv: PropTypes.string.isRequired,
+                                                            buttonEdit: PropTypes.string.isRequired,
+                                                            buttonDelete: PropTypes.string.isRequired,
+                                                            inputRecordsNumber: PropTypes.string.isRequired,
+                                                            selectType: PropTypes.string.isRequired,
+                                                            tableHeadName: PropTypes.string.isRequired,
+                                                            tableHeadEnergy: PropTypes.string.isRequired,
+                                                            tableHeadType: PropTypes.string.isRequired,
+                                                            tableHeadActions: PropTypes.string.isRequired,
+                                                            modalEditProductHeadCreate: PropTypes.string.isRequired,
+                                                            modalEditProductHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditProductInputName: PropTypes.string.isRequired,
+                                                            modalEditProductInputEnergy: PropTypes.string.isRequired,
+                                                            modalEditProductSelectType: PropTypes.string.isRequired,
+                                                            modalEditProductButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeHeader: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCancel: PropTypes.string.isRequired,
+                                                            modalEditTypeInputName: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonCreate: PropTypes.string.isRequired,
+                                                            modalEditTypeButtonSave: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadName: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadEdit: PropTypes.string.isRequired,
+                                                            modalEditTypeTableHeadDelete: PropTypes.string.isRequired
+                                                        }).isRequired,
+                              dishes: PropTypes.shape({
+                                                          buttonCreate: PropTypes.string.isRequired,
+                                                          tableHeadName: PropTypes.string.isRequired,
+                                                          tableHeadEnergy: PropTypes.string.isRequired,
+                                                          tableHeadAmount: PropTypes.string.isRequired,
+                                                          buttonEdit: PropTypes.string.isRequired,
+                                                          buttonDelete: PropTypes.string.isRequired,
+                                                          modalEditHeader: PropTypes.string.isRequired,
+                                                          modalEditTotalEnergyText: PropTypes.string.isRequired,
+                                                          modalEditInputProductName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderName: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderEnergy: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderAmount: PropTypes.string.isRequired,
+                                                          modalEditTableHeaderDelete: PropTypes.string.isRequired,
+                                                          modalEditTableInputAmount: PropTypes.string.isRequired,
+                                                          modalEditButtonCancel: PropTypes.string.isRequired,
+                                                          modalEditButtonSave: PropTypes.string.isRequired
+                                                      }).isRequired
+                          }).isRequired,
     productTypes: PropTypes.array.isRequired,
     modalTrigger: PropTypes.element.isRequired
 };
