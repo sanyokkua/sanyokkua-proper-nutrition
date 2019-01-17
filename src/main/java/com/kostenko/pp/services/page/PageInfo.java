@@ -31,6 +31,10 @@ public class PageInfo {
         return new PageInfo(page, dbPageNumber, dbRecordsPerPage, params);
     }
 
+    public static PageInfo createPageInfo() {
+        return new PageInfo(0, 0, 0, null);
+    }
+
     public String getParam(String key) {
         return params.get(key);
     }

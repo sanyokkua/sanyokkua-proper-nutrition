@@ -7,11 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DishRepository extends CrudRepository<Dish, Long> {
-
-    Dish findByName(String name);
+public interface DishRepository extends GeneralRepository<Dish>, CrudRepository<Dish, Long> {
 
     Page<Dish> findAllByNameIsContaining(Pageable pageable, String name);
 
-    Page<Dish> findAll(Pageable pageable);
 }

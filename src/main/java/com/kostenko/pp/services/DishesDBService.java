@@ -56,7 +56,7 @@ public class DishesDBService implements DBService<Dish> {
         if (StringUtils.isBlank(pageInfo.getParam(PageInfo.SEARCH_STRING))) {
             page = dishRepository.findAll(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
         } else {
-            page = dishRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), PageInfo.SEARCH_STRING);
+            page = dishRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getParam(PageInfo.SEARCH_STRING));
         }
         return page;
     }

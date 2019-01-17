@@ -9,17 +9,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface ProductRepository extends GeneralRepository<Product>, CrudRepository<Product, Long> {
 
     Product findByNameAndTypeId(String name, Long typeID);
-
-    Product findByName(String name);
 
     List<Product> findAllByNameIsStartingWith(String name);
 
     Page<Product> findAllByNameIsContaining(Pageable pageable, String name);
-
-    Page<Product> findAll(Pageable pageable);
 
     Page<Product> findAllByTypeId(Pageable pageable, Long typeId);
 

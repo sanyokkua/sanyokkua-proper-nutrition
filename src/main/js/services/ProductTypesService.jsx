@@ -21,7 +21,7 @@ export default class ProductTypesService {
         axios.get('/types')
              .then(response => {
                  let types = [{id: 0, name: ''}];
-                 successCallback(types.concat(response.data));
+                 successCallback(types.concat(response.data.content));
              })
              .catch(error => failCallback(error));
     }

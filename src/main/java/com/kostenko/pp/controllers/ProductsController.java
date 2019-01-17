@@ -58,7 +58,6 @@ public class ProductsController {
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
-
     }
 
     @DeleteMapping("/products/{id}")
