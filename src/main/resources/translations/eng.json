@@ -1,6 +1,7 @@
 {
     "general": {
         "tabUser": "User",
+        "tabUserProfile": "User Profile",
         "tabProducts": "Products",
         "tabDishes": "Dishes",
         "tabLogout": "Logout",
@@ -70,5 +71,38 @@
         "modalEditTableInputAmount": "Amount",
         "modalEditButtonCancel": "Cancel",
         "modalEditButtonSave": "Save"
+    },
+    "userProfile": {
+        "inputAge": "Age",
+        "inputHeight": "Height",
+        "inputWeight": "Weight",
+        "inputLogin": "Login",
+        "inputEmail": "Email",
+        "inputPassword": "Password",
+        "inputConfirmPassword": "Confirm password",
+        "selectGender": "Gender",
+        "selectGenderMale": "Male",
+        "selectGenderFemale": "Female",
+        "buttonEdit": "Edit",
+        "buttonCancel": "Cancel",
+        "buttonEditProfile": "Edit profile",
+        "buttonUpdate": "Update",
+        "validationSuccessAge": "Age is valid",
+        "validationSuccessHeight": "Height is valid",
+        "validationSuccessWeight": "Weight is valid",
+        "validationSuccessLogin": "Login is valid",
+        "validationSuccessEmail": "Email is valid",
+        "validationSuccessPassword": "Password is valid",
+        "validationSuccessPasswordConfirm": "Password Confirm is valid",
+        "validationErrorAge": "Age is invalid",
+        "validationErrorHeight": "Height is invalid",
+        "validationErrorWeight": "Weight is invalid",
+        "validationErrorLogin": "Login is invalid",
+        "validationErrorEmail": "Email is invalid",
+        "validationErrorPassword": "Password is invalid",
+        "validationErrorPasswordConfirm": "Password Confirm is invalid",
+        "validationErrorPasswordAndConfirmDiff": "Password and Confirm password is not equal",
+        "validationErrorPasswordLength": "Length should be from 6 to 14 symbols",
+        "userInfoTitle": "Short info"
     }
 }

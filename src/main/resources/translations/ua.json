@@ -1,6 +1,7 @@
 {
     "general": {
         "tabUser": "Користувач",
+        "tabUserProfile": "Профiль користувача",
         "tabProducts": "Продукти",
         "tabDishes": "Страви",
         "tabLogout": "Вийти",
@@ -70,5 +71,38 @@
         "modalEditTableInputAmount": "Кількість",
         "modalEditButtonCancel": "Скасувати",
         "modalEditButtonSave": "Зберегти"
+    },
+    "userProfile": {
+        "inputAge": "Вік",
+        "inputHeight": "Зростання",
+        "inputWeight": "Вага",
+        "inputLogin": "Логін",
+        "inputEmail": "Пошта",
+        "inputPassword": "Пароль",
+        "inputConfirmPassword": "Підтвердити пароль",
+        "selectGender": "Пол",
+        "selectGenderMale": "Чоловік",
+        "selectGenderFemale": "Жіночий",
+        "buttonEdit": "Редагувати",
+        "buttonCancel": "Скасування",
+        "buttonEditProfile": "Редагувати профіль",
+        "buttonUpdate": "Оновити",
+        "validationSuccessAge": "Вік коректний",
+        "validationSuccessHeight": "Зростання коректний",
+        "validationSuccessWeight": "Вага коректний",
+        "validationSuccessLogin": "Логін коректний",
+        "validationSuccessEmail": "Електронна пошта коректний",
+        "validationSuccessPassword": "Пароль коректний",
+        "validationSuccessPasswordConfirm": "Підтвердження пароля КОРЕКТ",
+        "validationErrorAge": "Вік КОРЕКТ",
+        "validationErrorHeight": "Ростов не КОРЕКТ",
+        "validationErrorWeight": "вага не КОРЕКТ",
+        "validationErrorLogin": "Логін неверений",
+        "validationErrorEmail": "Email НЕ КОРЕКТ",
+        "validationErrorPassword": "Забули пароль Реєстрація КОРЕКТ",
+        "validationErrorPasswordConfirm": "Підтвердження паролі не КОРЕКТ",
+        "validationErrorPasswordAndConfirmDiff": "Пароль і Підтвердження пароля не рівні",
+        "validationErrorPasswordLength": "Довжина повинна бути від 6 до 14 символів",
+        "userInfoTitle": "Коротка інформація"
     }
 }

@@ -1,6 +1,7 @@
 {
     "general": {
         "tabUser": "Пользователь",
+        "tabUserProfile": "Профиль пользователя",
         "tabProducts": "Продукты",
         "tabDishes": "Блюда",
         "tabLogout": "Выйти",
@@ -70,5 +71,38 @@
         "modalEditTableInputAmount": "Количество",
         "modalEditButtonCancel": "Отмена",
         "modalEditButtonSave": "Сохранить"
+    },
+    "userProfile": {
+        "inputAge": "Возраст",
+        "inputHeight": "Рост",
+        "inputWeight": "Вес",
+        "inputLogin": "Логин",
+        "inputEmail": "Почта",
+        "inputPassword": "Пароль",
+        "inputConfirmPassword": "Подтвердить пароль",
+        "selectGender": "Пол",
+        "selectGenderMale": "Мужской",
+        "selectGenderFemale": "Женский",
+        "buttonEdit": "Редактировать",
+        "buttonCancel": "Отмена",
+        "buttonEditProfile": "Редактировать профиль",
+        "buttonUpdate": "Обновить",
+        "validationSuccessAge": "Возраст коректный",
+        "validationSuccessHeight": "Рост коректный",
+        "validationSuccessWeight": "Вес коректный",
+        "validationSuccessLogin": "Логин коректный",
+        "validationSuccessEmail": "Электронная почта коректна",
+        "validationSuccessPassword": "Пароль коректный",
+        "validationSuccessPasswordConfirm": "Подтверждение пароля коректо",
+        "validationErrorAge": "Возраст не коректен",
+        "validationErrorHeight": "Рост не коректен",
+        "validationErrorWeight": "Вес не коректен",
+        "validationErrorLogin": "Логин невереный",
+        "validationErrorEmail": "Email не коректен",
+        "validationErrorPassword": "Пароль не коректен",
+        "validationErrorPasswordConfirm": "Подтверждение пароля не коректено",
+        "validationErrorPasswordAndConfirmDiff": "Пароль и Подтверждение пароля не равны",
+        "validationErrorPasswordLength": "Длина должна быть от 6 до 14 символов",
+        "userInfoTitle": "Краткая информация"
     }
 }

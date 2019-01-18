@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Slf4j
 @Data
@@ -31,5 +32,8 @@ public class User {
     private String password;
     @Column(name = "roleId", nullable = false)
     private long roleId;
-
+    @ElementCollection
+    @CollectionTable(name = "user_dishes", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "dishes")
+    private List<Long> dishes;
 }

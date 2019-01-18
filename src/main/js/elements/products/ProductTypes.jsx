@@ -52,7 +52,7 @@ class ProductTypes extends React.Component {
 
     render() {
         return !this.props.productTypes || this.props.productTypes.length < 1 ? '' : (
-            <Modal header={ this.props.text.products.modalEditTypeHeader } trigger={ this.props.modalTrigger } actions={
+            <Modal fixedFooter header={ this.props.text.products.modalEditTypeHeader } trigger={ this.props.modalTrigger } actions={
                 <Button flat modal="close" waves="light">Cancel</Button>
             }>
                 <div>
@@ -100,6 +100,7 @@ ProductTypes.propTypes = {
     text: PropTypes.shape({
                               general: PropTypes.shape({
                                                            tabUser: PropTypes.string.isRequired,
+                                                           tabUserProfile: PropTypes.string.isRequired,
                                                            tabProducts: PropTypes.string.isRequired,
                                                            tabDishes: PropTypes.string.isRequired,
                                                            tabLogout: PropTypes.string.isRequired,
@@ -169,7 +170,40 @@ ProductTypes.propTypes = {
                                                           modalEditTableInputAmount: PropTypes.string.isRequired,
                                                           modalEditButtonCancel: PropTypes.string.isRequired,
                                                           modalEditButtonSave: PropTypes.string.isRequired
-                                                      }).isRequired
+                                                      }).isRequired,
+                              userProfile: PropTypes.shape({
+                                                               inputAge: PropTypes.string.isRequired,
+                                                               inputHeight: PropTypes.string.isRequired,
+                                                               inputWeight: PropTypes.string.isRequired,
+                                                               inputLogin: PropTypes.string.isRequired,
+                                                               inputEmail: PropTypes.string.isRequired,
+                                                               inputPassword: PropTypes.string.isRequired,
+                                                               inputConfirmPassword: PropTypes.string.isRequired,
+                                                               selectGender: PropTypes.string.isRequired,
+                                                               selectGenderMale: PropTypes.string.isRequired,
+                                                               selectGenderFemale: PropTypes.string.isRequired,
+                                                               buttonEdit: PropTypes.string.isRequired,
+                                                               buttonCancel: PropTypes.string.isRequired,
+                                                               buttonEditProfile: PropTypes.string.isRequired,
+                                                               buttonUpdate: PropTypes.string.isRequired,
+                                                               validationSuccessAge: PropTypes.string.isRequired,
+                                                               validationSuccessHeight: PropTypes.string.isRequired,
+                                                               validationSuccessWeight: PropTypes.string.isRequired,
+                                                               validationSuccessLogin: PropTypes.string.isRequired,
+                                                               validationSuccessEmail: PropTypes.string.isRequired,
+                                                               validationSuccessPassword: PropTypes.string.isRequired,
+                                                               validationSuccessPasswordConfirm: PropTypes.string.isRequired,
+                                                               validationErrorAge: PropTypes.string.isRequired,
+                                                               validationErrorHeight: PropTypes.string.isRequired,
+                                                               validationErrorWeight: PropTypes.string.isRequired,
+                                                               validationErrorLogin: PropTypes.string.isRequired,
+                                                               validationErrorEmail: PropTypes.string.isRequired,
+                                                               validationErrorPassword: PropTypes.string.isRequired,
+                                                               validationErrorPasswordConfirm: PropTypes.string.isRequired,
+                                                               validationErrorPasswordAndConfirmDiff: PropTypes.string.isRequired,
+                                                               validationErrorPasswordLength: PropTypes.string.isRequired,
+                                                               userInfoTitle: PropTypes.string.isRequired
+                                                           })
                           }).isRequired,
     productTypes: PropTypes.array.isRequired,
     modalTrigger: PropTypes.element.isRequired

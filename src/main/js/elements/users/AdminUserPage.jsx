@@ -1,66 +1,57 @@
-import React                         from 'react';
-import { Button, Input, Modal, Row } from 'react-materialize';
-import ProductTypeSelect             from "./ProductTypeSelect";
-import Utils                         from '../../utils/Utils'
-import PropTypes                     from "prop-types";
+import React                                from 'react';
+import { Button, Input, Pagination, Table } from "react-materialize";
+import PropTypes                            from "prop-types";
 
-class ProductEdit extends React.Component {
+class AdminUserPage extends React.Component {
     constructor(props) {
         super(props);
-        Utils.checkRequiredProperty(this.props.text, "text");
-        Utils.checkRequiredProperty(this.props.isCreation, "isCreation");
-        Utils.checkRequiredProperty(this.props.typesList, "type list");
-        Utils.checkCallback(this.props.onEditClick, "onEditClick");
-        let currentProd = this.props.currentProduct ? this.props.currentProduct : {id: null, name: '', energy: ''};
-        this.state = {product: currentProd};
-        this.onConfirmEditButtonClick = this.onConfirmEditButtonClick.bind(this);
-        this.onEditName = this.onEditName.bind(this);
-        this.onEditEnergy = this.onEditEnergy.bind(this);
-        this.onTypeEdit = this.onTypeEdit.bind(this);
+        this.id = 0;
+        this.onPageChange = this.onPageChange.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onDelete = this.onDelete.bind(this);
     }
 
-    onConfirmEditButtonClick(product) {
-        this.props.onEditClick(product);
+    onPageChange(pageNumber) {
     }
 
-    onEditName(event, value) {
-        let currentProduct = this.state.product;
-        currentProduct.name = value;
-        this.setState({product: currentProduct});
+    onSave() {
     }
 
-    onEditEnergy(event, value) {
-        let currentProduct = this.state.product;
-        currentProduct.energy = value;
-        this.setState({product: currentProduct})
-    }
-
-    onTypeEdit(typeId) {
-        if (typeId) {
-            let currentProduct = this.state.product;
-            currentProduct.typeId = typeId;
-            this.setState({product: currentProduct})
-        }
+    onDelete() {
     }
 
     render() {
-        return <Modal fixedFooter header={ this.props.editorHeader } trigger={ this.props.modalTrigger } actions={
-            <div>
-                <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.props.editorHeader }</Button>
-                <Button flat modal="close" waves="light">{ this.props.text.products.modalEditProductButtonCancel }</Button>
-            </div>
-        }>
-            <Row>
-                <Input s={ 3 } label={ this.props.text.products.modalEditProductInputName } onChange={ this.onEditName } defaultValue={ this.state.product.name }/>
-                <Input s={ 3 } type="number" min="0" onChange={ this.onEditEnergy } label={ this.props.text.products.modalEditProductInputEnergy } defaultValue={ this.state.product.energy }/>
-                <ProductTypeSelect text={ this.props.text } valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={ this.state.product.typeId }/>
-            </Row>
-        </Modal>
+        return <div>
+            <Table>
+                <thead>
+                <tr>
+                    <th data-field="login">Login</th>
+                    <th data-field="email">Email</th>
+                    <th data-field="role">User Role</th>
+                    <th data-field="Actions">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>login</td>
+                    <td>email</td>
+                    <td><Input s={ 12 } type='select' label="Role" defaultValue='0'>
+                        <option value='1'>Admin</option>
+                        <option value='2'>Content</option>
+                        <option value='3'>User</option>
+                    </Input></td>
+                    <td>
+                        <Button waves='purple' className='red darken-4 white-text' onClick={ this.onDelete }>Delete</Button>
+                    </td>
+                </tr>
+                </tbody>
+            </Table>
+            <Pagination className='center-align' items={ this.props.totalPages } activePage={ this.props.currentPage } maxButtons={ 10 } onSelect={ this.onPageChange }/>
+        </div>
     }
 }
 
-ProductEdit.propTypes = {
-    onEditClick: PropTypes.func.isRequired,
+AdminUserPage.propTypes = {
     text: PropTypes.shape({
                               general: PropTypes.shape({
                                                            tabUser: PropTypes.string.isRequired,
@@ -169,11 +160,10 @@ ProductEdit.propTypes = {
                                                                userInfoTitle: PropTypes.string.isRequired
                                                            })
                           }).isRequired,
-    isCreation: PropTypes.bool.isRequired,
-    typesList: PropTypes.array.isRequired,
-    currentProduct: PropTypes.object,
-    modalTrigger: PropTypes.node.isRequired,
-    editorHeader: PropTypes.string.isRequired
-
+    editable: PropTypes.bool.isRequired,
+    totalPages: PropTypes.string.isRequired,
+    activePage: PropTypes.string.isRequired,
+    onPageChange: PropTypes.func.isRequired
 };
-export default ProductEdit;
+
+export default AdminUserPage;

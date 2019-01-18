@@ -1,66 +1,99 @@
-import React                         from 'react';
-import { Button, Input, Modal, Row } from 'react-materialize';
-import ProductTypeSelect             from "./ProductTypeSelect";
-import Utils                         from '../../utils/Utils'
-import PropTypes                     from "prop-types";
+import React                                               from 'react';
+import { Button, Card, CardPanel, Col, Modal, Row, Table } from "react-materialize";
+import PropTypes                                           from "prop-types";
+import UserProfileEdit                                     from "./UserProfileEdit";
+import DishService                                         from '../../services/DishService'
+import Dishes                                              from "../dishes/Dishes";
+import Calculator                                          from "../calculator/Calculator";
 
-class ProductEdit extends React.Component {
+class UserProfilePage extends React.Component {
     constructor(props) {
         super(props);
-        Utils.checkRequiredProperty(this.props.text, "text");
-        Utils.checkRequiredProperty(this.props.isCreation, "isCreation");
-        Utils.checkRequiredProperty(this.props.typesList, "type list");
-        Utils.checkCallback(this.props.onEditClick, "onEditClick");
-        let currentProd = this.props.currentProduct ? this.props.currentProduct : {id: null, name: '', energy: ''};
-        this.state = {product: currentProd};
-        this.onConfirmEditButtonClick = this.onConfirmEditButtonClick.bind(this);
-        this.onEditName = this.onEditName.bind(this);
-        this.onEditEnergy = this.onEditEnergy.bind(this);
-        this.onTypeEdit = this.onTypeEdit.bind(this);
+        this.dishService = new DishService();
+        this.state = {
+            user: this.props.user,
+            currentPage: 0,
+            totalPages: 0,
+            numberOfRecords: 10,
+            dishList: []
+        };
+        this.reloadDishes();
+        this.onUpdateButtonClick = this.onUpdateButtonClick.bind(this);
+        this.onEditProfileButtonClick = this.onEditProfileButtonClick.bind(this);
+        this.onUpdateUser = this.onUpdateUser.bind(this);
     }
 
-    onConfirmEditButtonClick(product) {
-        this.props.onEditClick(product);
+    reloadDishes() {
+        this.dishService.getDishes({currentPage: this.state.currentPage, name: '', numberOfRecords: this.state.numberOfRecords},
+                                   result => this.setState({dishList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
+                                   error => console.log(error));
     }
 
-    onEditName(event, value) {
-        let currentProduct = this.state.product;
-        currentProduct.name = value;
-        this.setState({product: currentProduct});
+    onUpdateButtonClick(user) {
+        this.setState({user: user});
     }
 
-    onEditEnergy(event, value) {
-        let currentProduct = this.state.product;
-        currentProduct.energy = value;
-        this.setState({product: currentProduct})
+    onEditProfileButtonClick() {
+        //TODO: save user to server
     }
 
-    onTypeEdit(typeId) {
-        if (typeId) {
-            let currentProduct = this.state.product;
-            currentProduct.typeId = typeId;
-            this.setState({product: currentProduct})
-        }
+    onUpdateUser(user) {
+        //TODO: save user to server
     }
 
     render() {
-        return <Modal fixedFooter header={ this.props.editorHeader } trigger={ this.props.modalTrigger } actions={
-            <div>
-                <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.props.editorHeader }</Button>
-                <Button flat modal="close" waves="light">{ this.props.text.products.modalEditProductButtonCancel }</Button>
-            </div>
-        }>
-            <Row>
-                <Input s={ 3 } label={ this.props.text.products.modalEditProductInputName } onChange={ this.onEditName } defaultValue={ this.state.product.name }/>
-                <Input s={ 3 } type="number" min="0" onChange={ this.onEditEnergy } label={ this.props.text.products.modalEditProductInputEnergy } defaultValue={ this.state.product.energy }/>
-                <ProductTypeSelect text={ this.props.text } valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={ this.state.product.typeId }/>
-            </Row>
-        </Modal>
+        return <div>
+            <CardPanel className="white black-text">
+                <Row>
+                    <Col s={ 6 }>
+                        <Card className='blue lighten-5 z-depth-4' textClassName='black-text' title={ this.props.text.userProfile.userInfoTitle }
+                              actions={ [<Modal key={ "calc" } fixedFooter header={ "" }
+                                                trigger={ <Button waves='teal' className='deep-purple darken-4 white-text'>{ this.props.text.userProfile.buttonUpdate }</Button> }
+                                                actions={ <Button flat modal="close" waves="light">{ this.props.text.userProfile.buttonCancel }</Button> }>
+                                             <Calculator isUpdating={ true } text={ this.props.text } user={ this.state.user } onResultCalculated={ this.onUpdateButtonClick }/>
+                                         </Modal>]
+                              }>
+                            <Row>
+                            </Row>
+                            <Row>
+                                <Table hoverable bordered>
+                                    <tbody>
+                                    <tr>
+                                        <td className="left-align">{ this.props.text.userProfile.inputAge }</td>
+                                        <td className="right-align">{ this.props.user.age }</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="left-align">{ this.props.text.userProfile.inputHeight }</td>
+                                        <td className="right-align">{ this.props.user.height }</td>
+                                    </tr>
+                                    <tr>
+                                        <td className="left-align">{ this.props.text.userProfile.inputWeight }</td>
+                                        <td className="right-align">{ this.props.user.weight }</td>
+                                    </tr>
+                                    </tbody>
+                                </Table>
+                            </Row>
+                            <Row>
+                                <div><h2>{ this.state.user.lastCalculatedEnergy }</h2></div>
+                            </Row>
+                        </Card>
+                        <Row className='center-align'>
+                            <UserProfileEdit user={ this.state.user } onEditClick={ this.onUpdateUser } text={ this.props.text } modalTrigger={
+                                <Button waves='teal' className='blue darken-4 white-text center-align z-depth-3'>{ this.props.text.userProfile.buttonEditProfile }</Button>
+                            }/>
+                        </Row>
+
+                    </Col>
+                    <Col s={ 6 }>
+                        <Dishes editable={ false } text={ this.props.text } numberOfRecords={ 5 }/>
+                    </Col>
+                </Row>
+            </CardPanel>
+        </div>
     }
 }
 
-ProductEdit.propTypes = {
-    onEditClick: PropTypes.func.isRequired,
+UserProfilePage.propTypes = {
     text: PropTypes.shape({
                               general: PropTypes.shape({
                                                            tabUser: PropTypes.string.isRequired,
@@ -169,11 +202,15 @@ ProductEdit.propTypes = {
                                                                userInfoTitle: PropTypes.string.isRequired
                                                            })
                           }).isRequired,
-    isCreation: PropTypes.bool.isRequired,
-    typesList: PropTypes.array.isRequired,
-    currentProduct: PropTypes.object,
-    modalTrigger: PropTypes.node.isRequired,
-    editorHeader: PropTypes.string.isRequired
-
+    user: PropTypes.shape({
+                              age: PropTypes.number.isRequired,
+                              weight: PropTypes.number.isRequired,
+                              height: PropTypes.number.isRequired,
+                              login: PropTypes.string.isRequired,
+                              email: PropTypes.string.isRequired,
+                              gender: PropTypes.string.isRequired,
+                              lastCalculatedEnergy: PropTypes.number.isRequired
+                          }).isRequired
 };
-export default ProductEdit;
+
+export default UserProfilePage;

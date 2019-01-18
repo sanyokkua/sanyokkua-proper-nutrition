@@ -6,6 +6,7 @@ import Dishes                               from './dishes/Dishes';
 import Products                             from './products/Products';
 import User                                 from './users/User';
 import Utils                                from "../utils/Utils";
+import UserProfilePage                      from "./users/UserProfilePage";
 
 class MainContent extends React.Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class MainContent extends React.Component {
                 <Navbar className='light-blue darken-2' brand={ this.state.header } right>
                     <li><Input onChange={ (event, value) => {this.onEditModeChange(value)} } name='group1' type='checkbox' value='white' label={ this.props.text.general.tabEditMode }/></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabUser') } to='/'>{ this.props.text.general.tabUser }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabUserProfile') } to='/userProfile'>{ this.props.text.general.tabUser }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabProducts') } to='/products'>{ this.props.text.general.tabProducts }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
                     <li>
@@ -52,6 +54,17 @@ class MainContent extends React.Component {
                 <div className='container'>
                     <Route exact path="/" render={ () => { return <User text={ this.props.text }/>} }/>
                     <Route path="/user" render={ () => {return <User text={ this.props.text }/>} }/>
+                    <Route path="/userProfile" render={ () => {
+                        return <UserProfilePage text={ this.props.text } user={ {
+                            age: 25,
+                            weight: 82,
+                            height: 182,
+                            login: "alexK",
+                            email: "alex@mail.com",
+                            gender: "Male",
+                            lastCalculatedEnergy: 1888
+                        } }/>
+                    } }/>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ this.state.isEditMode } numberOfRecords={ 10 }/>} }/>
                     <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true }/>} }/>
                 </div>
@@ -64,6 +77,7 @@ MainContent.propTypes = {
     text: PropTypes.shape({
                               general: PropTypes.shape({
                                                            tabUser: PropTypes.string.isRequired,
+                                                           tabUserProfile: PropTypes.string.isRequired,
                                                            tabProducts: PropTypes.string.isRequired,
                                                            tabDishes: PropTypes.string.isRequired,
                                                            tabLogout: PropTypes.string.isRequired,
@@ -133,7 +147,40 @@ MainContent.propTypes = {
                                                           modalEditTableInputAmount: PropTypes.string.isRequired,
                                                           modalEditButtonCancel: PropTypes.string.isRequired,
                                                           modalEditButtonSave: PropTypes.string.isRequired
-                                                      }).isRequired
+                                                      }).isRequired,
+                              userProfile: PropTypes.shape({
+                                                               inputAge: PropTypes.string.isRequired,
+                                                               inputHeight: PropTypes.string.isRequired,
+                                                               inputWeight: PropTypes.string.isRequired,
+                                                               inputLogin: PropTypes.string.isRequired,
+                                                               inputEmail: PropTypes.string.isRequired,
+                                                               inputPassword: PropTypes.string.isRequired,
+                                                               inputConfirmPassword: PropTypes.string.isRequired,
+                                                               selectGender: PropTypes.string.isRequired,
+                                                               selectGenderMale: PropTypes.string.isRequired,
+                                                               selectGenderFemale: PropTypes.string.isRequired,
+                                                               buttonEdit: PropTypes.string.isRequired,
+                                                               buttonCancel: PropTypes.string.isRequired,
+                                                               buttonEditProfile: PropTypes.string.isRequired,
+                                                               buttonUpdate: PropTypes.string.isRequired,
+                                                               validationSuccessAge: PropTypes.string.isRequired,
+                                                               validationSuccessHeight: PropTypes.string.isRequired,
+                                                               validationSuccessWeight: PropTypes.string.isRequired,
+                                                               validationSuccessLogin: PropTypes.string.isRequired,
+                                                               validationSuccessEmail: PropTypes.string.isRequired,
+                                                               validationSuccessPassword: PropTypes.string.isRequired,
+                                                               validationSuccessPasswordConfirm: PropTypes.string.isRequired,
+                                                               validationErrorAge: PropTypes.string.isRequired,
+                                                               validationErrorHeight: PropTypes.string.isRequired,
+                                                               validationErrorWeight: PropTypes.string.isRequired,
+                                                               validationErrorLogin: PropTypes.string.isRequired,
+                                                               validationErrorEmail: PropTypes.string.isRequired,
+                                                               validationErrorPassword: PropTypes.string.isRequired,
+                                                               validationErrorPasswordConfirm: PropTypes.string.isRequired,
+                                                               validationErrorPasswordAndConfirmDiff: PropTypes.string.isRequired,
+                                                               validationErrorPasswordLength: PropTypes.string.isRequired,
+                                                               userInfoTitle: PropTypes.string.isRequired
+                                                           })
                           }).isRequired,
     onLanguageChanged: PropTypes.func.isRequired,
     currentLanguage: PropTypes.string.isRequired,
