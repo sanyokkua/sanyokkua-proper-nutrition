@@ -39,6 +39,7 @@ class UserProfilePage extends React.Component {
 
     onUpdateUser(user) {
         //TODO: save user to server
+        console.log(JSON.stringify(user));
     }
 
     render() {

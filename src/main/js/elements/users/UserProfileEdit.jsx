@@ -1,16 +1,56 @@
 import React                              from 'react';
 import { Button, Col, Input, Modal, Row } from 'react-materialize';
 import PropTypes                          from "prop-types";
+import Utils                              from "../../utils/Utils";
 
 class UserProfileEdit extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isValid: false,
-            passwordSuccessMessage: '',
-            passwordConfirmSuccessMessage: '',
-            passwordErrorMessage: '',
-            passwordConfirmErrorMessage: '',
+            fields: { //TODO: load user fields from props
+                login: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                email: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                password: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                passwordConfirm: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                age: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                height: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                weight: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+                gender: {
+                    isValid: false,
+                    value: null,
+                    error: null
+                },
+            },
+            passwordsIsSame: false,
         };
         this.onLoginChange = this.onLoginChange.bind(this);
         this.onEmailChange = this.onEmailChange.bind(this);
@@ -23,41 +63,101 @@ class UserProfileEdit extends React.Component {
         this.onProfileUpdateButtonClick = this.onProfileUpdateButtonClick.bind(this);
     }
 
-    onLoginChange(event, value) {
+    updateState(fieldName, objValue, callback) {
+        let objForUpdate = JSON.parse(JSON.stringify(this.state.fields));
+        objForUpdate[fieldName] = objValue;
+        this.setState({fields: objForUpdate}, () => {
+            this.validateForm(callback);
+        });
+    }
 
+    validateForm(callback) {
+        let isValid = true;
+        let fields = this.state.fields;
+        for (let key in fields) {
+            if (fields.hasOwnProperty(key)) {
+                let field = fields[key];
+                isValid &= field.isValid;
+            }
+        }
+        isValid &= this.state.passwordsIsSame;
+        if (callback) {
+            this.setState({isValid: isValid}, callback)
+        } else {
+            this.setState({isValid: isValid});
+        }
+    }
+
+    generalUpdateState(value, fieldName, invalidText, validatorFunc, callback) {
+        let isValid = validatorFunc(value);
+        let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
+        this.updateState(fieldName, result, callback);
+    }
+
+    onLoginChange(event, value) {
+        this.generalUpdateState(value, "login", this.props.text.userProfile.validationErrorLogin, Utils.isValidText);
     }
 
     onEmailChange(event, value) {
-
+        this.generalUpdateState(value, "email", this.props.text.userProfile.validationErrorEmail, Utils.isValidEmail);
     }
 
     onAgeChange(event, value) {
-
+        this.generalUpdateState(value, "age", this.props.text.userProfile.validationErrorAge, Utils.isValidNumber);
     }
 
     onHeightChange(event, value) {
-
+        this.generalUpdateState(value, "height", this.props.text.userProfile.validationErrorHeight, Utils.isValidNumber);
     }
 
     onWeightChange(event, value) {
-
+        this.generalUpdateState(value, "weight", this.props.text.userProfile.validationErrorWeight, Utils.isValidNumber);
     }
 
     onGenderChange(event, value) {
-
+        let result = {isValid: true, value: value, error: null};
+        this.updateState("gender", result);
     }
 
     onPasswordChange(event, value) {
-
+        this.generalUpdateState(value, "password", this.props.text.userProfile.validationErrorPassword, Utils.isValidPassword, this.validatePasswords);
     }
 
     onPasswordConfirmChange(event, value) {
+        this.generalUpdateState(value, "passwordConfirm", this.props.text.userProfile.validationErrorPasswordConfirm, Utils.isValidPassword, this.validatePasswords);
+    }
 
+    validatePasswords() {
+        let pass = this.state.fields.password;
+        let confirm = this.state.fields.passwordConfirm;
+        if (pass.isValid && confirm.isValid) {
+            if (pass.value !== confirm.value) {
+                let resultPassword = {isValid: true, value: pass.value, error: this.props.text.userProfile.validationErrorPasswordAndConfirmDiff};
+                let resultPasswordConfirm = {isValid: true, value: confirm.value, error: this.props.text.userProfile.validationErrorPasswordAndConfirmDiff};
+                this.setState({passwordsIsSame: false}, () => this.updateState("password", resultPassword, () => this.updateState("passwordConfirm", resultPasswordConfirm)))
+            } else {
+                let resultPassword = {isValid: true, value: pass.value, error: null};
+                let resultPasswordConfirm = {isValid: true, value: confirm.value, error: null};
+                this.setState({passwordsIsSame: true}, () => this.updateState("password", resultPassword, () => this.updateState("passwordConfirm", resultPasswordConfirm)))
+            }
+        }
     }
 
     onProfileUpdateButtonClick() {
-
+        if (this.state.isValid) {
+            let fields = this.state.fields;
+            this.props.onEditClick({
+                                       age: fields.age.value,
+                                       weight: fields.weight.value,
+                                       height: fields.height.value,
+                                       login: fields.login.value,
+                                       email: fields.email.value,
+                                       gender: fields.gender.value,
+                                       lastCalculatedEnergy: 0
+                                   });
+        }
     }
+
 
     render() {
         return <Modal fixedFooter header={ "" } trigger={ this.props.modalTrigger } actions={
@@ -68,51 +168,69 @@ class UserProfileEdit extends React.Component {
         }>
             <Row>
                 <Col s={ 6 }>
-                    <Input required validate defaultValue={ this.props.user.login }
-                           placeholder={ this.props.text.userProfile.inputLogin }
-                           label={ this.props.text.userProfile.inputLogin }
-                           success={ this.props.text.userProfile.validationSuccessLogin }
-                           error={ this.props.text.userProfile.validationErrorLogin }
-                    />
+                    <div>
+                        <Input required validate defaultValue={ this.props.user.login }
+                               placeholder={ this.props.text.userProfile.inputLogin }
+                               label={ this.props.text.userProfile.inputLogin }
+                               success={ this.state.fields.login.isValid ? this.props.text.userProfile.validationSuccessLogin : null }
+                               onChange={ this.onLoginChange }
+                        />
+                        <span className="red-text"> { this.state.fields.login.error } </span>
+                    </div>
+                    <div>
                     <Input required validate type="email" defaultValue={ this.props.user.email }
                            label={ this.props.text.userProfile.inputEmail }
-                           success={ this.props.text.userProfile.validationSuccessEmail }
-                           error={ this.props.text.userProfile.validationErrorEmail }
+                           success={ this.state.fields.email.isValid ? this.props.text.userProfile.validationSuccessEmail : null }
+                           onChange={ this.onEmailChange }
                     />
-                    <Input required validate type="number" min="1" defaultValue={ this.props.user.age }
-                           label={ this.props.text.userProfile.inputAge }
-                           success={ this.props.text.userProfile.validationSuccessAge }
-                           error={ this.props.text.userProfile.validationErrorAge }
-                           onChange={ this.onAgeChange }
+                        <span className="red-text"> { this.state.fields.email.error } </span>
+                    </div>
+                    <div>
+                        <Input required validate type="number" min="1" defaultValue={ this.props.user.age }
+                               label={ this.props.text.userProfile.inputAge }
+                               success={ this.state.fields.age.isValid ? this.props.text.userProfile.validationSuccessAge : null }
+                               onChange={ this.onAgeChange }
                     />
-                    <Input required validate type="number" min="1" defaultValue={ this.props.user.height }
-                           label={ this.props.text.userProfile.inputHeight }
-                           success={ this.props.text.userProfile.validationSuccessHeight }
-                           error={ this.props.text.userProfile.validationErrorHeight }
-                           onChange={ this.onHeightChange }
+                        <span className="red-text"> { this.state.fields.age.error } </span>
+                    </div>
+                    <div>
+                        <Input required validate type="number" min="1" defaultValue={ this.props.user.height }
+                               label={ this.props.text.userProfile.inputHeight }
+                               success={ this.state.fields.height.isValid ? this.props.text.userProfile.validationSuccessHeight : null }
+                               onChange={ this.onHeightChange }
                     />
-                    <Input required validate type="number" min="1" defaultValue={ this.props.user.weight }
-                           label={ this.props.text.userProfile.inputWeight }
-                           success={ this.props.text.userProfile.validationSuccessWeight }
-                           error={ this.props.text.userProfile.validationErrorWeight }
-                           onChange={ this.onWeightChange }
+                        <span className="red-text"> { this.state.fields.height.error } </span>
+                    </div>
+                    <div>
+                        <Input required validate type="number" min="1" defaultValue={ this.props.user.weight }
+                               label={ this.props.text.userProfile.inputWeight }
+                               success={ this.state.fields.weight.isValid ? this.props.text.userProfile.validationSuccessWeight : null }
+                               onChange={ this.onWeightChange }
                     />
-                    <Input type='select' label={ this.props.text.userProfile.selectGender } onChange={ this.onGenderChange } defaultValue={ this.props.user.gender }>
-                        <option value='male'>{ this.props.text.userProfile.selectGenderMale }</option>
-                        <option value='female'>{ this.props.text.userProfile.selectGenderFemale }</option>
-                    </Input>
+                        <span className="red-text"> { this.state.fields.weight.error } </span>
+                    </div>
+                    <div>
+                        <Input type='select' label={ this.props.text.userProfile.selectGender } onChange={ this.onGenderChange } defaultValue={ this.props.user.gender }>
+                            <option value='male'>{ this.props.text.userProfile.selectGenderMale }</option>
+                            <option value='female'>{ this.props.text.userProfile.selectGenderFemale }</option>
+                        </Input>
+                    </div>
                 </Col>
                 <Col s={ 6 }>
-                    <Input required validate type="password"
-                           label={ this.props.text.userProfile.inputPassword }
-                           success={ this.state.passwordSuccessMessage }
-                           error={ this.state.passwordErrorMessage }
-                           onChange={ this.onPasswordChange }/>
-                    <Input required validate type="password"
-                           label={ this.props.text.userProfile.inputConfirmPassword }
-                           success={ this.state.passwordConfirmSuccessMessage }
-                           error={ this.state.passwordConfirmErrorMessage }
-                           onChange={ this.onPasswordConfirmChange }/>
+                    <div>
+                        <Input required validate type="password" minLength="6" maxLength="16"
+                               label={ this.props.text.userProfile.inputPassword }
+                               success={ this.state.fields.password.isValid ? this.props.text.userProfile.validationSuccessPassword : null }
+                               onChange={ this.onPasswordChange }/>
+                        <span className="red-text"> { this.state.fields.password.error }</span>
+                    </div>
+                    <div>
+                        <Input required validate type="password" minLength="6" maxLength="16"
+                               label={ this.props.text.userProfile.inputConfirmPassword }
+                               success={ this.state.fields.passwordConfirm.isValid ? this.props.text.userProfile.validationSuccessPasswordConfirm : null }
+                               onChange={ this.onPasswordConfirmChange }/>
+                        <span className="red-text"> { this.state.fields.passwordConfirm.error } </span>
+                    </div>
                 </Col>
             </Row>
         </Modal>
