@@ -1,8 +1,9 @@
-package com.kostenko.pp.services;
+package com.kostenko.pp.services.food;
 
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Dish;
-import com.kostenko.pp.data.repositories.DishRepository;
+import com.kostenko.pp.data.repositories.food.DishRepository;
+import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service("DishesDBService")
 public class DishesDBService implements DBService<Dish> {
     private final DishRepository dishRepository;
 
     @Autowired
     public DishesDBService(DishRepository dishRepository) {
-        Preconditions.checkNotNull(dishRepository, "Null injected instead of " + DishRepository.class.getName());
-        this.dishRepository = dishRepository;
+        this.dishRepository = Objects.requireNonNull(dishRepository, "Instead of DishRepository instance injected null");
     }
 
     @Override

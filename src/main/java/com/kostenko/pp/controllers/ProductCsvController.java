@@ -1,11 +1,10 @@
 package com.kostenko.pp.controllers;
 
-import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Product;
 import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.data.repositories.GeneralRepository;
-import com.kostenko.pp.data.repositories.ProductRepository;
-import com.kostenko.pp.data.repositories.ProductTypeRepository;
+import com.kostenko.pp.data.repositories.food.GeneralRepository;
+import com.kostenko.pp.data.repositories.food.ProductRepository;
+import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -21,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Controller
 @Slf4j
@@ -32,10 +32,8 @@ public class ProductCsvController {
 
     @Autowired
     public ProductCsvController(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
-        Preconditions.checkNotNull(productRepository, "productRepository is null");
-        Preconditions.checkNotNull(productTypeRepository, "productTypeRepository is null");
-        this.productRepository = productRepository;
-        this.productTypeRepository = productTypeRepository;
+        this.productRepository = Objects.requireNonNull(productRepository, "Instead of ProductRepository instance injected null");
+        this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
         foundProducts = new HashMap<>();
         foundProductTypes = new HashMap<>();
     }

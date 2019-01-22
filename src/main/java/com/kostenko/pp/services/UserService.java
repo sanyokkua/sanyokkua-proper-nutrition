@@ -2,7 +2,7 @@ package com.kostenko.pp.services;
 
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.User;
-import com.kostenko.pp.data.repositories.UserRepository;
+import com.kostenko.pp.data.repositories.users.UserRepository;
 import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -21,8 +22,7 @@ public class UserService implements DBService<User> {
 
     @Autowired
     public UserService(UserRepository userRepository) {
-        Preconditions.checkNotNull(userRepository, "Null injected instead of " + UserRepository.class.getName());
-        this.userRepository = userRepository;
+        this.userRepository = Objects.requireNonNull(userRepository, "Instead of UserRepository instance injected null");
     }
 
     public void createUser(User user) {

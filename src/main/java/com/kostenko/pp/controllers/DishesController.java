@@ -1,6 +1,5 @@
 package com.kostenko.pp.controllers;
 
-import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Dish;
 import com.kostenko.pp.json.JsonDish;
 import com.kostenko.pp.services.DBService;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @Slf4j
@@ -23,8 +23,7 @@ public class DishesController {
 
     @Autowired
     public DishesController(@Qualifier("DishesDBService") DBService<Dish> dishDBService) {
-        Preconditions.checkNotNull(dishDBService);
-        this.dishDBService = dishDBService;
+        this.dishDBService = Objects.requireNonNull(dishDBService, "Instead of DishesDBService instance injected null");
     }
 
     @GetMapping("/dishes")

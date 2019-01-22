@@ -1,9 +1,8 @@
 package com.kostenko.pp.controllers;
 
-import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.ProductType;
 import com.kostenko.pp.json.JsonProductType;
-import com.kostenko.pp.services.ProductTypeService;
+import com.kostenko.pp.services.food.ProductTypeService;
 import com.kostenko.pp.services.page.PageInfo;
 import com.kostenko.pp.services.page.ResultPage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +10,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 public class ProductTypeController {
     private final ProductTypeService productTypeService;
 
     @Autowired
     public ProductTypeController(ProductTypeService productTypeService) {
-        Preconditions.checkNotNull(productTypeService);
-        this.productTypeService = productTypeService;
+        this.productTypeService = Objects.requireNonNull(productTypeService, "Instead of ProductTypeService instance injected null");
     }
 
     @GetMapping("/types")

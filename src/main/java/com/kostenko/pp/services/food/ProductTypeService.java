@@ -1,15 +1,18 @@
-package com.kostenko.pp.services;
+package com.kostenko.pp.services.food;
 
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.data.repositories.ProductRepository;
-import com.kostenko.pp.data.repositories.ProductTypeRepository;
+import com.kostenko.pp.data.repositories.food.ProductRepository;
+import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
+import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -19,10 +22,8 @@ public class ProductTypeService implements DBService<ProductType> {
 
     @Autowired
     public ProductTypeService(ProductTypeRepository productTypeRepository, ProductRepository productRepository) {
-        Preconditions.checkNotNull(productTypeRepository, "productTypeRepository is null");
-        Preconditions.checkNotNull(productRepository, "productRepository is null");
-        this.productTypeRepository = productTypeRepository;
-        this.productRepository = productRepository;
+        this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
+        this.productRepository = Objects.requireNonNull(productRepository, "Instead of ProductRepository instance injected null");
     }
 
     @Override

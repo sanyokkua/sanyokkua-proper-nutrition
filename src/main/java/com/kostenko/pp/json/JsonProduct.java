@@ -2,7 +2,7 @@ package com.kostenko.pp.json;
 
 import com.kostenko.pp.data.entity.Product;
 import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.data.repositories.ProductTypeRepository;
+import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

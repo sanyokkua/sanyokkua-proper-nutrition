@@ -1,8 +1,7 @@
 package com.kostenko.pp.controllers;
 
-import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Product;
-import com.kostenko.pp.data.repositories.ProductTypeRepository;
+import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
 import com.kostenko.pp.json.JsonProduct;
 import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class ProductsController {
@@ -23,10 +23,8 @@ public class ProductsController {
 
     @Autowired
     public ProductsController(ProductTypeRepository productTypeRepository, @Qualifier("ProductDBService") DBService<Product> productDBService) {
-        Preconditions.checkNotNull(productTypeRepository);
-        Preconditions.checkNotNull(productDBService);
-        this.productDBService = productDBService;
-        this.productTypeRepository = productTypeRepository;
+        this.productDBService = Objects.requireNonNull(productDBService, "Instead of ProductDBService instance injected null");
+        this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
     }
 
     @GetMapping("/products")

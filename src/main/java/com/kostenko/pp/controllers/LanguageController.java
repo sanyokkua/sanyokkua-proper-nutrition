@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,14 @@ public class LanguageController {
 
     @SuppressWarnings("unchecked")
     @GetMapping("/lang/{lang}")
-    public Map<String, Object> getTranslations(@PathVariable String lang) throws IOException {
-        File file = new ClassPathResource("./translations/" + lang + ".json").getFile();
-        String JSON_SOURCE = FileUtils.readFileToString(file, "UTF-8");
-        return new ObjectMapper().readValue(JSON_SOURCE, HashMap.class);
+    public Map<String, Object> getTranslations(@PathVariable String lang) {
+        try {
+            File file = new ClassPathResource("./translations/" + lang + ".json").getFile();
+            String json = FileUtils.readFileToString(file, "UTF-8");
+            return new ObjectMapper().readValue(json, HashMap.class);
+        } catch (IOException e) {
+            throw new RuntimeException("Applications doesn't have any language files in language folder", e);
+        }
     }
 
     @GetMapping("/lang")
@@ -37,6 +40,6 @@ public class LanguageController {
                 return Stream.of(list).map(fileName -> StringUtils.remove(fileName, ".json")).collect(Collectors.toList());
             }
         }
-        return new ArrayList<>();
+        throw new RuntimeException("Applications doesn't have any language files in language folder");
     }
 }

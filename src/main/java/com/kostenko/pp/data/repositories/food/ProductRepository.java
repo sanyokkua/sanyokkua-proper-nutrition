@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.repositories;
+package com.kostenko.pp.data.repositories.food;
 
 import com.kostenko.pp.data.entity.Product;
 import org.springframework.data.domain.Page;

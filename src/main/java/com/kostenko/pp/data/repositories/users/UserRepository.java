@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.repositories;
+package com.kostenko.pp.data.repositories.users;
 
 import com.kostenko.pp.data.entity.User;
 import org.springframework.data.repository.CrudRepository;

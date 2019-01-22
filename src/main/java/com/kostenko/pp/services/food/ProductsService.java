@@ -1,8 +1,9 @@
-package com.kostenko.pp.services;
+package com.kostenko.pp.services.food;
 
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entity.Product;
-import com.kostenko.pp.data.repositories.ProductRepository;
+import com.kostenko.pp.data.repositories.food.ProductRepository;
+import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,14 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Slf4j
 @Service("ProductDBService")
 public class ProductsService implements DBService<Product> {
     private final ProductRepository productRepository;
 
     public ProductsService(ProductRepository productRepository) {
-        Preconditions.checkNotNull(productRepository, "Null injected instead of " + ProductRepository.class.getName());
-        this.productRepository = productRepository;
+        this.productRepository = Objects.requireNonNull(productRepository, "Instead of ProductRepository instance injected null");
     }
 
     @Override

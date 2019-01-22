@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.repositories;
+package com.kostenko.pp.data.repositories.food;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
