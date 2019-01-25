@@ -1,8 +1,8 @@
 export default class Utils {
 
-    static checkDefaultCallbacks(successCallback, failCallback) {
-        Utils.checkCallback(successCallback, "Success");
-        Utils.checkCallback(failCallback, "Fail");
+    static checkDefaultCallbacks(success, fail) {
+        Utils.checkCallback(success, "Success");
+        Utils.checkCallback(fail, "Fail");
     }
 
     static checkCallback(callBack, callBackName) {

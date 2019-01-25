@@ -1,244 +1,156 @@
-import React                              from 'react';
-import { Button, Col, Input, Modal, Row } from 'react-materialize';
-import PropTypes                          from "prop-types";
-import Utils                              from "../../utils/Utils";
+import React                                    from 'react';
+import { Button, CardPanel, Modal, Row, Table } from "react-materialize";
+import PropTypes                                from "prop-types";
+import DishService                              from '../../../services/DishService'
+import UserService                              from "../../../services/UserService";
+import Calculator                               from "../../calculator/Calculator";
+import UserProfileEditView                      from "./UserProfileEditView";
+import TextPropType                             from "../../../utils/TextPropType";
+import Dishes                                   from "../../dishes/Dishes";
 
-class UserProfileEdit extends React.Component {
+class UserProfileMainPage extends React.Component {
     constructor(props) {
         super(props);
+        this.dishService = new DishService();
+        this.userService = new UserService();
+
         this.state = {
-            isValid: false,
-            fields: { //TODO: load user fields from props
-                login: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                email: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                password: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                passwordConfirm: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                age: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                height: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                weight: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-                gender: {
-                    isValid: false,
-                    value: null,
-                    error: null
-                },
-            },
-            passwordsIsSame: false,
+            user: this.props.user,
+            lastCalculatedEnergy: this.props.user.lastCalculatedEnergy,
+            currentPage: 0,
+            totalPages: 0,
+            numberOfRecords: 10,
+            dishList: [],
+            showDishes: false
         };
-        this.onLoginChange = this.onLoginChange.bind(this);
-        this.onEmailChange = this.onEmailChange.bind(this);
-        this.onAgeChange = this.onAgeChange.bind(this);
-        this.onHeightChange = this.onHeightChange.bind(this);
-        this.onWeightChange = this.onWeightChange.bind(this);
-        this.onGenderChange = this.onGenderChange.bind(this);
-        this.onPasswordChange = this.onPasswordChange.bind(this);
-        this.onPasswordConfirmChange = this.onPasswordConfirmChange.bind(this);
-        this.onProfileUpdateButtonClick = this.onProfileUpdateButtonClick.bind(this);
+        this.reloadDishes();
+        this.onUpdateButtonClick = this.onUpdateButtonClick.bind(this);
+        this.onUpdateUser = this.onUpdateUser.bind(this);
     }
 
-    updateState(fieldName, objValue, callback) {
-        let objForUpdate = JSON.parse(JSON.stringify(this.state.fields));
-        objForUpdate[fieldName] = objValue;
-        this.setState({fields: objForUpdate}, () => {
-            this.validateForm(callback);
-        });
+    reloadDishes() {
+        this.dishService.getDishes({currentPage: this.state.currentPage, name: '', numberOfRecords: this.state.numberOfRecords},
+                                   result => this.setState({dishList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
+                                   error => console.log(error));
     }
 
-    validateForm(callback) {
-        let isValid = true;
-        let fields = this.state.fields;
-        for (let key in fields) {
-            if (fields.hasOwnProperty(key)) {
-                let field = fields[key];
-                isValid &= field.isValid;
-            }
-        }
-        isValid &= this.state.passwordsIsSame;
-        if (callback) {
-            this.setState({isValid: isValid}, callback)
-        } else {
-            this.setState({isValid: isValid});
-        }
+    onUpdateButtonClick(user) {
+        let newUserData = JSON.parse(JSON.stringify(user));
+        this.setState({user: newUserData, lastCalculatedEnergy: newUserData.lastCalculatedEnergy});
     }
 
-    generalUpdateState(value, fieldName, invalidText, validatorFunc, callback) {
-        let isValid = validatorFunc(value);
-        let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-        this.updateState(fieldName, result, callback);
+    onUpdateUser(user) {
+        //TODO: save user to server
+        console.log(JSON.stringify(user));
+        this.setState({user: JSON.parse(JSON.stringify(user))});
+        // this.userService.updateUser(user, () => {
+        //     //CalculatorService.calculate({}, ()=>{}, ()=>{});
+        //     this.setState({user: user});
+        // }, (error) => {console.log(error)})
     }
-
-    onLoginChange(event, value) {
-        this.generalUpdateState(value, "login", this.props.text.userProfile.validationErrorLogin, Utils.isValidText);
-    }
-
-    onEmailChange(event, value) {
-        this.generalUpdateState(value, "email", this.props.text.userProfile.validationErrorEmail, Utils.isValidEmail);
-    }
-
-    onAgeChange(event, value) {
-        this.generalUpdateState(value, "age", this.props.text.userProfile.validationErrorAge, Utils.isValidNumber);
-    }
-
-    onHeightChange(event, value) {
-        this.generalUpdateState(value, "height", this.props.text.userProfile.validationErrorHeight, Utils.isValidNumber);
-    }
-
-    onWeightChange(event, value) {
-        this.generalUpdateState(value, "weight", this.props.text.userProfile.validationErrorWeight, Utils.isValidNumber);
-    }
-
-    onGenderChange(event, value) {
-        let result = {isValid: true, value: value, error: null};
-        this.updateState("gender", result);
-    }
-
-    onPasswordChange(event, value) {
-        this.generalUpdateState(value, "password", this.props.text.userProfile.validationErrorPassword, Utils.isValidPassword, this.validatePasswords);
-    }
-
-    onPasswordConfirmChange(event, value) {
-        this.generalUpdateState(value, "passwordConfirm", this.props.text.userProfile.validationErrorPasswordConfirm, Utils.isValidPassword, this.validatePasswords);
-    }
-
-    validatePasswords() {
-        let pass = this.state.fields.password;
-        let confirm = this.state.fields.passwordConfirm;
-        if (pass.isValid && confirm.isValid) {
-            if (pass.value !== confirm.value) {
-                let resultPassword = {isValid: true, value: pass.value, error: this.props.text.userProfile.validationErrorPasswordAndConfirmDiff};
-                let resultPasswordConfirm = {isValid: true, value: confirm.value, error: this.props.text.userProfile.validationErrorPasswordAndConfirmDiff};
-                this.setState({passwordsIsSame: false}, () => this.updateState("password", resultPassword, () => this.updateState("passwordConfirm", resultPasswordConfirm)))
-            } else {
-                let resultPassword = {isValid: true, value: pass.value, error: null};
-                let resultPasswordConfirm = {isValid: true, value: confirm.value, error: null};
-                this.setState({passwordsIsSame: true}, () => this.updateState("password", resultPassword, () => this.updateState("passwordConfirm", resultPasswordConfirm)))
-            }
-        }
-    }
-
-    onProfileUpdateButtonClick() {
-        if (this.state.isValid) {
-            let fields = this.state.fields;
-            this.props.onEditClick({
-                                       age: fields.age.value,
-                                       weight: fields.weight.value,
-                                       height: fields.height.value,
-                                       login: fields.login.value,
-                                       email: fields.email.value,
-                                       gender: fields.gender.value,
-                                       lastCalculatedEnergy: 0
-                                   });
-        }
-    }
-
 
     render() {
-        return <Modal fixedFooter header={ "" } trigger={ this.props.modalTrigger } actions={
-            <div>
-                <Button disabled={ !this.state.isValid } modal="close" waves="light" className="red darken-2" onClick={ this.onProfileUpdateButtonClick }>{ this.props.text.userProfile.buttonEdit }</Button>
-                <Button flat modal="close" waves="light">{ this.props.text.userProfile.buttonCancel }</Button>
-            </div>
-        }>
-            <Row>
-                <Col s={ 6 }>
-                    <div>
-                        <Input required validate defaultValue={ this.props.user.login }
-                               placeholder={ this.props.text.userProfile.inputLogin }
-                               label={ this.props.text.userProfile.inputLogin }
-                               success={ this.state.fields.login.isValid ? this.props.text.userProfile.validationSuccessLogin : null }
-                               onChange={ this.onLoginChange }
-                        />
-                        <span className="red-text"> { this.state.fields.login.error } </span>
-                    </div>
-                    <div>
-                    <Input required validate type="email" defaultValue={ this.props.user.email }
-                           label={ this.props.text.userProfile.inputEmail }
-                           success={ this.state.fields.email.isValid ? this.props.text.userProfile.validationSuccessEmail : null }
-                           onChange={ this.onEmailChange }
-                    />
-                        <span className="red-text"> { this.state.fields.email.error } </span>
-                    </div>
-                    <div>
-                        <Input required validate type="number" min="1" defaultValue={ this.props.user.age }
-                               label={ this.props.text.userProfile.inputAge }
-                               success={ this.state.fields.age.isValid ? this.props.text.userProfile.validationSuccessAge : null }
-                               onChange={ this.onAgeChange }
-                    />
-                        <span className="red-text"> { this.state.fields.age.error } </span>
-                    </div>
-                    <div>
-                        <Input required validate type="number" min="1" defaultValue={ this.props.user.height }
-                               label={ this.props.text.userProfile.inputHeight }
-                               success={ this.state.fields.height.isValid ? this.props.text.userProfile.validationSuccessHeight : null }
-                               onChange={ this.onHeightChange }
-                    />
-                        <span className="red-text"> { this.state.fields.height.error } </span>
-                    </div>
-                    <div>
-                        <Input required validate type="number" min="1" defaultValue={ this.props.user.weight }
-                               label={ this.props.text.userProfile.inputWeight }
-                               success={ this.state.fields.weight.isValid ? this.props.text.userProfile.validationSuccessWeight : null }
-                               onChange={ this.onWeightChange }
-                    />
-                        <span className="red-text"> { this.state.fields.weight.error } </span>
-                    </div>
-                    <div>
-                        <Input type='select' label={ this.props.text.userProfile.selectGender } onChange={ this.onGenderChange } defaultValue={ this.props.user.gender }>
-                            <option value='male'>{ this.props.text.userProfile.selectGenderMale }</option>
-                            <option value='female'>{ this.props.text.userProfile.selectGenderFemale }</option>
-                        </Input>
-                    </div>
-                </Col>
-                <Col s={ 6 }>
-                    <div>
-                        <Input required validate type="password" minLength="6" maxLength="16"
-                               label={ this.props.text.userProfile.inputPassword }
-                               success={ this.state.fields.password.isValid ? this.props.text.userProfile.validationSuccessPassword : null }
-                               onChange={ this.onPasswordChange }/>
-                        <span className="red-text"> { this.state.fields.password.error }</span>
-                    </div>
-                    <div>
-                        <Input required validate type="password" minLength="6" maxLength="16"
-                               label={ this.props.text.userProfile.inputConfirmPassword }
-                               success={ this.state.fields.passwordConfirm.isValid ? this.props.text.userProfile.validationSuccessPasswordConfirm : null }
-                               onChange={ this.onPasswordConfirmChange }/>
-                        <span className="red-text"> { this.state.fields.passwordConfirm.error } </span>
-                    </div>
-                </Col>
-            </Row>
-        </Modal>
+        const currentUser = this.state.user;
+        const currentTabText = this.props.text.userProfile;
+        const CalculatorModal = ({updateButtonText, cancelButtonText, text, user, onResult}) => {
+            return <Modal fixedFooter header={ "" }
+                          trigger={ <Button waves='teal' className='deep-purple darken-4 white-text'>{ updateButtonText }</Button> }
+                          actions={ <Button flat modal="close" waves="light">{ cancelButtonText }</Button> }>
+                <Calculator isUpdating={ true } text={ text } user={ user } onResultCalculated={ onResult }/>
+            </Modal>
+        };
+        CalculatorModal.propTypes = {
+            updateButtonText: PropTypes.string.isRequired,
+            cancelButtonText: PropTypes.string.isRequired,
+            text: PropTypes.object.isRequired,
+            user: PropTypes.object.isRequired,
+            onResult: PropTypes.func.isRequired
+        };
+        const UserProfileEditModal = ({onUserSave, userSaveButtonText, dialogCancelButtonText, text, user, modalButtonText,}) => {
+            return <Modal fixedFooter header={ "" }
+                          trigger={ <Button waves='teal' className='blue darken-4 white-text center-align z-depth-3'>{ modalButtonText }</Button> }
+                          actions={ <Button flat modal="close" waves="light">{ dialogCancelButtonText }</Button>
+                          }>
+                <UserProfileEditView onSaveButtonClick={ onUserSave } onSaveButtonText={ userSaveButtonText } user={ user } text={ text }/>
+            </Modal>
+        };
+        UserProfileEditModal.propTypes = {
+            onUserSave: PropTypes.func.isRequired,
+            userSaveButtonText: PropTypes.string.isRequired,
+            dialogCancelButtonText: PropTypes.string.isRequired,
+            text: TextPropType,
+            user: PropTypes.shape({
+                                      id: PropTypes.number.isRequired,
+                                      age: PropTypes.number.isRequired,
+                                      weight: PropTypes.number.isRequired,
+                                      height: PropTypes.number.isRequired,
+                                      login: PropTypes.string.isRequired,
+                                      email: PropTypes.string.isRequired,
+                                      gender: PropTypes.string.isRequired,
+                                      lastCalculatedEnergy: PropTypes.number.isRequired
+                                  }),
+            modalButtonText: PropTypes.string.isRequired,
+        };
+
+        return <div>
+            <CardPanel className="blue lighten-5 z-depth-4 black-text">
+                <Row>
+                    <h3>{ currentTabText.userInfoTitle }</h3>
+                </Row>
+                <Row>
+                    <UserProfileEditModal dialogCancelButtonText={ currentTabText.buttonCancel }
+                                          modalButtonText={ currentTabText.buttonEditProfile }
+                                          onUserSave={ this.onUpdateUser }
+                                          userSaveButtonText={ currentTabText.buttonEdit }
+                                          text={ this.props.text }
+                                          user={ this.state.user }/>
+                </Row>
+                <Row>
+                    <Table hoverable bordered>
+                        <tbody>
+                        <tr>
+                            <td className="left-align">{ currentTabText.inputAge }</td>
+                            <td className="right-align">{ currentUser.age }</td>
+                        </tr>
+                        <tr>
+                            <td className="left-align">{ currentTabText.inputHeight }</td>
+                            <td className="right-align">{ currentUser.height }</td>
+                        </tr>
+                        <tr>
+                            <td className="left-align">{ currentTabText.inputWeight }</td>
+                            <td className="right-align">{ currentUser.weight }</td>
+                        </tr>
+                        </tbody>
+                    </Table>
+                </Row>
+                <Row>
+                    <div><h2>{ this.state.lastCalculatedEnergy }</h2></div>
+                </Row>
+                <Row>
+                    <Table key={ "buttons" }>
+                        <tbody>
+                        <tr>
+                            <td className={ "right-align" }>
+                                <CalculatorModal key={ "calc" } text={ this.props.text }
+                                                 user={ currentUser }
+                                                 updateButtonText={ currentTabText.buttonUpdate }
+                                                 cancelButtonText={ currentTabText.buttonCancel }
+                                                 onResult={ this.onUpdateButtonClick }
+                                /></td>
+                            <td className={ "left-align" }>
+                                <Button waves='teal' className='deep-purple darken-4 white-text' onClick={ () => {this.setState({showDishes: !this.state.showDishes})} }>{ this.props.text.general.tabDishes }</Button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </Table>
+                </Row>
+                <Row>{ this.state.showDishes ? (<Dishes editable={ false } text={ this.props.text } numberOfRecords={ 5 }/>) : (null) }</Row>
+            </CardPanel>
+        </div>
     }
 }
 
-UserProfileEdit.propTypes = {
-    onEditClick: PropTypes.func.isRequired,
+UserProfileMainPage.propTypes = {
     text: PropTypes.shape({
                               general: PropTypes.shape({
                                                            tabUser: PropTypes.string.isRequired,
@@ -347,7 +259,6 @@ UserProfileEdit.propTypes = {
                                                                userInfoTitle: PropTypes.string.isRequired
                                                            })
                           }).isRequired,
-    modalTrigger: PropTypes.node.isRequired,
     user: PropTypes.shape({
                               age: PropTypes.number.isRequired,
                               weight: PropTypes.number.isRequired,
@@ -356,7 +267,7 @@ UserProfileEdit.propTypes = {
                               email: PropTypes.string.isRequired,
                               gender: PropTypes.string.isRequired,
                               lastCalculatedEnergy: PropTypes.number.isRequired
-                          })
-
+                          }).isRequired
 };
-export default UserProfileEdit;
+
+export default UserProfileMainPage;

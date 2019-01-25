@@ -1,9 +1,9 @@
-import React       from 'react';
-import ReactDOM    from 'react-dom';
-import MainContent from './elements/MainContent';
-import TextService from './services/TextService';
-import PropTypes   from 'prop-types';
-import { TEXT }    from './utils/TextPropType';
+import React        from 'react';
+import ReactDOM     from 'react-dom';
+import MainContent  from './elements/MainContent';
+import TextService  from './services/TextService';
+import PropTypes    from 'prop-types';
+import TextPropType from './utils/TextPropType';
 
 class Application extends React.Component {
     constructor(props) {
@@ -14,9 +14,9 @@ class Application extends React.Component {
         this.onLanguageChanged = this.onLanguageChanged.bind(this);
     }
 
-    loadLanguage(lang, successCallback) {
+    loadLanguage(lang, success) {
         TextService.load(lang, (currentLang, text) => {
-            successCallback(currentLang, text);
+            success(currentLang, text);
         }, (error, message) => {
             console.log(message);
             this.setState({isLangLoaded: false});
@@ -36,7 +36,7 @@ class Application extends React.Component {
 }
 
 Application.propTypes = {
-    text: TEXT.isRequired,
+    text: TextPropType.isRequired,
     currentLanguage: PropTypes.string.isRequired,
     langList: PropTypes.arrayOf(PropTypes.string).isRequired
 };

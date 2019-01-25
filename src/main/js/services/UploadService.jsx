@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default class UploadService {
 
-    static uploadFile(csvFile, successCallback, failCallback) {
+    static uploadFile(csvFile, success, fail) {
         if (csvFile) {
             let formData = new FormData();
             formData.append("csv", csvFile);
@@ -16,18 +16,18 @@ export default class UploadService {
                 }
             }).then(response => {
                 console.log(response);
-                if (successCallback) {
-                    successCallback();
+                if (success) {
+                    success();
                 }
             }).catch(function (error) {
                 console.log(error);
-                if (failCallback) {
-                    failCallback();
+                if (fail) {
+                    fail();
                 }
             });
         } else {
-            if (failCallback) {
-                failCallback();
+            if (fail) {
+                fail();
             }
         }
     }

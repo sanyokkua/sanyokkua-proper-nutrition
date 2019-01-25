@@ -119,33 +119,33 @@ class Products extends React.Component {
         }
     }
 
-    handleTypeCreate(type, successCallback, failCallback) {
+    handleTypeCreate(type, success, fail) {
         this.productTypeService.createProductType(type, () => {
             this.loadTypes();
-            successCallback();
+            success();
         }, (error) => {
             console.log(error);
-            failCallback();
+            fail();
         });
     }
 
-    handleTypeEdit(type, successCallback, failCallback) {
+    handleTypeEdit(type, success, fail) {
         this.productTypeService.updateProductType(type, () => {
             this.loadTypes();
-            successCallback();
+            success();
         }, (error) => {
             console.log(error);
-            failCallback();
+            fail();
         });
     }
 
-    handleTypeDelete(type, successCallback, failCallback) {
+    handleTypeDelete(type, success, fail) {
         this.productTypeService.deleteProductType(type, () => {
             this.loadTypes();
-            successCallback();
+            success();
         }, (error) => {
             console.log(error);
-            failCallback();
+            fail();
         });
     }
 

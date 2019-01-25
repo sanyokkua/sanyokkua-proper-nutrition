@@ -8,7 +8,7 @@ class TextService {
         return TextService.instance;
     }
 
-    load(lang, successCallback, failCallback) {
+    load(lang, success, fail) {
         if (lang === null) {
             lang = 'eng'
         }
@@ -19,38 +19,38 @@ class TextService {
             axios.get('/lang/' + lang).then(response => {
                 let currentLang = lang;
                 let text = response.data;
-                if (successCallback) {
-                    successCallback(currentLang, text);
+                if (success) {
+                    success(currentLang, text);
                 }
             }).catch(error => {
                 console.log(error);
-                if (failCallback) {
-                    failCallback(error, "Server problem");
+                if (fail) {
+                    fail(error, "Server problem");
                 }
             });
         } else {
-            if (failCallback) {
-                failCallback(null, "Language is not set");
+            if (fail) {
+                fail(null, "Language is not set");
             }
         }
     }
 
-    loadLangList(successCallback, failCallback) {
+    loadLangList(success, fail) {
         axios.get('/lang').then(response => {
             let langList = response.data;
             if (langList && langList.length > 0) {
-                if (successCallback) {
-                    successCallback(langList);
+                if (success) {
+                    success(langList);
                 }
             } else {
-                if (failCallback) {
-                    failCallback(null, "Langs list is empty");
+                if (fail) {
+                    fail(null, "Langs list is empty");
                 }
             }
         }).catch(error => {
             console.log(error);
-            if (failCallback) {
-                failCallback(error, "Server problem");
+            if (fail) {
+                fail(error, "Server problem");
             }
         });
     }

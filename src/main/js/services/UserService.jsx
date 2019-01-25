@@ -1,37 +1,41 @@
 import axios from 'axios';
 import Utils from '../utils/Utils'
 
-export default class DishService {
+export default class UserService {
     constructor() {
         this.token = $("meta[name='_csrf']").attr("content");
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
-    static calculateTotalEnergy(productsList) {
-        let totalValue = 0;
-        productsList.filter(product => product.amount > 0).forEach(product => {
-            totalValue += product.energy * (product.amount / 100);
-        });
-        return totalValue;
-    }
-
-    createDish(product, success, fail) {
+    createUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.post('/dishes', product, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
+        axios.post('/users', user, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
              .then(() => {
                  success();
              })
              .catch(error => fail(error));
-
     }
 
-    getDishes(loadParams, success, fail) {
+    getUser(loadParams, success, fail){
         Utils.checkDefaultCallbacks(success, fail);
-        axios.get('/dishes', {
+    }
+
+    emailIsInUse(email, success, fail){
+        Utils.checkDefaultCallbacks(success, fail);
+    }
+
+    loginIsInUse(login, success, fail){
+        Utils.checkDefaultCallbacks(success, fail);
+    }
+
+    getUsers(loadParams, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
+        axios.get('/users', {
                  headers: {[this.header]: this.token},
                  params: {
                      page: loadParams.currentPage,
-                     name: loadParams.name,
+                     name: loadParams.search,
+                     currentType: loadParams.currentType,
                      numberOfRecords: loadParams.numberOfRecords
                  }
              })
@@ -49,18 +53,18 @@ export default class DishService {
              .catch(error => fail(error));
     }
 
-    updateDish(dish, success, fail) {
+    updateUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/dishes/' + dish.id, dish, {headers: {[this.header]: this.token}})
+        axios.put('/users/' + user.id, user, {headers: {[this.header]: this.token}})
              .then(() => {
                  success();
              })
              .catch(error => fail(error));
     }
 
-    deleteDish(dish, success, fail) {
+    deleteUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/dishes/' + dish.id, {
+        axios.delete('/users/' + user.id, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {

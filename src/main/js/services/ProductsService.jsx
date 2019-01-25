@@ -7,18 +7,18 @@ export default class ProductsService {
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
-    createProduct(product, successCallback, failCallback) {
-        Utils.checkDefaultCallbacks(successCallback, failCallback);
+    createProduct(product, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
         axios.post('/products', product, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
              .then(() => {
-                 successCallback();
+                 success();
              })
-             .catch(error => failCallback(error));
+             .catch(error => fail(error));
 
     }
 
-    getProducts(loadParams, successCallback, failCallback) {
-        Utils.checkDefaultCallbacks(successCallback, failCallback);
+    getProducts(loadParams, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
         axios.get('/products', {
                  headers: {[this.header]: this.token},
                  params: {
@@ -37,28 +37,28 @@ export default class ProductsService {
                      totalPages: total,
                      content: content
                  };
-                 successCallback(result);
+                 success(result);
              })
-             .catch(error => failCallback(error));
+             .catch(error => fail(error));
     }
 
-    updateProduct(product, successCallback, failCallback) {
-        Utils.checkDefaultCallbacks(successCallback, failCallback);
+    updateProduct(product, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
         axios.put('/products/' + product.id, product, {headers: {[this.header]: this.token}})
              .then(() => {
-                 successCallback();
+                 success();
              })
-             .catch(error => failCallback(error));
+             .catch(error => fail(error));
     }
 
-    deleteProduct(product, successCallback, failCallback) {
-        Utils.checkDefaultCallbacks(successCallback, failCallback);
+    deleteProduct(product, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
         axios.delete('/products/' + product.id, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {
-                 successCallback();
+                 success();
              })
-             .catch(error => failCallback(error));
+             .catch(error => fail(error));
     }
 }

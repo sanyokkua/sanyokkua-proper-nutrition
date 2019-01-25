@@ -6,7 +6,7 @@ import Dishes                               from './dishes/Dishes';
 import Products                             from './products/Products';
 import User                                 from './users/User';
 import Utils                                from "../utils/Utils";
-import UserProfilePage                      from "./users/UserProfilePage";
+import UserProfileMainPage                  from "./users/profile/UserProfileMainPage";
 
 class MainContent extends React.Component {
     constructor(props) {
@@ -55,7 +55,8 @@ class MainContent extends React.Component {
                     <Route exact path="/" render={ () => { return <User text={ this.props.text }/>} }/>
                     <Route path="/user" render={ () => {return <User text={ this.props.text }/>} }/>
                     <Route path="/userProfile" render={ () => {
-                        return <UserProfilePage text={ this.props.text } user={ {
+                        return <UserProfileMainPage text={ this.props.text } user={ {
+                            id: 0,
                             age: 25,
                             weight: 82,
                             height: 182,

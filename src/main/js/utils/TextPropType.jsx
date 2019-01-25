@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-export const TEXT = PropTypes.shape({
+const TextPropType = PropTypes.shape({
                                         general: PropTypes.shape({
                                                                      tabUser: PropTypes.string.isRequired,
                                                                      tabUserProfile: PropTypes.string.isRequired,
@@ -108,3 +108,5 @@ export const TEXT = PropTypes.shape({
                                                                          userInfoTitle: PropTypes.string.isRequired
                                                                      })
                                     });
+
+export default TextPropType;
