@@ -20,7 +20,7 @@ class ProductTypeSelect extends React.Component {
         return this.props.valuesList && this.props.valuesList.length > 0 ? (
             <Input s={ 6 } type='select' label={ this.props.text.products.tableHeadType } defaultValue={ this.props.defaultValue ? this.props.defaultValue : 0 } onChange={ this.onChange }>
                 { this.props.valuesList && this.props.valuesList.length > 0 ? (this.props.valuesList.map((type) => {
-                    return (<option key={ type.id } value={ type.id }>{ type.name }</option>)
+                    return (<option key={ type.prodTypeId } value={ type.prodTypeId }>{ type.name }</option>)
                 })) : null }
             </Input>
         ) : null

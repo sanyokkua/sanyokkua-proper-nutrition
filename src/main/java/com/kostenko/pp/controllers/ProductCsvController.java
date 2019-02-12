@@ -1,10 +1,11 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.entity.Product;
-import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.data.repositories.food.GeneralRepository;
+import com.kostenko.pp.data.entities.Product;
+import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.repositories.food.ProductRepository;
 import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
+import com.kostenko.pp.services.food.ProductTypeService;
+import com.kostenko.pp.services.food.ProductsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -25,13 +26,17 @@ import java.util.Objects;
 @Controller
 @Slf4j
 public class ProductCsvController {
+    private final ProductTypeService productTypeService;
+    private final ProductsService productsService;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
     private final Map<String, Product> foundProducts;
     private final Map<String, ProductType> foundProductTypes;
 
     @Autowired
-    public ProductCsvController(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
+    public ProductCsvController(ProductTypeService productTypeService, ProductsService productsService, ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
+        this.productTypeService = Objects.requireNonNull(productTypeService);
+        this.productsService = Objects.requireNonNull(productsService);
         this.productRepository = Objects.requireNonNull(productRepository, "Instead of ProductRepository instance injected null");
         this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
         foundProducts = new HashMap<>();
@@ -47,19 +52,14 @@ public class ProductCsvController {
                 String type = record.get("type");
                 String name = record.get("name");
                 double energy = Double.valueOf(record.get("energy"));
-                ProductType productType = findProductType(type);
-                if (productType == null) {
-                    ProductType newProdType = new ProductType();
-                    newProdType.setName(type);
-                    productType = productTypeRepository.save(newProdType);
-                }
-                Product product = new Product();
-                product.setName(name);
-                product.setEnergy(energy);
-                product.setTypeId(productType.getId());
-                final Product exProduct = findProduct(product.getName());
-                if (exProduct == null) {
-                    productRepository.save(product);
+
+                ProductType prodType = ProductType.builder().name(type).build();
+                ProductType updatedProdType = productTypeService.createOrUpdate(prodType);
+                Product product = Product.builder().name(name).energy(energy).productType(updatedProdType).build();
+                product = productsService.createOrUpdate(product);
+                if (product != null) {
+                    updatedProdType.addProduct(product);
+                    productTypeService.createOrUpdate(updatedProdType);
                 }
             }
         } catch (IOException e) {
@@ -69,24 +69,5 @@ public class ProductCsvController {
             foundProducts.clear();
         }
         return ResponseEntity.ok("OK");
-    }
-
-    private ProductType findProductType(String name) {
-        return find(name, foundProductTypes, productTypeRepository);
-    }
-
-    private Product findProduct(String name) {
-        return find(name, foundProducts, productRepository);
-    }
-
-    private static <T> T find(String name, Map<String, T> map, GeneralRepository<T> repository) {
-        T result = map.getOrDefault(name, null);
-        if (result == null) {
-            result = repository.findByName(name);
-            if (result != null) {
-                map.put(name, result);
-            }
-        }
-        return result;
     }
 }

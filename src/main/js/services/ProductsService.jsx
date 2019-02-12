@@ -44,7 +44,7 @@ export default class ProductsService {
 
     updateProduct(product, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/products/' + product.id, product, {headers: {[this.header]: this.token}})
+        axios.put('/products/' + product.productId, product, {headers: {[this.header]: this.token}})
              .then(() => {
                  success();
              })
@@ -53,7 +53,7 @@ export default class ProductsService {
 
     deleteProduct(product, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/products/' + product.id, {
+        axios.delete('/products/' + product.productId, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {

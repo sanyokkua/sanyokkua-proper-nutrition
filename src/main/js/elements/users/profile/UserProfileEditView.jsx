@@ -188,7 +188,7 @@ class UserProfileEditView extends React.Component {
         if (this.state.isValid) {
             let fields = this.state.fields;
             this.props.onSaveButtonClick({
-                                             id: this.props.user ? this.props.user.id : null,
+                                             id: this.props.user ? this.props.user.user_id : null,
                                              age: Number(fields.age.value),
                                              weight: Number(fields.weight.value),
                                              height: Number(fields.height.value),

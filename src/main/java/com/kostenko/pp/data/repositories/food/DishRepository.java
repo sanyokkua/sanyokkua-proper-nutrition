@@ -1,6 +1,6 @@
 package com.kostenko.pp.data.repositories.food;
 
-import com.kostenko.pp.data.entity.Dish;
+import com.kostenko.pp.data.entities.Dish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

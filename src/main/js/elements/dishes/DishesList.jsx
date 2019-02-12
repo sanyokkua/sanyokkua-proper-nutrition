@@ -7,7 +7,6 @@ import Utils                                                                 fro
 class DishesList extends React.Component {
     constructor(props) {
         super(props);
-        this.id = 0;
         Utils.checkCallback(this.props.onPageChange, "onPageChange");
         Utils.checkCallback(this.props.onDishCreate, "onDishCreate");
         Utils.checkCallback(this.props.onDishEdit, "onDishEdit");
@@ -37,7 +36,7 @@ class DishesList extends React.Component {
         return <div>
             <Collapsible popout className="white">
                 { this.isDishListExists() ? (this.props.dishList.map(dish => {
-                    return <CollapsibleItem key={ dish.id } header={ <Table>
+                    return <CollapsibleItem key={ dish.dishId } header={ <Table>
                         <tbody>
                         <tr>
                             <td className="left-align">{ dish.name }</td>
@@ -56,7 +55,7 @@ class DishesList extends React.Component {
                             </thead>
                             <tbody>
                             { dish.products.map(product => {
-                                return <tr key={ product.id }>
+                                return <tr key={ product.productId }>
                                     <td className="left-align">{ product.name }</td>
                                     <td>{ product.energy }</td>
                                     <td>{ product.amount }</td>

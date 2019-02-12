@@ -60,10 +60,10 @@ class ProductsList extends React.Component {
                     <tbody>
                     { (this.props.productsList.map((product) => {
                         return (
-                            <tr key={ product.id } onClick={ () => this.handleRowClick(product) }>
+                            <tr key={ product.productId } onClick={ () => this.handleRowClick(product) }>
                                 <td>{ product.name }</td>
                                 <td>{ product.energy }</td>
-                                <td>{ product.typeName }</td>
+                                <td>{ product.productType.name }</td>
                                 { this.props.editable ? (
                                     <td>
                                         <ProductEdit text={ this.props.text }

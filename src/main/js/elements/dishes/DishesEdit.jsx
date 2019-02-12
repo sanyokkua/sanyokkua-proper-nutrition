@@ -21,7 +21,7 @@ class DishesEdit extends React.Component {
             currentDish = this.props.dish;
         }
         this.state = {
-            id: currentDish.id,
+            id: currentDish.dishId,
             name: currentDish.name,
             products: currentDish.products,
             totalEnergy: currentDish.totalEnergy,
@@ -40,7 +40,7 @@ class DishesEdit extends React.Component {
 
     onProductAmountChange(productAmount, product) {
         let resultProducts = this.state.products.map(productInList => {
-            if (productInList.id === product.id) {
+            if (productInList.productId === product.productId) {
                 productInList.amount = productAmount;
             }
             return productInList;
@@ -50,13 +50,13 @@ class DishesEdit extends React.Component {
     }
 
     onProductRemove(product) {
-        let filteredProducts = this.state.products.filter(productFromList => productFromList.id !== product.id);
+        let filteredProducts = this.state.products.filter(productFromList => productFromList.productId !== product.productId);
         let totalEnergy = DishService.calculateTotalEnergy(filteredProducts);
         this.setState({products: filteredProducts, totalEnergy: totalEnergy}, this.validate);
     }
 
     onProductSelect(product) {
-        let filteredProducts = this.state.products.filter(productFromList => productFromList.id === product.id);
+        let filteredProducts = this.state.products.filter(productFromList => productFromList.productId === product.productId);
         if (filteredProducts.length === 0) {
             let selectedProducts = this.state.products;
             selectedProducts.push(product);
@@ -74,9 +74,9 @@ class DishesEdit extends React.Component {
                 products.push(product);
             });
             let dish = {
-                id: this.state.id,
+                id: this.state.dishId,
                 name: this.state.name,
-                products: JSON.stringify(products),
+                products: products,
                 totalEnergy: this.state.totalEnergy
             };
             this.props.onSave(dish);
@@ -131,7 +131,7 @@ class DishesEdit extends React.Component {
                                 <tbody>
                                 { (this.state.products.map((product) => {
                                     return (
-                                        <tr key={ product.id }>
+                                        <tr key={ product.productId }>
                                             <td>{ product.name }</td>
                                             <td>{ product.energy }</td>
                                             <td><Input required

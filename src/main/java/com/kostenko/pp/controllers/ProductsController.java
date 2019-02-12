@@ -1,8 +1,8 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.entity.Product;
+import com.kostenko.pp.data.entities.Product;
 import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
-import com.kostenko.pp.json.JsonProduct;
+import com.kostenko.pp.json.entities.JsonProductEntity;
 import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import com.kostenko.pp.services.page.ResultPage;
@@ -28,10 +28,10 @@ public class ProductsController {
     }
 
     @GetMapping("/products")
-    public ResultPage<JsonProduct> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
-                                                      @RequestParam(value = "page", required = false) Integer pageNumber,
-                                                      @RequestParam(value = "currentType", required = false) Long currentType,
-                                                      @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+    public ResultPage<JsonProductEntity> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
+                                                            @RequestParam(value = "page", required = false) Integer pageNumber,
+                                                            @RequestParam(value = "currentType", required = false) Long currentType,
+                                                            @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         Map<String, String> params = new HashMap<>();
         params.put(PageInfo.SEARCH_STRING, name);
         params.put(PageInfo.TYPE_ID, String.valueOf(currentType));
@@ -39,7 +39,7 @@ public class ProductsController {
         PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
         Page<Product> page = productDBService.getAll(pageInfo);
 
-        return ResultPage.getResultPage(page, product -> JsonProduct.mapFromProduct(product, productTypeRepository));
+        return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(product, productTypeRepository));
     }
 
     @PostMapping("/products")
@@ -51,7 +51,7 @@ public class ProductsController {
     @PutMapping("/products/{id}")
     @ResponseBody
     public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        if (id.equals(product.getId())) {
+        if (id.equals(product.getProductId())) {
             return productDBService.update(product);
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");

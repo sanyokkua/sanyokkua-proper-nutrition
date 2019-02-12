@@ -1,7 +1,9 @@
 package com.kostenko.pp.services.food;
 
 import com.google.common.base.Preconditions;
-import com.kostenko.pp.data.entity.Dish;
+import com.kostenko.pp.data.entities.Dish;
+import com.kostenko.pp.data.entities.Product;
+import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.repositories.food.DishRepository;
 import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
@@ -11,11 +13,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Service("DishesDBService")
+@org.springframework.transaction.annotation.Transactional
 public class DishesDBService implements DBService<Dish> {
     private final DishRepository dishRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public DishesDBService(DishRepository dishRepository) {
@@ -43,13 +51,30 @@ public class DishesDBService implements DBService<Dish> {
     @Override
     public Dish update(Dish data) {
         validate(data);
-        Dish dbDish = dishRepository.findById(data.getId()).orElse(null);
+        Dish dbDish = dishRepository.findById(data.getDishId()).orElse(null);
         if (dbDish == null) {
-            throw new IllegalArgumentException("Dish with id " + data.getId() + " doesn't exists. Update can't be done");
+            throw new IllegalArgumentException("Dish with id " + data.getDishId() + " doesn't exists. Update can't be done");
         } else {
             dbDish = dishRepository.save(data);
         }
         return dbDish;
+    }
+
+    @Override
+    public Dish createOrUpdate(Dish data) {
+        validate(data);
+        Dish result = null;
+        if (data.getDishId() != null) {
+            result = dishRepository.findById(data.getDishId()).orElse(null);
+        } else if (StringUtils.isNotBlank(data.getName())) {
+            result = dishRepository.findByName(data.getName());
+        }
+        if (result != null) {
+            result = save(data);
+        } else {
+            throw new IllegalArgumentException("Dish with id " + data.getDishId() + " and name " + data.getName() + " doesn't exists. Update can't be done");
+        }
+        return result;
     }
 
     @Override
@@ -76,6 +101,13 @@ public class DishesDBService implements DBService<Dish> {
     }
 
     private boolean isValid(Dish dish) {
-        return dish != null && dish.getName().length() > 0 && dish.getProducts().length() > 0;
+        return dish != null && dish.getName().length() > 0 && dish.getProducts().size() > 0;
+    }
+
+    @Transactional
+    public Dish save(Dish productType){
+        Dish merge = em.merge(productType);
+        em.clear();
+        return merge;
     }
 }

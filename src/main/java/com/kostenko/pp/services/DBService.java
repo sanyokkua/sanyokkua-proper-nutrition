@@ -7,6 +7,7 @@ public interface DBService<T> {
     T findById(Long id);
     T create(T data);
     T update(T data);
+    T createOrUpdate(T data);
     Page<T> getAll(PageInfo pageInfo);
     void delete(T data);
 }

@@ -1,7 +1,7 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.entity.Dish;
-import com.kostenko.pp.json.JsonDish;
+import com.kostenko.pp.data.entities.Dish;
+import com.kostenko.pp.json.entities.JsonDishEntity;
 import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import com.kostenko.pp.services.page.ResultPage;
@@ -27,27 +27,27 @@ public class DishesController {
     }
 
     @GetMapping("/dishes")
-    public ResultPage<JsonDish> getDishes(@RequestParam(value = "name", required = false) String name,
-                                          @RequestParam(value = "page", required = false) Integer pageNumber,
-                                          @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+    public ResultPage<JsonDishEntity> getDishes(@RequestParam(value = "name", required = false) String name,
+                                                @RequestParam(value = "page", required = false) Integer pageNumber,
+                                                @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         Map<String, String> params = new HashMap<>();
         params.put(PageInfo.SEARCH_STRING, name);
         PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
         Page<Dish> page = dishDBService.getAll(pageInfo);
-        return ResultPage.getResultPage(page, JsonDish::mapFromDish);
+        return ResultPage.getResultPage(page, JsonDishEntity::mapFromDish);
     }
 
     @PostMapping("/dishes")
     @ResponseBody
-    public Dish createProduct(@RequestBody JsonDish jsonDish) {
+    public Dish createProduct(@RequestBody JsonDishEntity jsonDish) {
         Dish dishFromJson = jsonDish.mapToDish();
         return dishDBService.create(dishFromJson);
     }
 
     @PutMapping("/dishes/{id}")
     @ResponseBody
-    public Dish updateProduct(@PathVariable Long id, @RequestBody JsonDish dish) {
-        if (id.equals(dish.getId())) {
+    public Dish updateProduct(@PathVariable Long id, @RequestBody JsonDishEntity dish) {
+        if (id.equals(dish.getDishId())) {
             Dish dishFromJson = dish.mapToDish();
             return dishDBService.update(dishFromJson);
         } else {

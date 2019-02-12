@@ -71,7 +71,7 @@ class ProductTypes extends React.Component {
                         <tbody>
                         { this.props.productTypes.filter((productType) => productType.name).map((productType) => {
                             return (
-                                <tr key={ productType.id }>
+                                <tr key={ productType.prodTypeId }>
                                     <td>
                                         <Input s={ 3 } onChange={ (event, value) => productType.name = value } defaultValue={ productType.name }/>
                                     </td>

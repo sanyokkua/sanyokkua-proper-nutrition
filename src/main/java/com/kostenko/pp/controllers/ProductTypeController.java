@@ -1,7 +1,7 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.entity.ProductType;
-import com.kostenko.pp.json.JsonProductType;
+import com.kostenko.pp.data.entities.ProductType;
+import com.kostenko.pp.json.entities.JsonProductTypeEntity;
 import com.kostenko.pp.services.food.ProductTypeService;
 import com.kostenko.pp.services.page.PageInfo;
 import com.kostenko.pp.services.page.ResultPage;
@@ -22,10 +22,10 @@ public class ProductTypeController {
     }
 
     @GetMapping("/types")
-    public ResultPage<JsonProductType> getAllProductTypes() {
+    public ResultPage<JsonProductTypeEntity> getAllProductTypes() {
         PageInfo pageInfo = PageInfo.createPageInfo();
         Page<ProductType> page = productTypeService.getAll(pageInfo);
-        return ResultPage.getResultPage(page, JsonProductType::mapFromProductType);
+        return ResultPage.getResultPage(page, JsonProductTypeEntity::mapFromProductType);
     }
 
     @PostMapping("/types")
@@ -37,7 +37,7 @@ public class ProductTypeController {
     @PutMapping("/types/{id}")
     @ResponseBody
     public ProductType updateProductType(@PathVariable Long id, @RequestBody ProductType productType) {
-        if (id.equals(productType.getId())) {
+        if (id.equals(productType.getProdTypeId())) {
             return productTypeService.update(productType);
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");

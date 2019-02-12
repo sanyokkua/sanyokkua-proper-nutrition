@@ -51,7 +51,7 @@ export default class DishService {
 
     updateDish(dish, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/dishes/' + dish.id, dish, {headers: {[this.header]: this.token}})
+        axios.put('/dishes/' + dish.dishId, dish, {headers: {[this.header]: this.token}})
              .then(() => {
                  success();
              })
@@ -60,7 +60,7 @@ export default class DishService {
 
     deleteDish(dish, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/dishes/' + dish.id, {
+        axios.delete('/dishes/' + dish.dishId, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {

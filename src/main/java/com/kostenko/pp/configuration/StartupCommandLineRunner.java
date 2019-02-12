@@ -1,7 +1,7 @@
 package com.kostenko.pp.configuration;
 
-import com.kostenko.pp.data.entity.Role;
-import com.kostenko.pp.data.entity.User;
+import com.kostenko.pp.data.entities.Role;
+import com.kostenko.pp.data.entities.AppUser;
 import com.kostenko.pp.data.repositories.users.RoleRepository;
 import com.kostenko.pp.data.repositories.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +19,12 @@ import java.util.Objects;
 public class StartupCommandLineRunner implements CommandLineRunner {
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    @Value("${admin.user.login}")
-    public String adminUserLogin;
-    @Value("${admin.user.pass}")
-    public String adminUserPass;
-    @Value("${admin.user.email}")
-    public String adminUserEmail;
+//    @Value("${admin.user.login}")
+//    public String adminUserLogin;
+//    @Value("${admin.user.pass}")
+//    public String adminUserPass;
+//    @Value("${admin.user.email}")
+//    public String adminUserEmail;
 
     @Autowired
     public StartupCommandLineRunner(RoleRepository roleRepository, UserRepository userRepository) {
@@ -34,24 +34,24 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        UserRoles.getAllRoles().stream()
-                 .map(userRoles -> new Role(userRoles.getId(), userRoles.getRoleName()))
-                 .filter(role -> !roleRepository.findById(role.getId()).isPresent())
-                 .forEach(roleRepository::save);
-        User admin = new User.UserBuilder()
-                .setId(0)
-                .setLogin(adminUserLogin)
-                .setPassword(adminUserPass)
-                .setEmail(adminUserEmail)
-                .build();
-        User byLogin = userRepository.findByLogin(adminUserLogin);
-        User byEmail = userRepository.findByEmail(adminUserEmail);
-        log.debug("Created user: ", admin.toString());
-        if (Objects.nonNull(byLogin) && Objects.nonNull(byEmail) && !byLogin.equals(byEmail)) {
-            log.error("Default admin user is already exists and login or email is not equal to them from properties");
-        } else if (Objects.isNull(byLogin) && Objects.isNull(byEmail)) {
-            userRepository.save(admin);
-            log.info("Created default admin user");
-        }
+//        UserRoles.getAllRoles().stream()
+//                 .map(userRoles -> new Role(userRoles.getId(), userRoles.getRoleName()))
+//                 .filter(role -> !roleRepository.findById(role.getId()).isPresent())
+//                 .forEach(roleRepository::save);
+//        User admin = new User.UserBuilder()
+//                .setId(0)
+//                .setLogin(adminUserLogin)
+//                .setPassword(adminUserPass)
+//                .setEmail(adminUserEmail)
+//                .build();
+//        User byLogin = userRepository.findByLogin(adminUserLogin);
+//        User byEmail = userRepository.findByEmail(adminUserEmail);
+//        log.debug("Created user: ", admin.toString());
+//        if (Objects.nonNull(byLogin) && Objects.nonNull(byEmail) && !byLogin.equals(byEmail)) {
+//            log.error("Default admin user is already exists and login or email is not equal to them from properties");
+//        } else if (Objects.isNull(byLogin) && Objects.isNull(byEmail)) {
+//            userRepository.save(admin);
+//            log.info("Created default admin user");
+//        }
     }
 }

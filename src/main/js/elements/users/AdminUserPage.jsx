@@ -5,7 +5,6 @@ import PropTypes                            from "prop-types";
 class AdminUserPage extends React.Component {
     constructor(props) {
         super(props);
-        this.id = 0;
         this.onPageChange = this.onPageChange.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onDelete = this.onDelete.bind(this);

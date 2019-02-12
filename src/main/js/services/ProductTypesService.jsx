@@ -20,7 +20,7 @@ export default class ProductTypesService {
         Utils.checkDefaultCallbacks(success, fail);
         axios.get('/types')
              .then(response => {
-                 let types = [{id: 0, name: ''}];
+                 let types = [{prodTypeId: 0, name: ''}];//
                  success(types.concat(response.data.content));
              })
              .catch(error => fail(error));
@@ -28,7 +28,7 @@ export default class ProductTypesService {
 
     updateProductType(productType, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/types/' + productType.id, productType, {headers: {[this.header]: this.token}})
+        axios.put('/types/' + productType.prodTypeId, productType, {headers: {[this.header]: this.token}})
              .then(() => {
                  success();
              })
@@ -37,7 +37,7 @@ export default class ProductTypesService {
 
     deleteProductType(productType, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/types/' + productType.id, {
+        axios.delete('/types/' + productType.prodTypeId, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {
