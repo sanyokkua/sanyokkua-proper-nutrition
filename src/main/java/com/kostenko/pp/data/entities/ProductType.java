@@ -30,6 +30,9 @@ public class ProductType {
     }
 
     public void addProduct(Product product) {
+        if (product==null){
+            products = new HashSet<>();
+        }
         products.add(product);
         product.setProductType(this);
     }

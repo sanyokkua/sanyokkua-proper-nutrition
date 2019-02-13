@@ -34,11 +34,17 @@ public class Dish {
     }
 
     public void addProduct(Product product) {
+        if (product==null){
+            products = new HashSet<>();
+        }
         products.add(product);
         product.getDishes().add(this);
     }
 
     public void removeProduct(Product product) {
+        if (product==null){
+            products = new HashSet<>();
+        }
         products.remove(product);
         product.getDishes().remove(this);
     }

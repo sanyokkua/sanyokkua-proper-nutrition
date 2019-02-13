@@ -1,10 +1,12 @@
 package com.kostenko.pp.controllers;
 
+import com.kostenko.pp.data.RequestInfo;
 import com.kostenko.pp.data.entities.Product;
+import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
+import com.kostenko.pp.data.services.ProductCrudService;
 import com.kostenko.pp.json.entities.JsonProductEntity;
 import com.kostenko.pp.services.DBService;
-import com.kostenko.pp.services.page.PageInfo;
 import com.kostenko.pp.services.page.ResultPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,17 +14,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @RestController
 public class ProductsController {
+    private final ProductCrudService productCrudService;
     private final ProductTypeRepository productTypeRepository;
     private final DBService<Product> productDBService;
 
     @Autowired
-    public ProductsController(ProductTypeRepository productTypeRepository, @Qualifier("ProductDBService") DBService<Product> productDBService) {
+    public ProductsController(ProductCrudService productCrudService, ProductTypeRepository productTypeRepository, @Qualifier("ProductDBService") DBService<Product> productDBService) {
+        this.productCrudService = Objects.requireNonNull(productCrudService);
         this.productDBService = Objects.requireNonNull(productDBService, "Instead of ProductDBService instance injected null");
         this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
     }
@@ -32,13 +34,9 @@ public class ProductsController {
                                                             @RequestParam(value = "page", required = false) Integer pageNumber,
                                                             @RequestParam(value = "currentType", required = false) Long currentType,
                                                             @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
-        Map<String, String> params = new HashMap<>();
-        params.put(PageInfo.SEARCH_STRING, name);
-        params.put(PageInfo.TYPE_ID, String.valueOf(currentType));
-
-        PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
-        Page<Product> page = productDBService.getAll(pageInfo);
-
+        ProductType productType = productTypeRepository.findById(currentType).orElse(null);
+        RequestInfo requestInfo = RequestInfo.builder().search(name).uiPageNumber(pageNumber).productType(productType).recordsPerPage(numberOfRecords).build();
+        Page<Product> page = productCrudService.getAll(requestInfo);
         return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(product, productTypeRepository));
     }
 

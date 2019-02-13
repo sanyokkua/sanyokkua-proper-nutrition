@@ -52,11 +52,17 @@ public class AppUser {
     }
 
     public void addDish(@Nonnull Dish dish) {
+        if (dishes==null){
+            dishes = new HashSet<>();
+        }
         dishes.add(Objects.requireNonNull(dish));
         dish.getAppUsers().add(this);
     }
 
     public void removeDish(@Nonnull Dish dish) {
+        if (dishes==null){
+            dishes = new HashSet<>();
+        }
         dishes.remove(Objects.requireNonNull(dish));
         dish.getAppUsers().remove(this);
     }
