@@ -23,10 +23,10 @@ public class Dish {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "dishes")
+    @ManyToMany(mappedBy = "dishes", fetch = FetchType.EAGER)
     private Set<AppUser> appUsers = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "dish_products", joinColumns = @JoinColumn(name = "dish_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     private Set<Product> products = new HashSet<>();
 
@@ -34,17 +34,11 @@ public class Dish {
     }
 
     public void addProduct(Product product) {
-        if (product==null){
-            products = new HashSet<>();
-        }
         products.add(product);
         product.getDishes().add(this);
     }
 
     public void removeProduct(Product product) {
-        if (product==null){
-            products = new HashSet<>();
-        }
         products.remove(product);
         product.getDishes().remove(this);
     }

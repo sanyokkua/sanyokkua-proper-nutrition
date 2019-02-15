@@ -12,4 +12,7 @@ public interface ProductJpaRepository extends JpaRepository<Product, Long> {
     Page<Product> findAllByProductType(Pageable pageable, ProductType productType);
     Page<Product> findAllByNameIsContainingAndProductType(Pageable pageable, String name, ProductType productType);
 
+    
+    void createProduct(String name, Double energy, Long amount, Long prod_type_id);
+
 }

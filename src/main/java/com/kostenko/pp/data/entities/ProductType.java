@@ -3,6 +3,8 @@ package com.kostenko.pp.data.entities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -23,16 +25,13 @@ public class ProductType {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productType", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productType", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Product> products = new HashSet<>();
 
     public ProductType() {
     }
 
     public void addProduct(Product product) {
-        if (product==null){
-            products = new HashSet<>();
-        }
         products.add(product);
         product.setProductType(this);
     }
@@ -40,5 +39,22 @@ public class ProductType {
     public void removeProduct(Product product) {
         products.remove(product);
         product.setProductType(null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProductType that = (ProductType) o;
+        return new EqualsBuilder().append(name, that.name).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(name).toHashCode();
     }
 }

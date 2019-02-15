@@ -13,20 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Slf4j
 @Service
-@org.springframework.transaction.annotation.Transactional
 public class ProductTypeService implements DBService<ProductType> {
     private final ProductTypeRepository productTypeRepository;
     private final ProductRepository productRepository;
-
-    @PersistenceContext
-    private EntityManager em;
 
     @Autowired
     public ProductTypeService(ProductTypeRepository productTypeRepository, ProductRepository productRepository) {
@@ -98,10 +91,7 @@ public class ProductTypeService implements DBService<ProductType> {
         }
     }
 
-    @Transactional
     public ProductType save(ProductType productType){
-        ProductType merge = em.merge(productType);
-        em.clear();
-        return merge;
+        return productTypeRepository.save(productType);
     }
 }

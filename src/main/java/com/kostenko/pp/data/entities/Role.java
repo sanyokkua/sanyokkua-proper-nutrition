@@ -25,24 +25,18 @@ public class Role {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "role", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<AppUser> appUsers = new HashSet<>();
 
     public Role() {
     }
 
     public void addUser(@Nonnull AppUser appUser) {
-        if (appUsers==null){
-            appUsers = new HashSet<>();
-        }
         this.appUsers.add(Objects.requireNonNull(appUser));
         appUser.setRole(this);
     }
 
     public void removeUser(@Nonnull AppUser appUser) {
-        if (appUsers==null){
-            appUsers = new HashSet<>();
-        }
         this.appUsers.remove(Objects.requireNonNull(appUser));
         appUser.setRole(null);
     }

@@ -25,24 +25,18 @@ public class Gender {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gender", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gender", orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<AppUser> appUsers = new HashSet<>();
 
     public Gender() {
     }
 
     public void addUser(@Nonnull AppUser appUser) {
-        if (appUsers==null){
-            appUsers = new HashSet<>();
-        }
         this.appUsers.add(Objects.requireNonNull(appUser));
         appUser.setGender(this);
     }
 
     public void removeUser(@Nonnull AppUser appUser) {
-        if (appUsers==null){
-            appUsers = new HashSet<>();
-        }
         this.appUsers.remove(Objects.requireNonNull(appUser));
         appUser.setGender(null);
     }
