@@ -12,10 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.Objects;
 
@@ -25,9 +21,6 @@ public class ProductCrudService {
     private final ProductJpaRepository productJpaRepository;
     private final ProductTypeJpaRepository productTypeJpaRepository;
     private final ProductTypeCrudService productTypeCrudService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     public ProductCrudService(ProductJpaRepository productJpaRepository, ProductTypeJpaRepository productTypeJpaRepository, ProductTypeCrudService productTypeCrudService) {
@@ -74,40 +67,30 @@ public class ProductCrudService {
                 && product.getProductType() != null;
     }
 
-    @Transactional
     protected Product create(Product product) {
-        Product fromDb = null;
-        ProductType productType = product.getProductType();
-        ProductType productTypeFromDb;
-        if (!productTypeJpaRepository.existsByName(productType.getName())) {
-            productTypeFromDb = productTypeCrudService.createOrUpdateProductType(productType);
+        Product productFromDatabase = productJpaRepository.findByName(product.getName());
+        if (Objects.isNull(productFromDatabase)) {
+            ProductType productType = product.getProductType();
+            ProductType productTypeFromDatabase;
+            if (!productTypeJpaRepository.existsByName(productType.getName())) {
+                productTypeFromDatabase = productTypeCrudService.createOrUpdateProductType(productType);
+            } else {
+                productTypeFromDatabase = productTypeCrudService.getProductTypeByName(productType.getName());
+            }
+            product.setProductType(productTypeFromDatabase);
+            productJpaRepository.save(product);
         } else {
-            productTypeFromDb = productTypeCrudService.getProductTypeByName(productType.getName());
+            log.warn("Product already exists. product to save {}", product);
         }
-        //long id = ((Number) entityManager.createNativeQuery("select prodIdSequence.nextval from prod_id_sequence").getSingleResult()).longValue();
-        //Query nativeQuery = entityManager.createNativeQuery("insert into product (energy, name, prod_type_id, product_id) values (:energy,:name,:prod_type_id, prod_id_sequence.nextval)");
-        //nativeQuery.setParameter("energy", product.getEnergy());
-        //nativeQuery.setParameter("name", product.getName());
-        //nativeQuery.setParameter("prod_type_id", productTypeFromDb.getProdTypeId());
-//        nativeQuery.setParameter("id", id);
-        //nativeQuery.executeUpdate();
-        product.setProductType(productTypeFromDb);
-//        EntityTransaction transaction = entityManager.getTransaction();
-//        transaction.begin();
-//        transaction.commit();
-        //productTypeFromDb.addProduct(product);
-        //productTypeJpaRepository.save(productTypeFromDb);
-        fromDb = productJpaRepository.findByName(product.getName());
-        return fromDb;
+        return productJpaRepository.findByName(product.getName());
     }
 
     private Product update(Product product) {
-        Product fromDb = productJpaRepository.getOne(product.getProductId());
-        fromDb.setProductType(product.getProductType());
-        fromDb.setAmount(product.getAmount());
-        fromDb.setEnergy(product.getEnergy());
-        fromDb.setName(product.getName());
-        return productJpaRepository.save(fromDb);
+        if (!Objects.isNull(product) && !Objects.isNull(product.getProductId())) {
+            return productJpaRepository.save(product);
+        } else {
+            throw new IllegalArgumentException("Product is incorrect: " + product);
+        }
     }
 
     public void deleteProduct(Product product) {

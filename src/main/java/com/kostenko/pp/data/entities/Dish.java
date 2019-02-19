@@ -13,10 +13,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@SequenceGenerator(schema = "pp_app", name = "dish_id_generator", sequenceName = "dish_id_generator", allocationSize = 10)
+@Table(schema = "pp_app", name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Dish {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "dish_id_generator")
     @Column(name = "dish_id", nullable = false)
     private Long dishId;
     @NaturalId
@@ -27,7 +28,7 @@ public class Dish {
     private Set<AppUser> appUsers = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    @JoinTable(name = "dish_products", joinColumns = @JoinColumn(name = "dish_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
+    @JoinTable(schema = "pp_app", name = "dish_products", joinColumns = @JoinColumn(name = "dish_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     private Set<Product> products = new HashSet<>();
 
     public Dish() {

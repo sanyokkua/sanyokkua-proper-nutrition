@@ -15,10 +15,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "appuser", uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
+@SequenceGenerator(schema = "pp_app", name = "user_id_generator", sequenceName = "user_id_generator", allocationSize = 10)
+@Table(schema = "pp_app", name = "appuser", uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
 public class AppUser {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "user_id_generator")
     @Column(name = "user_id", nullable = false)
     private Long userId;
     @NaturalId
@@ -45,7 +46,7 @@ public class AppUser {
     private Role role;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "user_dishes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "dish_id"))
+    @JoinTable(schema = "pp_app", name = "user_dishes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "dish_id"))
     private Set<Dish> dishes = new HashSet<>();
 
     public AppUser() {

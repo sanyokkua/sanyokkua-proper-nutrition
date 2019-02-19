@@ -15,10 +15,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "role", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@SequenceGenerator(schema = "pp_app", name = "role_type_id_generator", sequenceName = "role_type_id_generator", allocationSize = 10)
+@Table(schema = "pp_app", name = "role", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Role {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "role_type_id_generator")
     @Column(name = "role_id", nullable = false)
     private Long roleId;
     @NaturalId

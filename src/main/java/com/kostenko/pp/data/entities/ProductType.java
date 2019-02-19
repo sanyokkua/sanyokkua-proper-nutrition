@@ -3,8 +3,7 @@ package com.kostenko.pp.data.entities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -12,20 +11,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "prod_type", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@SequenceGenerator(schema = "pp_app", name = "prod_type_id_generator", sequenceName = "prod_type_id_generator", allocationSize = 10)
+@Table(schema = "pp_app", name = "prod_type", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class ProductType {
+    @EqualsAndHashCode.Exclude
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "prod_type_id_generator")
     @Column(name = "prod_type_id", nullable = false)
     private Long prodTypeId;
+    @EqualsAndHashCode.Include
     @NaturalId
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productType", orphanRemoval = true, fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productType", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();
 
     public ProductType() {
@@ -39,22 +43,5 @@ public class ProductType {
     public void removeProduct(Product product) {
         products.remove(product);
         product.setProductType(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ProductType that = (ProductType) o;
-        return new EqualsBuilder().append(name, that.name).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(name).toHashCode();
     }
 }

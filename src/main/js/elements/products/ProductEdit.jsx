@@ -38,12 +38,13 @@ class ProductEdit extends React.Component {
     onTypeEdit(typeId) {
         if (typeId) {
             let currentProduct = this.state.product;
-            currentProduct.typeId = typeId;
+            currentProduct.productType.prodTypeId = typeId;
             this.setState({product: currentProduct})
         }
     }
 
     render() {
+        const defValue = this.state.product && this.state.product.productType && this.state.product.productType.prodTypeId ? this.state.product.productType.prodTypeId : null;
         return <Modal fixedFooter header={ this.props.editorHeader } trigger={ this.props.modalTrigger } actions={
             <div>
                 <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.props.editorHeader }</Button>
@@ -53,7 +54,7 @@ class ProductEdit extends React.Component {
             <Row>
                 <Input s={ 3 } label={ this.props.text.products.modalEditProductInputName } onChange={ this.onEditName } defaultValue={ this.state.product.name }/>
                 <Input s={ 3 } type="number" min="0" onChange={ this.onEditEnergy } label={ this.props.text.products.modalEditProductInputEnergy } defaultValue={ this.state.product.energy }/>
-                <ProductTypeSelect text={ this.props.text } valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={ this.state.product.typeId }/>
+                <ProductTypeSelect text={ this.props.text } valuesList={ this.props.typesList } onValueSelected={ this.onTypeEdit } defaultValue={ defValue }/>
             </Row>
         </Modal>
     }

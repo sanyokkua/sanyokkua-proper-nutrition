@@ -3,8 +3,7 @@ package com.kostenko.pp.data.entities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -12,56 +11,39 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @Entity
-@Table(name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@SequenceGenerator(schema = "pp_app", name = "product_id_generator", sequenceName = "product_id_generator", allocationSize = 10)
+@Table(schema = "pp_app", name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product {
 
+    @EqualsAndHashCode.Exclude
     @Id
-    @GeneratedValue(generator = "prodIdSequence")
-    @SequenceGenerator(name = "prodIdSequence", sequenceName = "prodIdSequence", allocationSize = 1)
+    @GeneratedValue(generator = "product_id_generator")
     @Column(name = "product_id", nullable = false)
     private Long productId;
+    @EqualsAndHashCode.Include
     @NaturalId
     @Column(name = "name", nullable = false)
     private String name;
+    @EqualsAndHashCode.Include
     @Column(name = "energy", nullable = false)
     private Double energy;
+    @EqualsAndHashCode.Exclude
     @Column(name = "amount")
     private Long amount;
 
+    @EqualsAndHashCode.Exclude
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "prod_type_id")
     private ProductType productType;
 
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "products")
     private Set<Dish> dishes = new HashSet<>();
 
     public Product() {
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(name)
-                .toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Product product = (Product) o;
-
-        return new EqualsBuilder()
-                .append(name, product.name)
-                .isEquals();
     }
 }

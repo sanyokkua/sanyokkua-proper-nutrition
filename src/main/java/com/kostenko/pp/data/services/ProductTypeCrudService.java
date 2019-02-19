@@ -35,7 +35,7 @@ public class ProductTypeCrudService {
         if (StringUtils.isBlank(productType.getName())) {
             throw new IllegalArgumentException("Given ProductType has blank name");
         }
-        ProductType fromDb = null;
+        ProductType fromDb;
         if (!Objects.isNull(productType.getProdTypeId())) {
             if (productTypeJpaRepository.existsById(productType.getProdTypeId())) {
                 fromDb = productTypeJpaRepository.getOne(productType.getProdTypeId());
