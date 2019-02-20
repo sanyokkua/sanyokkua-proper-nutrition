@@ -3,7 +3,6 @@ package com.kostenko.pp.controllers;
 import com.kostenko.pp.data.entities.Product;
 import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.services.ProductCrudService;
-import com.kostenko.pp.data.services.ProductTypeCrudService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -22,12 +21,10 @@ import java.util.Objects;
 @Controller
 @Slf4j
 public class ProductCsvController {
-    private final ProductTypeCrudService productTypeService;
     private final ProductCrudService productsService;
 
     @Autowired
-    public ProductCsvController(ProductTypeCrudService productTypeService, ProductCrudService productsService) {
-        this.productTypeService = Objects.requireNonNull(productTypeService);
+    public ProductCsvController(ProductCrudService productsService) {
         this.productsService = Objects.requireNonNull(productsService);
     }
 

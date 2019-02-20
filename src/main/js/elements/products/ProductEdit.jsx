@@ -38,7 +38,7 @@ class ProductEdit extends React.Component {
     onTypeEdit(typeId) {
         if (typeId) {
             let currentProduct = this.state.product;
-            currentProduct.productType.prodTypeId = typeId;
+            currentProduct.productType = typeId;
             this.setState({product: currentProduct})
         }
     }

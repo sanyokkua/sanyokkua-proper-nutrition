@@ -4,7 +4,8 @@ import com.kostenko.pp.data.RequestInfo;
 import com.kostenko.pp.data.entities.Product;
 import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.repositories.food.ProductJpaRepository;
-import com.kostenko.pp.data.repositories.food.ProductTypeJpaRepository;
+import com.kostenko.pp.data.repositories.jdbc.ProductRepository;
+import com.kostenko.pp.data.repositories.jdbc.ProductTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +19,22 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class ProductCrudService {
+    private final ProductRepository productRepository;
+    private final ProductTypeRepository productTypeRepository;
     private final ProductJpaRepository productJpaRepository;
-    private final ProductTypeJpaRepository productTypeJpaRepository;
-    private final ProductTypeCrudService productTypeCrudService;
 
     @Autowired
-    public ProductCrudService(ProductJpaRepository productJpaRepository, ProductTypeJpaRepository productTypeJpaRepository, ProductTypeCrudService productTypeCrudService) {
+    public ProductCrudService(ProductRepository productRepository, ProductTypeRepository productTypeRepository, ProductJpaRepository productJpaRepository) {
+        this.productRepository = Objects.requireNonNull(productRepository);
+        this.productTypeRepository = Objects.requireNonNull(productTypeRepository);
         this.productJpaRepository = Objects.requireNonNull(productJpaRepository);
-        this.productTypeJpaRepository = Objects.requireNonNull(productTypeJpaRepository);
-        this.productTypeCrudService = Objects.requireNonNull(productTypeCrudService);
     }
 
     public Product getProductByName(String name) {
         if (StringUtils.isBlank(name)) {
             throw new IllegalArgumentException("Product name is empty");
         }
-        Product founded = productJpaRepository.findByName(name);
+        Product founded = productRepository.findByUniqueField(name).orElse(null);
         if (founded == null) {
             throw new IllegalArgumentException("For product name: '" + name + "' nothing found");
         }
@@ -42,7 +43,7 @@ public class ProductCrudService {
 
     public Product getProductById(Long id) {
         Objects.requireNonNull(id, "Product id is null");
-        return productJpaRepository.getOne(id);
+        return productRepository.findById(id).orElse(null);
     }
 
     @Transactional
@@ -68,26 +69,26 @@ public class ProductCrudService {
     }
 
     protected Product create(Product product) {
-        Product productFromDatabase = productJpaRepository.findByName(product.getName());
+        Product productFromDatabase = productRepository.findByUniqueField(product.getName()).orElse(null);
         if (Objects.isNull(productFromDatabase)) {
             ProductType productType = product.getProductType();
             ProductType productTypeFromDatabase;
-            if (!productTypeJpaRepository.existsByName(productType.getName())) {
-                productTypeFromDatabase = productTypeCrudService.createOrUpdateProductType(productType);
+            if (!productTypeRepository.isExists(productType)) {
+                productTypeFromDatabase = productTypeRepository.create(productType).orElse(null);
             } else {
-                productTypeFromDatabase = productTypeCrudService.getProductTypeByName(productType.getName());
+                productTypeFromDatabase = productTypeRepository.findByUniqueField(productType.getName()).orElse(null);
             }
             product.setProductType(productTypeFromDatabase);
-            productJpaRepository.save(product);
+            productRepository.create(product);
         } else {
             log.warn("Product already exists. product to save {}", product);
         }
-        return productJpaRepository.findByName(product.getName());
+        return productRepository.findByUniqueField(product.getName()).orElse(null);
     }
 
     private Product update(Product product) {
         if (!Objects.isNull(product) && !Objects.isNull(product.getProductId())) {
-            return productJpaRepository.save(product);
+            return productRepository.update(product).orElse(null);
         } else {
             throw new IllegalArgumentException("Product is incorrect: " + product);
         }
@@ -97,7 +98,7 @@ public class ProductCrudService {
         if (product == null || product.getProductId() == null) {
             throw new IllegalArgumentException("Product is not valid");
         }
-        productJpaRepository.deleteById(product.getProductId());
+        productRepository.deleteById(product.getProductId());
     }
 
     public Page<Product> getAll(RequestInfo pageInfo) {

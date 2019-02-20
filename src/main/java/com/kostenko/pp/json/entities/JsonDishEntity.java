@@ -43,7 +43,6 @@ public class JsonDishEntity {
                                                                         .productId(jsonDishProduct.getProductId())
                                                                         .name(jsonDishProduct.getName())
                                                                         .energy(jsonDishProduct.getEnergy())
-                                                                        .amount(jsonDishProduct.getAmount())
                                                                         .productType(jsonDishProduct.getProductType().mapToProductType())
                                                                         .build())
                                          .collect(Collectors.toSet());

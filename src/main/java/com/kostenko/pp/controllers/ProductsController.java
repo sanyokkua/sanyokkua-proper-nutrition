@@ -3,7 +3,7 @@ package com.kostenko.pp.controllers;
 import com.kostenko.pp.data.RequestInfo;
 import com.kostenko.pp.data.entities.Product;
 import com.kostenko.pp.data.entities.ProductType;
-import com.kostenko.pp.data.repositories.food.ProductTypeRepository;
+import com.kostenko.pp.data.repositories.food.ProductTypeCrudRepository;
 import com.kostenko.pp.data.services.ProductCrudService;
 import com.kostenko.pp.json.entities.JsonProductEntity;
 import com.kostenko.pp.services.page.ResultPage;
@@ -17,12 +17,12 @@ import java.util.Objects;
 @RestController
 public class ProductsController {
     private final ProductCrudService productCrudService;
-    private final ProductTypeRepository productTypeRepository;
+    private final ProductTypeCrudRepository productTypeCrudRepository;
 
     @Autowired
-    public ProductsController(ProductCrudService productCrudService, ProductTypeRepository productTypeRepository) {
+    public ProductsController(ProductCrudService productCrudService, ProductTypeCrudRepository productTypeCrudRepository) {
         this.productCrudService = Objects.requireNonNull(productCrudService);
-        this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Instead of ProductTypeRepository instance injected null");
+        this.productTypeCrudRepository = Objects.requireNonNull(productTypeCrudRepository, "Instead of ProductTypeRepository instance injected null");
     }
 
     @GetMapping("/products")
@@ -32,13 +32,13 @@ public class ProductsController {
                                                             @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         ProductType productType = null;
         try {
-            productType = productTypeRepository.findById(currentType).orElse(null);
+            productType = productTypeCrudRepository.findById(currentType).orElse(null);
         } catch (Exception ex) {
             productType = null;
         }
         RequestInfo requestInfo = RequestInfo.builder().search(name).uiPageNumber(pageNumber).productType(productType).recordsPerPage(numberOfRecords).build();
         Page<Product> page = productCrudService.getAll(requestInfo);
-        return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(product, productTypeRepository));
+        return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(product, productTypeCrudRepository));
     }
 
     @PostMapping("/products")

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends GeneralRepository<Product>, CrudRepository<Product, Long> {
+public interface ProductCrudRepository extends GeneralRepository<Product>, CrudRepository<Product, Long> {
 
     Product findByNameAndProductType(String name, ProductType typeID);
 

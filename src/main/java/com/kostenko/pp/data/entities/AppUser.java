@@ -15,12 +15,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@SequenceGenerator(schema = "pp_app", name = "user_id_generator", sequenceName = "user_id_generator", allocationSize = 10)
 @Table(schema = "pp_app", name = "appuser", uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
 public class AppUser {
     @Id
-    @GeneratedValue(generator = "user_id_generator")
-    @Column(name = "user_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false, columnDefinition = "serial")
     private Long userId;
     @NaturalId
     @Column(name = "email", nullable = false)

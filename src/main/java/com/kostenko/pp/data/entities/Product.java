@@ -15,14 +15,13 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@SequenceGenerator(schema = "pp_app", name = "product_id_generator", sequenceName = "product_id_generator", allocationSize = 10)
 @Table(schema = "pp_app", name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product {
 
     @EqualsAndHashCode.Exclude
     @Id
-    @GeneratedValue(generator = "product_id_generator")
-    @Column(name = "product_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_id", nullable = false, columnDefinition = "serial")
     private Long productId;
     @EqualsAndHashCode.Include
     @NaturalId
@@ -31,9 +30,6 @@ public class Product {
     @EqualsAndHashCode.Include
     @Column(name = "energy", nullable = false)
     private Double energy;
-    @EqualsAndHashCode.Exclude
-    @Column(name = "amount")
-    private Long amount;
 
     @EqualsAndHashCode.Exclude
     @ManyToOne(cascade = CascadeType.ALL)

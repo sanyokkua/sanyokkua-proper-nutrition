@@ -15,13 +15,12 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@SequenceGenerator(schema = "pp_app", name = "prod_type_id_generator", sequenceName = "prod_type_id_generator", allocationSize = 10)
 @Table(schema = "pp_app", name = "prod_type", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class ProductType {
     @EqualsAndHashCode.Exclude
     @Id
-    @GeneratedValue(generator = "prod_type_id_generator")
-    @Column(name = "prod_type_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "prod_type_id", nullable = false, columnDefinition = "serial")
     private Long prodTypeId;
     @EqualsAndHashCode.Include
     @NaturalId

@@ -13,7 +13,8 @@ class ProductTypeSelect extends React.Component {
     }
 
     onChange(event, value) {
-        this.props.onValueSelected(value);
+        let filter = this.props.valuesList.filter(type => type.prodTypeId === Number(value));
+        this.props.onValueSelected(filter.pop());
     }
 
     render() {

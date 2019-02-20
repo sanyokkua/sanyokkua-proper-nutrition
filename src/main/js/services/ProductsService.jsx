@@ -24,7 +24,7 @@ export default class ProductsService {
                  params: {
                      page: loadParams.currentPage,
                      name: loadParams.search,
-                     currentType: loadParams.currentType,
+                     currentType: loadParams.currentType.prodTypeId,
                      numberOfRecords: loadParams.numberOfRecords
                  }
              })

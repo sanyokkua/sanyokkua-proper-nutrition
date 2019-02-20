@@ -13,12 +13,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @Entity
-@SequenceGenerator(schema = "pp_app", name = "dish_id_generator", sequenceName = "dish_id_generator", allocationSize = 10)
 @Table(schema = "pp_app", name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Dish {
     @Id
-    @GeneratedValue(generator = "dish_id_generator")
-    @Column(name = "dish_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "dish_id", nullable = false, columnDefinition = "serial")
     private Long dishId;
     @NaturalId
     @Column(name = "name", nullable = false)
