@@ -15,7 +15,7 @@ public class ResultPage<T> {
     private int totalPages;
     private List<T> content;
 
-    private ResultPage(int currentPage, int totalPages, List<T> content) {
+    public ResultPage(int currentPage, int totalPages, List<T> content) {
         this.currentPage = currentPage;
         this.totalPages = totalPages;
         this.content = content;

@@ -32,18 +32,18 @@ public class ProductTypeRepository implements JdbcRepository<ProductType> {
 
     @Override
     public Optional<ProductType> findById(@Nonnull @NonNull Long id) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.prod_type_id = ?", ROW_MAPPER, id));
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.prod_type_id = ?", ROW_MAPPER, id));
     }
 
     @Override
     public Optional<ProductType> findByUniqueField(@NotBlank String fieldValue) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.name = ?", ROW_MAPPER, fieldValue));
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.name = ?", ROW_MAPPER, fieldValue));
 
     }
 
     @Override
     public Optional<ProductType> findByCustomQuery(@NotBlank String query) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject(query, ROW_MAPPER));
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(query, ROW_MAPPER));
     }
 
     @Override

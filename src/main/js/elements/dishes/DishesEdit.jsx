@@ -12,7 +12,7 @@ class DishesEdit extends React.Component {
         Utils.checkRequiredProperty(this.props.modalTrigger, "modalTrigger");
         Utils.checkCallback(this.props.onSave, "onSave");
         let currentDish = {
-            id: null,
+            dishId: null,
             name: '',
             products: [],
             totalEnergy: 0
@@ -21,7 +21,7 @@ class DishesEdit extends React.Component {
             currentDish = this.props.dish;
         }
         this.state = {
-            id: currentDish.dishId,
+            dishId: currentDish.dishId,
             name: currentDish.name,
             products: currentDish.products,
             totalEnergy: currentDish.totalEnergy,
@@ -74,7 +74,7 @@ class DishesEdit extends React.Component {
                 products.push(product);
             });
             let dish = {
-                id: this.state.dishId,
+                dishId: this.state.dishId,
                 name: this.state.name,
                 products: products,
                 totalEnergy: this.state.totalEnergy

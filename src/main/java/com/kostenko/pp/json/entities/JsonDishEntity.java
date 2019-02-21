@@ -1,7 +1,6 @@
 package com.kostenko.pp.json.entities;
 
-import com.kostenko.pp.data.entities.Dish;
-import com.kostenko.pp.data.entities.Product;
+import com.kostenko.pp.data.views.Dish;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -22,35 +21,31 @@ public class JsonDishEntity {
     private Set<JsonProductEntity> products;
 
     public static JsonDishEntity mapFromDish(Dish dish) {
-        Set<Product> products = dish.getProducts();
-        Set<JsonProductEntity> productsSet = products.stream()
-                                                     .map(product -> JsonProductEntity
-                                                             .builder()
-                                                             .productId(product.getProductId())
-                                                             .name(product.getName())
-                                                             .energy(product.getEnergy())
-                                                             .productType(JsonProductTypeEntity.mapFromProductType(product.getProductType()))
-                                                             .build()).collect(Collectors.toSet());
-        Long dishId = dish.getDishId();
-        String name = dish.getName();
-        final Double total = productsSet.stream().map(jsonDishProduct -> (jsonDishProduct.getEnergy() / 100) * jsonDishProduct.getAmount()).reduce(Double::sum).orElse(0d);
-        return JsonDishEntity.builder().dishId(dishId).name(name).products(productsSet).energy(total).build();
+        return JsonDishEntity.builder()
+                             .dishId(dish.getDishId())
+                             .name(dish.getName())
+                             .energy(dish.getTotalEnergy())
+                             .products(dish.getProducts().stream()
+                                           .map(JsonProductEntity::mapFromProduct).collect(Collectors.toSet()))
+                             .build();
+
     }
 
     public Dish mapToDish() {
-        Set<Product> resultSet = products.stream()
-                                         .map(jsonDishProduct -> Product.builder()
-                                                                        .productId(jsonDishProduct.getProductId())
-                                                                        .name(jsonDishProduct.getName())
-                                                                        .energy(jsonDishProduct.getEnergy())
-                                                                        .productType(jsonDishProduct.getProductType().mapToProductType())
-                                                                        .build())
-                                         .collect(Collectors.toSet());
         Dish dish;
         if (dishId != null) {
-            dish = Dish.builder().dishId(dishId).name(name).products(resultSet).build();
+            dish = Dish.builder()
+                       .dishId(dishId)
+                       .name(name)
+                       .totalEnergy(energy)
+                       .products(products.stream().map(JsonProductEntity::mapToProduct).collect(Collectors.toList()))
+                       .build();
         } else {
-            dish = Dish.builder().name(name).products(resultSet).build();
+            dish = Dish.builder()
+                        .name(name)
+                        .totalEnergy(energy)
+                        .products(products.stream().map(JsonProductEntity::mapToProduct).collect(Collectors.toList()))
+                        .build();
         }
         return dish;
     }

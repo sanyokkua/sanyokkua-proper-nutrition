@@ -38,7 +38,13 @@ public class ProductsController {
         }
         RequestInfo requestInfo = RequestInfo.builder().search(name).uiPageNumber(pageNumber).productType(productType).recordsPerPage(numberOfRecords).build();
         Page<Product> page = productCrudService.getAll(requestInfo);
-        return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(product, productTypeCrudRepository));
+        return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(com.kostenko.pp.data.views.Product.builder()
+                                                                                                                            .productId(product.getProductId())
+                                                                                                                            .name(product.getName())
+                                                                                                                            .energy(product.getEnergy())
+                                                                                                                            .prodTypeId(product.getProductType().getProdTypeId())
+                                                                                                                            .typeName(product.getProductType().getName())
+                                                                                                                            .build()));
     }
 
     @PostMapping("/products")

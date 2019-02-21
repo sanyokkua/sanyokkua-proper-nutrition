@@ -43,21 +43,21 @@ public class ProductRepository implements JdbcRepository<Product> {
 
     @Override
     public Optional<Product> findById(@Nonnull @NonNull Long id) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                                                                                       "from pp_app.product p, pp_app.prod_type t " +
                                                                                       "where p.product_id = ? and p.prod_type_id = t.prod_type_id", ROW_MAPPER, id));
     }
 
     @Override
     public Optional<Product> findByUniqueField(@NotBlank String fieldValue) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                                                                                       "from pp_app.product p, pp_app.prod_type t " +
                                                                                       "where p.name = ? and p.prod_type_id = t.prod_type_id", ROW_MAPPER, fieldValue));
     }
 
     @Override
     public Optional<Product> findByCustomQuery(@NotBlank String query) {
-        return getNullableResultIfException(() -> jdbcTemplate.queryForObject(query, ROW_MAPPER));
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(query, ROW_MAPPER));
     }
 
     @Override
@@ -118,10 +118,9 @@ public class ProductRepository implements JdbcRepository<Product> {
 
     @Override
     public List<Product> findAll() {
-        List<Product> list = jdbcTemplate.query("select p.product_id, p.name as p_name, p.energy, t.name as t_name " +
+        return jdbcTemplate.query("select p.product_id, p.name as p_name, p.energy, t.name as t_name " +
                                                         "from pp_app.product p, pp_app.prod_type t " +
                                                         "where p.prod_type_id = t.prod_type_id", ROW_MAPPER);
-        return list;
     }
 
     @Override

@@ -1,9 +1,6 @@
 package com.kostenko.pp.data.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -14,6 +11,7 @@ import java.util.Set;
 @EqualsAndHashCode
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(schema = "pp_app", name = "product", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Product {
@@ -37,9 +35,6 @@ public class Product {
     private ProductType productType;
 
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "products")
-    private Set<Dish> dishes = new HashSet<>();
-
-    public Product() {
-    }
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DishProducts> dishes = new HashSet<>();
 }

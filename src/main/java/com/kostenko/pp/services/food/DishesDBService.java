@@ -2,9 +2,7 @@ package com.kostenko.pp.services.food;
 
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entities.Dish;
-import com.kostenko.pp.data.entities.Product;
-import com.kostenko.pp.data.entities.ProductType;
-import com.kostenko.pp.data.repositories.food.DishRepository;
+import com.kostenko.pp.data.repositories.food.DishJpaRepository;
 import com.kostenko.pp.services.DBService;
 import com.kostenko.pp.services.page.PageInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -21,27 +19,27 @@ import java.util.Objects;
 @Service("DishesDBService")
 @org.springframework.transaction.annotation.Transactional
 public class DishesDBService implements DBService<Dish> {
-    private final DishRepository dishRepository;
+    private final DishJpaRepository dishJpaRepository;
     @PersistenceContext
     private EntityManager em;
 
     @Autowired
-    public DishesDBService(DishRepository dishRepository) {
-        this.dishRepository = Objects.requireNonNull(dishRepository, "Instead of DishRepository instance injected null");
+    public DishesDBService(DishJpaRepository dishJpaRepository) {
+        this.dishJpaRepository = Objects.requireNonNull(dishJpaRepository, "Instead of DishRepository instance injected null");
     }
 
     @Override
     public Dish findById(Long id) {
         Preconditions.checkNotNull(id, "ID can't be null");
-        return dishRepository.findById(id).orElse(null);
+        return dishJpaRepository.findById(id).orElse(null);
     }
 
     @Override
     public Dish create(Dish data) {
         validate(data);
-        Dish dbDish = dishRepository.findByName(data.getName());
+        Dish dbDish = dishJpaRepository.findByName(data.getName());
         if (dbDish == null) {
-            dbDish = dishRepository.save(data);
+            dbDish = dishJpaRepository.save(data);
         } else {
             throw new IllegalArgumentException("Dish with name: " + data.getName() + " already exists");
         }
@@ -51,11 +49,11 @@ public class DishesDBService implements DBService<Dish> {
     @Override
     public Dish update(Dish data) {
         validate(data);
-        Dish dbDish = dishRepository.findById(data.getDishId()).orElse(null);
+        Dish dbDish = dishJpaRepository.findById(data.getDishId()).orElse(null);
         if (dbDish == null) {
             throw new IllegalArgumentException("Dish with id " + data.getDishId() + " doesn't exists. Update can't be done");
         } else {
-            dbDish = dishRepository.save(data);
+            dbDish = dishJpaRepository.save(data);
         }
         return dbDish;
     }
@@ -65,9 +63,9 @@ public class DishesDBService implements DBService<Dish> {
         validate(data);
         Dish result = null;
         if (data.getDishId() != null) {
-            result = dishRepository.findById(data.getDishId()).orElse(null);
+            result = dishJpaRepository.findById(data.getDishId()).orElse(null);
         } else if (StringUtils.isNotBlank(data.getName())) {
-            result = dishRepository.findByName(data.getName());
+            result = dishJpaRepository.findByName(data.getName());
         }
         if (result != null) {
             result = save(data);
@@ -81,9 +79,9 @@ public class DishesDBService implements DBService<Dish> {
     public Page<Dish> getAll(PageInfo pageInfo) {
         Page<Dish> page;
         if (StringUtils.isBlank(pageInfo.getParam(PageInfo.SEARCH_STRING))) {
-            page = dishRepository.findAll(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
+            page = dishJpaRepository.findAll(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
         } else {
-            page = dishRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getParam(PageInfo.SEARCH_STRING));
+            page = dishJpaRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getParam(PageInfo.SEARCH_STRING));
         }
         return page;
     }
@@ -91,7 +89,7 @@ public class DishesDBService implements DBService<Dish> {
     @Override
     public void delete(Dish data) {
         validate(data);
-        dishRepository.delete(data);
+        dishJpaRepository.delete(data);
     }
 
     private void validate(Dish dish) {

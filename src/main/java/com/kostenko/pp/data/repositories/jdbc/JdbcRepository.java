@@ -35,7 +35,7 @@ public interface JdbcRepository<T> {
 
     List<T> findAllByCustomQuery(@NotBlank String query);
 
-    default Optional<T> getNullableResultIfException(Supplier<T> supplier) {
+    static <T> Optional<T> getNullableResultIfException(Supplier<T> supplier) {
         T t = null;
         try {
             t = supplier.get();
