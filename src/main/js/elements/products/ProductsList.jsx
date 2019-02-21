@@ -63,7 +63,7 @@ class ProductsList extends React.Component {
                             <tr key={ product.productId } onClick={ () => this.handleRowClick(product) }>
                                 <td>{ product.name }</td>
                                 <td>{ product.energy }</td>
-                                <td>{ product.productType.name }</td>
+                                <td>{ product.typeName }</td>
                                 { this.props.editable ? (
                                     <td>
                                         <ProductEdit text={ this.props.text }

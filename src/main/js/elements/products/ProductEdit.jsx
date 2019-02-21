@@ -32,19 +32,20 @@ class ProductEdit extends React.Component {
     onEditEnergy(event, value) {
         let currentProduct = this.state.product;
         currentProduct.energy = value;
-        this.setState({product: currentProduct})
+        this.setState({product: currentProduct});
     }
 
     onTypeEdit(typeId) {
         if (typeId) {
             let currentProduct = this.state.product;
-            currentProduct.productType = typeId;
-            this.setState({product: currentProduct})
+            currentProduct.prodTypeId = typeId.prodTypeId;
+            currentProduct.typeName = typeId.name;
+            this.setState({product: currentProduct});
         }
     }
 
     render() {
-        const defValue = this.state.product && this.state.product.productType && this.state.product.productType.prodTypeId ? this.state.product.productType.prodTypeId : null;
+        const defValue = this.state.product && this.state.product.prodTypeId && this.state.product.typeName ? this.state.product.prodTypeId : null;
         return <Modal fixedFooter header={ this.props.editorHeader } trigger={ this.props.modalTrigger } actions={
             <div>
                 <Button modal="close" waves="light" className="red darken-2" onClick={ () => this.onConfirmEditButtonClick(this.state.product) }>{ this.props.editorHeader }</Button>

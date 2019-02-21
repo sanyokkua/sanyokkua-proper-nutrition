@@ -55,9 +55,9 @@ public class ProductsController {
 
     @PutMapping("/products/{id}")
     @ResponseBody
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public Product updateProduct(@PathVariable Long id, @RequestBody JsonProductEntity product) {
         if (id.equals(product.getProductId())) {
-            return productCrudService.createOrUpdateProduct(product);
+            return productCrudService.createOrUpdateProduct(product.mapToProduct().map());
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }

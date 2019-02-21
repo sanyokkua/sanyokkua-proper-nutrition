@@ -13,7 +13,8 @@ public class JsonProductEntity {
     private String name;
     private double energy;
     private long amount;
-    private JsonProductTypeEntity productType;
+    private long prodTypeId;
+    private String typeName;
 
     public static JsonProductEntity mapFromProduct(Product product) {
         return JsonProductEntity.builder()
@@ -21,7 +22,8 @@ public class JsonProductEntity {
                                 .name(product.getName())
                                 .energy(product.getEnergy())
                                 .amount(product.getAmount())
-                                .productType(JsonProductTypeEntity.builder().prodTypeId(product.getProdTypeId()).name(product.getTypeName()).build())
+                                .prodTypeId(product.getProdTypeId())
+                                .typeName(product.getTypeName())
                                 .build();
 
     }
@@ -32,8 +34,8 @@ public class JsonProductEntity {
                       .name(name)
                       .energy(energy)
                       .amount(amount)
-                      .prodTypeId(productType.getProdTypeId())
-                      .typeName(productType.getName())
+                      .prodTypeId(prodTypeId)
+                      .typeName(typeName)
                       .build();
     }
 }
