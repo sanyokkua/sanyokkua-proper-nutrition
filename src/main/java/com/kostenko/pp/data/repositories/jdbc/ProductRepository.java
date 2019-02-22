@@ -7,6 +7,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -118,7 +121,7 @@ public class ProductRepository implements JdbcRepository<Product> {
 
     @Override
     public List<Product> findAll() {
-        return jdbcTemplate.query("select p.product_id, p.name as p_name, p.energy, t.name as t_name " +
+        return jdbcTemplate.query("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                                                         "from pp_app.product p, pp_app.prod_type t " +
                                                         "where p.prod_type_id = t.prod_type_id", ROW_MAPPER);
     }
@@ -126,5 +129,63 @@ public class ProductRepository implements JdbcRepository<Product> {
     @Override
     public List<Product> findAllByCustomQuery(@NotBlank String query) {
         throw new NotImplementedException("findAllByCustomQuery is not implemented yet");
+    }
+
+    public Page<Product> findAllByPage(Pageable pageable) {
+        String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+                "from pp_app.product p, pp_app.prod_type t " +
+                "where p.prod_type_id = t.prod_type_id " +
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+        return getProducts(pageable, querySql);
+    }
+
+    private Page<Product> getProducts(Pageable pageable, String querySql) {
+        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER);
+        return new PageImpl<>(demos, pageable, getTotal());
+    }
+
+    private int getTotal() {
+        String countQuery = "select count(1) as row_count from pp_app.product p, pp_app.prod_type t where p.prod_type_id = t.prod_type_id";
+        return jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+    }
+
+    public Page<Product> findAllByNameIsContaining(Pageable pageable, String name){
+        String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+                "from pp_app.product p, pp_app.prod_type t " +
+                "where p.prod_type_id = t.prod_type_id and p.name like '%"+ name +"%' " +
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER);
+        String countQuery = "select count(1) as row_count from pp_app.product p, pp_app.prod_type t where p.prod_type_id = t.prod_type_id and p.name like '%"+ name +"%' ";
+        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+
+        return new PageImpl<>(demos, pageable, total);
+    }
+    public Page<Product> findAllByProductType(Pageable pageable, Long id){
+        String countQuery = "select count(1) as row_count from pp_app.product p, pp_app.prod_type t where p.prod_type_id = t.prod_type_id and p.prod_type_id = ?";
+        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1), id);
+        String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+                "from pp_app.product p, pp_app.prod_type t " +
+                "where p.prod_type_id = t.prod_type_id and p.prod_type_id = ? " +
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER, id);
+        return new PageImpl<>(demos, pageable, total);
+    }
+    public Page<Product> findAllByNameIsContainingAndProductType(Pageable pageable, String name, Long id){
+        String countQuery = "select count(1) as row_count from pp_app.product p, pp_app.prod_type t where p.prod_type_id = t.prod_type_id and p.prod_type_id = ? and p.name like '%"+ name +"%'";
+        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1), id);
+
+        String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
+
+                "from pp_app.product p, pp_app.prod_type t " +
+
+                "where p.prod_type_id = t.prod_type_id and p.name like '%"+ name +"%' and p.prod_type_id = ? " + //TODO: org.postgresql.util.PSQLException: The column index is out of range: 2, number of columns: 1.
+
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER, name, id);
+        return new PageImpl<>(demos, pageable, total);
     }
 }

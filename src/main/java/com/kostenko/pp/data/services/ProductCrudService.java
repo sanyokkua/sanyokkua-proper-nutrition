@@ -21,13 +21,11 @@ import java.util.Objects;
 public class ProductCrudService {
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
-    private final ProductJpaRepository productJpaRepository;
 
     @Autowired
-    public ProductCrudService(ProductRepository productRepository, ProductTypeRepository productTypeRepository, ProductJpaRepository productJpaRepository) {
+    public ProductCrudService(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
         this.productRepository = Objects.requireNonNull(productRepository);
         this.productTypeRepository = Objects.requireNonNull(productTypeRepository);
-        this.productJpaRepository = Objects.requireNonNull(productJpaRepository);
     }
 
     public Product getProductByName(String name) {
@@ -104,13 +102,13 @@ public class ProductCrudService {
     public Page<Product> getAll(RequestInfo pageInfo) {
         Page<Product> result;
         if (pageInfo.isCombinedSearch()) {
-            result = productJpaRepository.findAllByNameIsContainingAndProductType(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getSearch(), pageInfo.getProductType());
+            result = productRepository.findAllByNameIsContainingAndProductType(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getSearch(), pageInfo.getProductType().getProdTypeId());
         } else if (pageInfo.hasProductType()) {
-            result = productJpaRepository.findAllByProductType(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getProductType());
+            result = productRepository.findAllByProductType(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getProductType().getProdTypeId());
         } else if (pageInfo.hasSearch()) {
-            result = productJpaRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getSearch());
+            result = productRepository.findAllByNameIsContaining(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()), pageInfo.getSearch());
         } else {
-            result = productJpaRepository.findAll(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
+            result = productRepository.findAllByPage(PageRequest.of(pageInfo.getDbPageNumber(), pageInfo.getRecordsPerPage()));
         }
         return result;
     }
