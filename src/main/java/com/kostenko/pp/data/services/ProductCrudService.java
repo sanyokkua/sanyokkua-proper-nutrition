@@ -3,7 +3,6 @@ package com.kostenko.pp.data.services;
 import com.kostenko.pp.data.RequestInfo;
 import com.kostenko.pp.data.entities.Product;
 import com.kostenko.pp.data.entities.ProductType;
-import com.kostenko.pp.data.repositories.food.ProductJpaRepository;
 import com.kostenko.pp.data.repositories.jdbc.ProductRepository;
 import com.kostenko.pp.data.repositories.jdbc.ProductTypeRepository;
 import lombok.extern.slf4j.Slf4j;

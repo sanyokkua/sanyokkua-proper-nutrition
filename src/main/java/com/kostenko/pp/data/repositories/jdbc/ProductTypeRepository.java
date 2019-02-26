@@ -37,7 +37,7 @@ public class ProductTypeRepository implements JdbcRepository<ProductType> {
 
     @Override
     public Optional<ProductType> findByUniqueField(@NotBlank String fieldValue) {
-        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.name = ?", ROW_MAPPER, fieldValue));
+        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select * " + "from pp_app.prod_type t " + "where t.name = ?", ROW_MAPPER, fieldValue.toUpperCase()));
 
     }
 
@@ -48,14 +48,14 @@ public class ProductTypeRepository implements JdbcRepository<ProductType> {
 
     @Override
     public Optional<ProductType> create(@Nonnull @NonNull ProductType entity) {
-        jdbcTemplate.update("insert into pp_app.prod_type (name) values (?)", entity.getName());
-        return findByUniqueField(entity.getName());
+        jdbcTemplate.update("insert into pp_app.prod_type (name) values (?)", entity.getName().toUpperCase());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
     public Optional<ProductType> update(@Nonnull @NonNull ProductType entity) {
-        jdbcTemplate.update("update pp_app.prod_type set name=? where prod_type_id=?", entity.getName(), entity.getProdTypeId());
-        return findByUniqueField(entity.getName());
+        jdbcTemplate.update("update pp_app.prod_type set name=? where prod_type_id=?", entity.getName().toUpperCase(), entity.getProdTypeId());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ProductTypeRepository implements JdbcRepository<ProductType> {
 
     @Override
     public boolean isExists(@Nonnull @NonNull ProductType entity) {
-        return findByUniqueField(entity.getName()).isPresent();
+        return findByUniqueField(entity.getName().toUpperCase()).isPresent();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ProductTypeRepository implements JdbcRepository<ProductType> {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ProductType product = batch.get(i);
-                    ps.setString(1, product.getName());
+                    ps.setString(1, product.getName().toUpperCase());
                 }
 
                 @Override

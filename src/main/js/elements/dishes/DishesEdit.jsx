@@ -15,7 +15,7 @@ class DishesEdit extends React.Component {
             dishId: null,
             name: '',
             products: [],
-            totalEnergy: 0
+            energy: 0
         };
         if (this.props.dish) {
             currentDish = this.props.dish;
@@ -24,7 +24,7 @@ class DishesEdit extends React.Component {
             dishId: currentDish.dishId,
             name: currentDish.name,
             products: currentDish.products,
-            totalEnergy: currentDish.totalEnergy,
+            energy: currentDish.energy,
             isReadyForSave: this.isValid()
         };
         this.onDishNameChange = this.onDishNameChange.bind(this);
@@ -45,14 +45,14 @@ class DishesEdit extends React.Component {
             }
             return productInList;
         });
-        let totalEnergy = DishService.calculateTotalEnergy(resultProducts);
-        this.setState({products: resultProducts, totalEnergy: totalEnergy}, this.validate);
+        let energy = DishService.calculateTotalEnergy(resultProducts);
+        this.setState({products: resultProducts, energy: energy}, this.validate);
     }
 
     onProductRemove(product) {
         let filteredProducts = this.state.products.filter(productFromList => productFromList.productId !== product.productId);
-        let totalEnergy = DishService.calculateTotalEnergy(filteredProducts);
-        this.setState({products: filteredProducts, totalEnergy: totalEnergy}, this.validate);
+        let energy = DishService.calculateTotalEnergy(filteredProducts);
+        this.setState({products: filteredProducts, energy: energy}, this.validate);
     }
 
     onProductSelect(product) {
@@ -60,8 +60,8 @@ class DishesEdit extends React.Component {
         if (filteredProducts.length === 0) {
             let selectedProducts = this.state.products;
             selectedProducts.push(product);
-            let totalEnergy = DishService.calculateTotalEnergy(selectedProducts);
-            this.setState({products: selectedProducts, totalEnergy: totalEnergy}, this.validate);
+            let energy = DishService.calculateTotalEnergy(selectedProducts);
+            this.setState({products: selectedProducts, energy: energy}, this.validate);
         } else {
             window.Materialize.toast("Already in list: " + product.name, 1000);
         }
@@ -77,7 +77,7 @@ class DishesEdit extends React.Component {
                 dishId: this.state.dishId,
                 name: this.state.name,
                 products: products,
-                totalEnergy: this.state.totalEnergy
+                energy: this.state.energy
             };
             this.props.onSave(dish);
         } else {
@@ -108,7 +108,7 @@ class DishesEdit extends React.Component {
             <CardPanel className="white black-text z-depth-4">
                 <Row>
                     <Col s={ 6 }>
-                        <Row><Col s={ 12 }><h3>{ this.props.text.dishes.modalEditTotalEnergyText }{ this.state.totalEnergy }</h3></Col> </Row>
+                        <Row><Col s={ 12 }><h3>{ this.props.text.dishes.modalEditTotalEnergyText }{ this.state.energy }</h3></Col> </Row>
                         <Row>
                             <Col s={ 6 }>
                                 <Input required

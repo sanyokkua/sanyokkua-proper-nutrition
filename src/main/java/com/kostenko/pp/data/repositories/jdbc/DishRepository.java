@@ -34,14 +34,15 @@ public class DishRepository implements JdbcRepository<Dish> {
                                                                                               .prodTypeId(resultSet.getLong("prod_type_id"))
                                                                                               .typeName(resultSet.getString("prod_type"))
                                                                                               .build();
-    private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Dish> ROW_MAPPER_FOR_DISH_WITH_PRODUCTS = (resultSet, i) -> {
         Dish dish = Dish.builder().dishId(resultSet.getLong("dish_id")).name(resultSet.getString("name")).build();
         Optional<List<Product>> allProductsForDish = findAllProductsForDish(dish.getDishId());
         List<Product> products = allProductsForDish.orElse(Lists.newArrayList());
         dish.setProducts(products);
+        dish.setTotalEnergy(products.stream().filter(product -> product.getAmount()>0).map(product -> product.getEnergy() * (((double) product.getAmount()) / 100d)).reduce(Double::sum).orElse(0d));
         return dish;
     };
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public DishRepository(JdbcTemplate jdbcTemplate) {
@@ -49,7 +50,7 @@ public class DishRepository implements JdbcRepository<Dish> {
     }
 
     private void createProductsForDish(@NonNull @Nonnull Dish entity) {
-        Optional<Dish> byUniqueField = findByUniqueField(entity.getName());
+        Optional<Dish> byUniqueField = findByUniqueField(entity.getName().toUpperCase());
         if (byUniqueField.isPresent()) {
             Dish currentDish = byUniqueField.get();
             List<Product> batchLists = entity.getProducts();
@@ -89,19 +90,19 @@ public class DishRepository implements JdbcRepository<Dish> {
     @Override
     public Optional<Dish> create(@Nonnull @NonNull Dish entity) {
         String createDishSql = "insert into pp_app.dish (name) values (?)";
-        jdbcTemplate.update(createDishSql, entity.getName());
+        jdbcTemplate.update(createDishSql, entity.getName().toUpperCase());
         createProductsForDish(entity);
-        return findByUniqueField(entity.getName());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
     public Optional<Dish> update(@Nonnull @NonNull Dish entity) {
         String updateDishSql = "update pp_app.dish set name=? where dish_id=?";
-        jdbcTemplate.update(updateDishSql, entity.getName(), entity.getDishId());
+        jdbcTemplate.update(updateDishSql, entity.getName().toUpperCase(), entity.getDishId());
         String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
         jdbcTemplate.update(removeDishProductsSql, entity.getDishId());
         createProductsForDish(entity);
-        return findByUniqueField(entity.getName());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
@@ -124,7 +125,7 @@ public class DishRepository implements JdbcRepository<Dish> {
 
     @Override
     public boolean isExists(@Nonnull @NonNull Dish entity) {
-        return findByUniqueField(entity.getName()).isPresent();
+        return findByUniqueField(entity.getName().toUpperCase()).isPresent();
     }
 
     @Override

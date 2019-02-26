@@ -55,7 +55,7 @@ public class ProductRepository implements JdbcRepository<Product> {
     public Optional<Product> findByUniqueField(@NotBlank String fieldValue) {
         return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject("select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                                                                                       "from pp_app.product p, pp_app.prod_type t " +
-                                                                                      "where p.name = ? and p.prod_type_id = t.prod_type_id", ROW_MAPPER, fieldValue));
+                                                                                      "where p.name = ? and p.prod_type_id = t.prod_type_id", ROW_MAPPER, fieldValue.toUpperCase()));
     }
 
     @Override
@@ -65,14 +65,14 @@ public class ProductRepository implements JdbcRepository<Product> {
 
     @Override
     public Optional<Product> create(@Nonnull @NonNull Product entity) {
-        jdbcTemplate.update("insert into pp_app.product (energy, name, prod_type_id) values (?,?,?)", entity.getEnergy(), entity.getName(), entity.getProductType().getProdTypeId());
-        return findByUniqueField(entity.getName());
+        jdbcTemplate.update("insert into pp_app.product (energy, name, prod_type_id) values (?,?,?)", entity.getEnergy(), entity.getName().toUpperCase().toUpperCase(), entity.getProductType().getProdTypeId());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
     public Optional<Product> update(@Nonnull @NonNull Product entity) {
-        jdbcTemplate.update("update pp_app.product set energy= ?, name=?, prod_type_id=? where product_id=?", entity.getEnergy(), entity.getName(), entity.getProductType().getProdTypeId(), entity.getProductId());
-        return findByUniqueField(entity.getName());
+        jdbcTemplate.update("update pp_app.product set energy= ?, name=?, prod_type_id=? where product_id=?", entity.getEnergy(), entity.getName().toUpperCase(), entity.getProductType().getProdTypeId(), entity.getProductId());
+        return findByUniqueField(entity.getName().toUpperCase());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ProductRepository implements JdbcRepository<Product> {
 
     @Override
     public boolean isExists(@Nonnull @NonNull Product entity) {
-        return findByUniqueField(entity.getName()).isPresent();
+        return findByUniqueField(entity.getName().toUpperCase()).isPresent();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ProductRepository implements JdbcRepository<Product> {
                         throws SQLException {
                     Product product = batch.get(i);
                     ps.setDouble(1, product.getEnergy());
-                    ps.setString(2, product.getName());
+                    ps.setString(2, product.getName().toUpperCase());
                     ps.setLong(3, product.getProductType().getProdTypeId());
                 }
 
@@ -153,7 +153,7 @@ public class ProductRepository implements JdbcRepository<Product> {
     public Page<Product> findAllByNameIsContaining(Pageable pageable, String name){
         String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                 "from pp_app.product p, pp_app.prod_type t " +
-                "where p.prod_type_id = t.prod_type_id and p.name like '%"+ name +"%' " +
+                "where p.prod_type_id = t.prod_type_id and p.name like '%"+ name.toUpperCase() +"%' " +
                 "limit " + pageable.getPageSize() + " " +
                 "offset " + pageable.getOffset();
         List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER);
@@ -174,18 +174,20 @@ public class ProductRepository implements JdbcRepository<Product> {
         return new PageImpl<>(demos, pageable, total);
     }
     public Page<Product> findAllByNameIsContainingAndProductType(Pageable pageable, String name, Long id){
-        String countQuery = "select count(1) as row_count from pp_app.product p, pp_app.prod_type t where p.prod_type_id = t.prod_type_id and p.prod_type_id = ? and p.name like '%"+ name +"%'";
+        String countQuery = "select count(1) as row_count " +
+                "from pp_app.product p, pp_app.prod_type t " +
+                "where p.prod_type_id = t.prod_type_id and p.prod_type_id = ? and p.name like '%"+ name.toUpperCase() +"%'";
         int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1), id);
 
         String querySql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
 
                 "from pp_app.product p, pp_app.prod_type t " +
 
-                "where p.prod_type_id = t.prod_type_id and p.name like '%"+ name +"%' and p.prod_type_id = ? " + //TODO: org.postgresql.util.PSQLException: The column index is out of range: 2, number of columns: 1.
+                "where p.prod_type_id = t.prod_type_id and p.prod_type_id = ? and p.name like '%"+ name.toUpperCase() +"%' " +
 
                 "limit " + pageable.getPageSize() + " " +
                 "offset " + pageable.getOffset();
-        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER, name, id);
+        List<Product> demos = jdbcTemplate.query(querySql, ROW_MAPPER, id);
         return new PageImpl<>(demos, pageable, total);
     }
 }
