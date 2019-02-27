@@ -34,6 +34,7 @@ public class Product {
     @JoinColumn(name = "prod_type_id")
     private ProductType productType;
 
+    @Builder.Default
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DishProducts> dishes = new HashSet<>();

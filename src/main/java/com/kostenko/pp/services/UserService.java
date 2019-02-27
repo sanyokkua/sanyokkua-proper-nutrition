@@ -3,10 +3,8 @@ package com.kostenko.pp.services;
 import com.google.common.base.Preconditions;
 import com.kostenko.pp.data.entities.AppUser;
 import com.kostenko.pp.data.repositories.users.UserRepository;
-import com.kostenko.pp.services.page.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Slf4j
 @Service
-public class UserService implements DBService<AppUser> {
+public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
@@ -105,32 +103,22 @@ public class UserService implements DBService<AppUser> {
         }
     }
 
-    @Override
     public AppUser findById(Long id) {
         return null;
     }
 
-    @Override
     public AppUser create(AppUser data) {
         return null;
     }
 
-    @Override
     public AppUser update(AppUser data) {
         return null;
     }
 
-    @Override
     public AppUser createOrUpdate(AppUser data) {
         return null;
     }
 
-    @Override
-    public Page<AppUser> getAll(PageInfo pageInfo) {
-        return null;
-    }
-
-    @Override
     public void delete(AppUser data) {
 
     }

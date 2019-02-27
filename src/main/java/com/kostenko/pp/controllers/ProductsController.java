@@ -1,10 +1,8 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.RequestInfo;
-import com.kostenko.pp.data.entities.Product;
-import com.kostenko.pp.data.entities.ProductType;
-import com.kostenko.pp.data.repositories.food.ProductTypeCrudRepository;
+import com.kostenko.pp.data.PageableSearch.SearchParams;
 import com.kostenko.pp.data.services.ProductCrudService;
+import com.kostenko.pp.data.views.Product;
 import com.kostenko.pp.json.entities.JsonProductEntity;
 import com.kostenko.pp.services.page.ResultPage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +15,10 @@ import java.util.Objects;
 @RestController
 public class ProductsController {
     private final ProductCrudService productCrudService;
-    private final ProductTypeCrudRepository productTypeCrudRepository;
 
     @Autowired
-    public ProductsController(ProductCrudService productCrudService, ProductTypeCrudRepository productTypeCrudRepository) {
+    public ProductsController(ProductCrudService productCrudService) {
         this.productCrudService = Objects.requireNonNull(productCrudService);
-        this.productTypeCrudRepository = Objects.requireNonNull(productTypeCrudRepository, "Instead of ProductTypeRepository instance injected null");
     }
 
     @GetMapping("/products")
@@ -30,34 +26,33 @@ public class ProductsController {
                                                             @RequestParam(value = "page", required = false) Integer pageNumber,
                                                             @RequestParam(value = "currentType", required = false) Long currentType,
                                                             @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
-        ProductType productType = null;
-        try {
-            productType = productTypeCrudRepository.findById(currentType).orElse(null);
-        } catch (Exception ex) {
-            productType = null;
-        }
-        RequestInfo requestInfo = RequestInfo.builder().search(name).uiPageNumber(pageNumber).productType(productType).recordsPerPage(numberOfRecords).build();
-        Page<Product> page = productCrudService.getAll(requestInfo);
+        SearchParams<Product> searchParams = new SearchParams<>();
+        searchParams.add(ProductCrudService.NAME, name, true);
+        searchParams.add(ProductCrudService.TYPE, currentType, true);
+        searchParams.add(ProductCrudService.RECORDS, numberOfRecords, true);
+        searchParams.add(ProductCrudService.PAGE, pageNumber, true);
+        Page<Product> page = productCrudService.findAll(searchParams);
+
         return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(com.kostenko.pp.data.views.Product.builder()
                                                                                                                             .productId(product.getProductId())
                                                                                                                             .name(product.getName())
                                                                                                                             .energy(product.getEnergy())
-                                                                                                                            .prodTypeId(product.getProductType().getProdTypeId())
-                                                                                                                            .typeName(product.getProductType().getName())
+                                                                                                                            .prodTypeId(product.getProdTypeId())
+                                                                                                                            .typeName(product.getTypeName())
                                                                                                                             .build()));
     }
 
     @PostMapping("/products")
     @ResponseBody
     public Product createProduct(@RequestBody Product product) {
-        return productCrudService.createOrUpdateProduct(product);
+        return productCrudService.create(product);
     }
 
     @PutMapping("/products/{id}")
     @ResponseBody
     public Product updateProduct(@PathVariable Long id, @RequestBody JsonProductEntity product) {
         if (id.equals(product.getProductId())) {
-            return productCrudService.createOrUpdateProduct(product.mapToProduct().map());
+            return productCrudService.update(product.mapToProduct());
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
@@ -65,11 +60,11 @@ public class ProductsController {
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity deleteProduct(@PathVariable Long id) {
-        Product product = productCrudService.getProductById(id);
+        Product product = productCrudService.findById(id);
         if (product == null) {
             throw new IllegalArgumentException("Product with id " + id + " doesn't exists. Delete can't be done");
         } else {
-            productCrudService.deleteProduct(product);
+            productCrudService.delete(product.getProductId());
         }
         return ResponseEntity.ok("OK");
     }

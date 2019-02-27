@@ -42,10 +42,10 @@ public class JsonDishEntity {
                        .build();
         } else {
             dish = Dish.builder()
-                        .name(name)
-                        .totalEnergy(energy)
-                        .products(products.stream().map(JsonProductEntity::mapToProduct).collect(Collectors.toList()))
-                        .build();
+                       .name(name)
+                       .totalEnergy(energy)
+                       .products(products.stream().map(JsonProductEntity::mapToProduct).collect(Collectors.toList()))
+                       .build();
         }
         return dish;
     }

@@ -1,6 +1,6 @@
 package com.kostenko.pp.json.entities;
 
-import com.kostenko.pp.data.entities.ProductType;
+import com.kostenko.pp.data.views.ProductType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

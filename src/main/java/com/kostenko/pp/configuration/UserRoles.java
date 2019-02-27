@@ -16,15 +16,15 @@ public enum UserRoles {
         this.roleName = Objects.requireNonNull(roleName);
     }
 
+    public static List<UserRoles> getAllRoles() {
+        return Stream.of(ADMIN, MANAGER, USER).collect(Collectors.toList());
+    }
+
     public long getId() {
         return id;
     }
 
     public String getRoleName() {
         return roleName;
-    }
-
-    public static List<UserRoles> getAllRoles() {
-        return Stream.of(ADMIN, MANAGER, USER).collect(Collectors.toList());
     }
 }

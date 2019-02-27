@@ -25,6 +25,7 @@ public class ProductType {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Builder.Default
     @EqualsAndHashCode.Exclude
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productType", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Product> products = new HashSet<>();

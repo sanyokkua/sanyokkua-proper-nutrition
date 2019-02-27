@@ -1,6 +1,8 @@
 package com.kostenko.pp.data.repositories.jdbc;
 
 import com.google.common.collect.Lists;
+import com.kostenko.pp.data.repositories.CrudExtensions;
+import com.kostenko.pp.data.repositories.CrudRepository;
 import com.kostenko.pp.data.views.Dish;
 import com.kostenko.pp.data.views.Product;
 import lombok.NonNull;
@@ -12,6 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
@@ -22,7 +25,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public class DishRepository implements JdbcRepository<Dish> {
+public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish> {
     private static final RowMapper<Dish> ROW_MAPPER_FOR_DISH = (resultSet, i) -> Dish.builder().dishId(resultSet.getLong("dish_id"))
                                                                                      .name(resultSet.getString("name"))
                                                                                      .build();
@@ -34,25 +37,65 @@ public class DishRepository implements JdbcRepository<Dish> {
                                                                                               .prodTypeId(resultSet.getLong("prod_type_id"))
                                                                                               .typeName(resultSet.getString("prod_type"))
                                                                                               .build();
+    private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Dish> ROW_MAPPER_FOR_DISH_WITH_PRODUCTS = (resultSet, i) -> {
         Dish dish = Dish.builder().dishId(resultSet.getLong("dish_id")).name(resultSet.getString("name")).build();
         Optional<List<Product>> allProductsForDish = findAllProductsForDish(dish.getDishId());
         List<Product> products = allProductsForDish.orElse(Lists.newArrayList());
         dish.setProducts(products);
-        dish.setTotalEnergy(products.stream().filter(product -> product.getAmount()>0).map(product -> product.getEnergy() * (((double) product.getAmount()) / 100d)).reduce(Double::sum).orElse(0d));
+        dish.setTotalEnergy(products.stream().filter(product -> product.getAmount() > 0).map(product -> product.getEnergy() * (((double) product.getAmount()) / 100d)).reduce(Double::sum).orElse(0d));
         return dish;
     };
-    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public DishRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate);
     }
 
+    @Override
+    public Dish create(@Nonnull @NonNull Dish entity) {
+        String createDishSql = "insert into pp_app.dish (name) values (?)";
+        jdbcTemplate.update(createDishSql, entity.getName().toUpperCase());
+        createProductsForDish(entity);
+        return findByField(entity.getName().toUpperCase());
+    }
+
+    @Override
+    public Dish update(@Nonnull @NonNull Dish entity) {
+        String updateDishSql = "update pp_app.dish set name=? where dish_id=?";
+        jdbcTemplate.update(updateDishSql, entity.getName().toUpperCase(), entity.getDishId());
+        String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
+        jdbcTemplate.update(removeDishProductsSql, entity.getDishId());
+        createProductsForDish(entity);
+        return findByField((entity.getName().toUpperCase()));
+    }
+
+    @Override
+    public boolean delete(@Nonnull @NonNull Long id) {
+        String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
+        String removeDishSql = "delete from pp_app.dish where dish_id=?";
+        jdbcTemplate.update(removeDishProductsSql, id);
+        jdbcTemplate.update(removeDishSql, id);
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public Dish find(@Nonnull @NonNull Long id) {
+        String findDishByIdSql = "select d.dish_id, d.name from pp_app.dish d where d.dish_id = ?";
+        return queryForDish(findDishByIdSql, id).orElse(null);
+    }
+
+    @Override
+    public List<Dish> findAll() {
+        String findAllSql = "select d.dish_id, d.name from pp_app.dish d";
+        Optional<List<Dish>> result = CrudRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllSql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS));
+        return result.orElseGet(Lists::newArrayList);
+    }
+
     private void createProductsForDish(@NonNull @Nonnull Dish entity) {
-        Optional<Dish> byUniqueField = findByUniqueField(entity.getName().toUpperCase());
-        if (byUniqueField.isPresent()) {
-            Dish currentDish = byUniqueField.get();
+        Dish byUniqueField = findByField((entity.getName().toUpperCase()));
+        if (byUniqueField != null) {
             List<Product> batchLists = entity.getProducts();
             String createProductsSql = "insert into pp_app.dish_products (amount, dish_dish_id, product_product_id) VALUES (?,?,?)";
             jdbcTemplate.batchUpdate(createProductsSql, new BatchPreparedStatementSetter() {
@@ -60,7 +103,7 @@ public class DishRepository implements JdbcRepository<Dish> {
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     Product product = batchLists.get(i);
                     ps.setLong(1, product.getAmount());
-                    ps.setLong(2, currentDish.getDishId());
+                    ps.setLong(2, byUniqueField.getDishId());
                     ps.setLong(3, product.getProductId());
                 }
 
@@ -70,62 +113,6 @@ public class DishRepository implements JdbcRepository<Dish> {
                 }
             });
         }
-    }    @Override
-    public Optional<Dish> findById(@Nonnull @NonNull Long id) {
-        String findDishByIdSql = "select d.dish_id, d.name from pp_app.dish d where d.dish_id = ?";
-        return queryForDish(findDishByIdSql, id);
-    }
-
-    @Override
-    public Optional<Dish> findByUniqueField(@NotBlank String fieldValue) {
-        String findDishByIdSql = "select d.dish_id, d.name from pp_app.dish d where d.name = ?";
-        return queryForDish(findDishByIdSql, fieldValue);
-    }
-
-    @Override
-    public Optional<Dish> findByCustomQuery(@NotBlank String query) {
-        throw new NotImplementedException("findAllByCustomQuery is not implemented yet");
-    }
-
-    @Override
-    public Optional<Dish> create(@Nonnull @NonNull Dish entity) {
-        String createDishSql = "insert into pp_app.dish (name) values (?)";
-        jdbcTemplate.update(createDishSql, entity.getName().toUpperCase());
-        createProductsForDish(entity);
-        return findByUniqueField(entity.getName().toUpperCase());
-    }
-
-    @Override
-    public Optional<Dish> update(@Nonnull @NonNull Dish entity) {
-        String updateDishSql = "update pp_app.dish set name=? where dish_id=?";
-        jdbcTemplate.update(updateDishSql, entity.getName().toUpperCase(), entity.getDishId());
-        String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
-        jdbcTemplate.update(removeDishProductsSql, entity.getDishId());
-        createProductsForDish(entity);
-        return findByUniqueField(entity.getName().toUpperCase());
-    }
-
-    @Override
-    public void delete(@Nonnull @NonNull Dish entity) {
-        deleteById(entity.getDishId());
-    }
-
-    @Override
-    public void deleteById(@Nonnull @NonNull Long id) {
-        String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
-        String removeDishSql = "delete from pp_app.dish where dish_id=?";
-        jdbcTemplate.update(removeDishProductsSql, id);
-        jdbcTemplate.update(removeDishSql, id);
-    }
-
-    @Override
-    public boolean isExistsId(@Nonnull @NonNull Long id) {
-        return findById(id).isPresent();
-    }
-
-    @Override
-    public boolean isExists(@Nonnull @NonNull Dish entity) {
-        return findByUniqueField(entity.getName().toUpperCase()).isPresent();
     }
 
     @Override
@@ -134,19 +121,35 @@ public class DishRepository implements JdbcRepository<Dish> {
     }
 
     @Override
-    public List<Dish> findAll() {
-        String findAllSql = "select d.dish_id, d.name from pp_app.dish d";
-        Optional<List<Dish>> result = JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllSql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS));
-        return result.orElseGet(Lists::newArrayList);
+    public boolean delete(@Nonnull @NonNull Dish entity) {
+        return delete(entity.getDishId());
+    }
+
+    @Nullable
+    @Override
+    public Dish find(@Nonnull @NonNull Dish entity) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Dish findByField(@NotBlank String fieldValue) {
+        String findDishByIdSql = "select d.dish_id, d.name from pp_app.dish d where d.name = ?";
+        return queryForDish(findDishByIdSql, fieldValue).orElse(null);
     }
 
     @Override
-    public List<Dish> findAllByCustomQuery(@NotBlank String query) {
-        throw new NotImplementedException("findAllByCustomQuery is not implemented yet");
+    public boolean isExistsId(@Nonnull @NonNull Long id) {
+        return find(id) != null;
+    }
+
+    @Override
+    public boolean isExists(@Nonnull @NonNull Dish entity) {
+        return find(entity) != null;
     }
 
     private Optional<Dish> queryForDish(String findDishByIdSql, Object param) {
-        Optional<Dish> dish = JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(findDishByIdSql, ROW_MAPPER_FOR_DISH, param));
+        Optional<Dish> dish = CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(findDishByIdSql, ROW_MAPPER_FOR_DISH, param));
         if (dish.isPresent()) {
             return makeDish(dish.get());
         }
@@ -169,8 +172,7 @@ public class DishRepository implements JdbcRepository<Dish> {
         String findAllProductsForDishSql = "select dp.dish_dish_id as dish_id, dp.product_product_id as product_id, dp.amount, p.name, p.energy, pt.name as prod_type, pt.prod_type_id " +
                 "from pp_app.dish_products dp, pp_app.product p, pp_app.prod_type pt " +
                 "where dp.dish_dish_id = ? and p.product_id = dp.product_product_id and p.prod_type_id = pt.prod_type_id";
-        return JdbcRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllProductsForDishSql, ROW_MAPPER_FOR_PRODUCT, id));
+        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllProductsForDishSql, ROW_MAPPER_FOR_PRODUCT, id));
     }
-
 
 }

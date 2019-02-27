@@ -1,8 +1,7 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.entities.Product;
-import com.kostenko.pp.data.entities.ProductType;
 import com.kostenko.pp.data.services.ProductCrudService;
+import com.kostenko.pp.data.views.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -37,10 +36,8 @@ public class ProductCsvController {
                 String type = record.get("type");
                 String name = record.get("name");
                 double energy = Double.valueOf(record.get("energy"));
-
-                ProductType prodType = ProductType.builder().name(type).build();
-                Product product = Product.builder().name(name).energy(energy).productType(prodType).build();
-                productsService.createOrUpdateProduct(product);
+                Product product = Product.builder().name(name).energy(energy).typeName(type).build();
+                productsService.create(product);
             }
         } catch (IOException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

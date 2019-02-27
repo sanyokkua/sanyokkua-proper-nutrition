@@ -6,14 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class Product {
-    private long productId;
+public class ProductType {
+    private Long prodTypeId;
     private String name;
-    private double energy;
-    private long amount;
-    private long prodTypeId;
-    private String typeName;
 }

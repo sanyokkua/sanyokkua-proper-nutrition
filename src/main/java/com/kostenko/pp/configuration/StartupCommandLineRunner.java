@@ -1,12 +1,9 @@
 package com.kostenko.pp.configuration;
 
-import com.kostenko.pp.data.entities.Role;
-import com.kostenko.pp.data.entities.AppUser;
 import com.kostenko.pp.data.repositories.users.RoleRepository;
 import com.kostenko.pp.data.repositories.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;

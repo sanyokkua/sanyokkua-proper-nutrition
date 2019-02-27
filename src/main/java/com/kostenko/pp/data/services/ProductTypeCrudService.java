@@ -1,58 +1,86 @@
 package com.kostenko.pp.data.services;
 
-import com.kostenko.pp.data.entities.ProductType;
-import com.kostenko.pp.data.repositories.food.ProductTypeJpaRepository;
+import com.kostenko.pp.data.repositories.jdbc.ProductTypeRepository;
+import com.kostenko.pp.data.views.ProductType;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Objects;
 
 @Service
 @Slf4j
-public class ProductTypeCrudService {
-    private final ProductTypeJpaRepository productTypeJpaRepository;
+public class ProductTypeCrudService implements DBService<ProductType> {
+    private final ProductTypeRepository productTypeJpaRepository;
 
     @Autowired
-    public ProductTypeCrudService(ProductTypeJpaRepository productTypeJpaRepository) {
+    public ProductTypeCrudService(ProductTypeRepository productTypeJpaRepository) {
         this.productTypeJpaRepository = Objects.requireNonNull(productTypeJpaRepository);
     }
 
-    public ProductType getProductTypeById(Long id) {
+    @Override
+    public ProductType findById(@Nonnull @NonNull Long id) {
         Objects.requireNonNull(id, "ProductType id is null");
-        return productTypeJpaRepository.getOne(id);
+        return productTypeJpaRepository.find(id);
     }
 
-    public ProductType getProductTypeByName(String name) {
-        if (StringUtils.isBlank(name)) {
+    @Override
+    public ProductType findByField(@Nonnull @NonNull @NotBlank String field) {
+        if (StringUtils.isBlank(field)) {
             throw new IllegalArgumentException("ProductType name is empty");
         }
-        return productTypeJpaRepository.findByName(name);
+        return productTypeJpaRepository.findByField(field);
     }
 
-    public ProductType createOrUpdateProductType(ProductType productType) {
-        if (StringUtils.isBlank(productType.getName())) {
+    @Override
+    public ProductType create(@Nonnull @NonNull ProductType entity) {
+        if (StringUtils.isBlank(entity.getName())) {
             throw new IllegalArgumentException("Given ProductType has blank name");
         }
-        ProductType fromDb;
-        if (!Objects.isNull(productType.getProdTypeId())) {
-            if (productTypeJpaRepository.existsById(productType.getProdTypeId())) {
-                fromDb = productTypeJpaRepository.getOne(productType.getProdTypeId());
-                fromDb.setName(productType.getName());
-                fromDb = productTypeJpaRepository.save(fromDb);
-            } else {
-                throw new IllegalArgumentException("ProductType with id: " + productType.getProdTypeId() + " is not exists");
-            }
-        } else {
-            ProductType foundedByName = productTypeJpaRepository.findByName(productType.getName());
-            if (foundedByName == null) {
-                fromDb = productTypeJpaRepository.save(productType);
-            } else {
-                fromDb = foundedByName;
-            }
+        ProductType fromDb = productTypeJpaRepository.findByField(entity.getName());
+        if (fromDb == null) {
+            fromDb = productTypeJpaRepository.create(entity);
         }
         return fromDb;
     }
 
+    @Override
+    public ProductType update(@Nonnull @NonNull ProductType entity) {
+        if (StringUtils.isBlank(entity.getName())) {
+            throw new IllegalArgumentException("Given ProductType has blank name");
+        }
+        ProductType fromDb = productTypeJpaRepository.find(entity.getProdTypeId());
+        if (fromDb == null) {
+            throw new IllegalArgumentException("ProductType with id: " + entity.getProdTypeId() + " is not exists");
+        }
+        fromDb.setName(entity.getName());
+        fromDb = productTypeJpaRepository.update(fromDb);
+        return fromDb;
+    }
+
+    @Override
+    public void delete(@Nonnull @NonNull Long id) {
+        productTypeJpaRepository.delete(id);
+    }
+
+    @Override
+    public List<ProductType> findAll() {
+        return productTypeJpaRepository.findAll();
+    }
+
+    @Override
+    public boolean isExists(@Nonnull @NonNull ProductType entity) {
+        boolean result = false;
+        if (entity.getProdTypeId() != null) {
+            result = productTypeJpaRepository.isExistsId(entity.getProdTypeId());
+        } else if (StringUtils.isNotBlank(entity.getName())) {
+            result = productTypeJpaRepository.findByField(entity.getName()) != null;
+        }
+        return result;
+    }
 }

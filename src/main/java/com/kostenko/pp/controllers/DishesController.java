@@ -1,6 +1,5 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.repositories.jdbc.DishRepository;
 import com.kostenko.pp.data.services.DishCrudService;
 import com.kostenko.pp.data.views.Dish;
 import com.kostenko.pp.json.entities.JsonDishEntity;
@@ -32,7 +31,7 @@ public class DishesController {
 //        params.put(PageInfo.SEARCH_STRING, name);
 //        PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
 //        Page<Dish> page = dishDBService.getAll(pageInfo);
-        List<JsonDishEntity> collect = dishCrudService.getAll().stream().filter(dish -> dish.getName().contains(name)).map(JsonDishEntity::mapFromDish).collect(Collectors.toList());
+        List<JsonDishEntity> collect = dishCrudService.findAll().stream().filter(dish -> dish.getName().contains(name)).map(JsonDishEntity::mapFromDish).collect(Collectors.toList());
 
         return new ResultPage<>(0, 1, collect);
     }

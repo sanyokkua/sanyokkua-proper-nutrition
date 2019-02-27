@@ -11,11 +11,10 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-@Service
 @Slf4j
-public class DishCrudService {
+@Service
+public class DishCrudService implements DBService<Dish> {
     private final DishRepository dishRepository;
 
     @Autowired
@@ -23,31 +22,38 @@ public class DishCrudService {
         this.dishRepository = Objects.requireNonNull(dishRepository);
     }
 
-    public Dish getById(@NonNull @Nonnull Long id) {
-        Optional<Dish> dish = dishRepository.findById(id);
-        return dish.orElse(null);
+    @Override
+    public Dish findById(@Nonnull @NonNull Long id) {
+        return dishRepository.find(id);
     }
 
-    public Dish getByName(@NotBlank String name) {
-        Optional<Dish> dish = dishRepository.findByUniqueField(name);
-        return dish.orElse(null);
+    @Override
+    public Dish findByField(@Nonnull @NonNull @NotBlank String field) {
+        return dishRepository.findByField(field);
     }
 
+    @Override
     public Dish create(@NonNull @Nonnull Dish dish) {
-        Optional<Dish> created = dishRepository.create(dish);
-        return created.orElse(null);
+        return dishRepository.create(dish);
     }
 
+    @Override
     public Dish update(@NonNull @Nonnull Dish dish) {
-        Optional<Dish> updated = dishRepository.update(dish);
-        return updated.orElse(null);
+        return dishRepository.update(dish);
     }
 
+    @Override
     public void delete(@NonNull @Nonnull Long id) {
-        dishRepository.deleteById(id);
+        dishRepository.delete(id);
     }
 
-    public List<Dish> getAll() {
+    @Override
+    public List<Dish> findAll() {
         return dishRepository.findAll();
+    }
+
+    @Override
+    public boolean isExists(@Nonnull @NonNull Dish entity) {
+        return dishRepository.isExists(entity);
     }
 }
