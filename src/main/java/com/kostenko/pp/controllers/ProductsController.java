@@ -1,7 +1,7 @@
 package com.kostenko.pp.controllers;
 
 import com.kostenko.pp.data.PageableSearch.SearchParams;
-import com.kostenko.pp.data.services.ProductCrudService;
+import com.kostenko.pp.data.services.ProductService;
 import com.kostenko.pp.data.views.Product;
 import com.kostenko.pp.json.entities.JsonProductEntity;
 import com.kostenko.pp.services.page.ResultPage;
@@ -14,11 +14,11 @@ import java.util.Objects;
 
 @RestController
 public class ProductsController {
-    private final ProductCrudService productCrudService;
+    private final ProductService productService;
 
     @Autowired
-    public ProductsController(ProductCrudService productCrudService) {
-        this.productCrudService = Objects.requireNonNull(productCrudService);
+    public ProductsController(ProductService productService) {
+        this.productService = Objects.requireNonNull(productService);
     }
 
     @GetMapping("/products")
@@ -27,11 +27,11 @@ public class ProductsController {
                                                             @RequestParam(value = "currentType", required = false) Long currentType,
                                                             @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         SearchParams<Product> searchParams = new SearchParams<>();
-        searchParams.add(ProductCrudService.NAME, name, true);
-        searchParams.add(ProductCrudService.TYPE, currentType, true);
-        searchParams.add(ProductCrudService.RECORDS, numberOfRecords, true);
-        searchParams.add(ProductCrudService.PAGE, pageNumber, true);
-        Page<Product> page = productCrudService.findAll(searchParams);
+        searchParams.add(ProductService.NAME, name, true);
+        searchParams.add(ProductService.TYPE, currentType, true);
+        searchParams.add(ProductService.RECORDS, numberOfRecords, true);
+        searchParams.add(ProductService.PAGE, pageNumber, true);
+        Page<Product> page = productService.findAll(searchParams);
 
         return ResultPage.getResultPage(page, product -> JsonProductEntity.mapFromProduct(com.kostenko.pp.data.views.Product.builder()
                                                                                                                             .productId(product.getProductId())
@@ -45,14 +45,14 @@ public class ProductsController {
     @PostMapping("/products")
     @ResponseBody
     public Product createProduct(@RequestBody Product product) {
-        return productCrudService.create(product);
+        return productService.create(product);
     }
 
     @PutMapping("/products/{id}")
     @ResponseBody
     public Product updateProduct(@PathVariable Long id, @RequestBody JsonProductEntity product) {
         if (id.equals(product.getProductId())) {
-            return productCrudService.update(product.mapToProduct());
+            return productService.update(product.mapToProduct());
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
@@ -60,11 +60,11 @@ public class ProductsController {
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity deleteProduct(@PathVariable Long id) {
-        Product product = productCrudService.findById(id);
+        Product product = productService.findById(id);
         if (product == null) {
             throw new IllegalArgumentException("Product with id " + id + " doesn't exists. Delete can't be done");
         } else {
-            productCrudService.delete(product.getProductId());
+            productService.delete(product.getProductId());
         }
         return ResponseEntity.ok("OK");
     }

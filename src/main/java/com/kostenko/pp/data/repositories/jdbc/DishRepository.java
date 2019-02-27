@@ -8,6 +8,9 @@ import com.kostenko.pp.data.views.Product;
 import lombok.NonNull;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -52,6 +55,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
         this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate);
     }
 
+    @Nullable
     @Override
     public Dish create(@Nonnull @NonNull Dish entity) {
         String createDishSql = "insert into pp_app.dish (name) values (?)";
@@ -60,6 +64,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
         return findByField(entity.getName().toUpperCase());
     }
 
+    @Nullable
     @Override
     public Dish update(@Nonnull @NonNull Dish entity) {
         String updateDishSql = "update pp_app.dish set name=? where dish_id=?";
@@ -173,6 +178,34 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
                 "from pp_app.dish_products dp, pp_app.product p, pp_app.prod_type pt " +
                 "where dp.dish_dish_id = ? and p.product_id = dp.product_product_id and p.prod_type_id = pt.prod_type_id";
         return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllProductsForDishSql, ROW_MAPPER_FOR_PRODUCT, id));
+    }
+
+    public Page<Dish> findAllByPage(Pageable pageable) {
+        String countQuery = "select count(1) as row_count from pp_app.dish d";
+        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+
+        String querySql = "select d.dish_id, d.name " +
+                "from pp_app.dish d " +
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+
+        List<Dish> dishes = jdbcTemplate.query(querySql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS);
+        return new PageImpl<>(dishes, pageable, total);
+    }
+
+    public Page<Dish> findAllByPageAndName(Pageable pageable, String name) {
+        String likeString = String.format("'%%%s%%'", name);
+        String countQuery = "select count(1) as row_count from pp_app.dish d where name like " + likeString;
+        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+
+        String querySql = "select d.dish_id, d.name " +
+                "from pp_app.dish d " +
+                "where name like " + likeString + " " +
+                "limit " + pageable.getPageSize() + " " +
+                "offset " + pageable.getOffset();
+
+        List<Dish> dishes = jdbcTemplate.query(querySql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS);
+        return new PageImpl<>(dishes, pageable, total);
     }
 
 }

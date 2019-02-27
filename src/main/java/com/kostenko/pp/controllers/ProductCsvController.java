@@ -1,6 +1,6 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.services.ProductCrudService;
+import com.kostenko.pp.data.services.ProductService;
 import com.kostenko.pp.data.views.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -20,10 +20,10 @@ import java.util.Objects;
 @Controller
 @Slf4j
 public class ProductCsvController {
-    private final ProductCrudService productsService;
+    private final ProductService productsService;
 
     @Autowired
-    public ProductCsvController(ProductCrudService productsService) {
+    public ProductCsvController(ProductService productsService) {
         this.productsService = Objects.requireNonNull(productsService);
     }
 

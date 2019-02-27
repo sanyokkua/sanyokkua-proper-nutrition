@@ -15,11 +15,11 @@ import java.util.Objects;
 
 @Service
 @Slf4j
-public class ProductTypeCrudService implements DBService<ProductType> {
+public class ProductTypeService implements DBService<ProductType> {
     private final ProductTypeRepository productTypeJpaRepository;
 
     @Autowired
-    public ProductTypeCrudService(ProductTypeRepository productTypeJpaRepository) {
+    public ProductTypeService(ProductTypeRepository productTypeJpaRepository) {
         this.productTypeJpaRepository = Objects.requireNonNull(productTypeJpaRepository);
     }
 

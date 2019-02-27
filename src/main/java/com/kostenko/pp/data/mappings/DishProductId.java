@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.entities;
+package com.kostenko.pp.data.mappings;
 
 import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;

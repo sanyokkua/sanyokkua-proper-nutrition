@@ -1,53 +1,52 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.services.DishCrudService;
+import com.kostenko.pp.data.PageableSearch;
+import com.kostenko.pp.data.services.DishService;
 import com.kostenko.pp.data.views.Dish;
 import com.kostenko.pp.json.entities.JsonDishEntity;
 import com.kostenko.pp.services.page.ResultPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 public class DishesController {
-    private final DishCrudService dishCrudService;
+    private final DishService dishService;
 
     @Autowired
-    public DishesController(DishCrudService dishCrudService) {
-        this.dishCrudService = Objects.requireNonNull(dishCrudService);
+    public DishesController(DishService dishService) {
+        this.dishService = Objects.requireNonNull(dishService);
     }
 
     @GetMapping("/dishes")
     public ResultPage<JsonDishEntity> getDishes(@RequestParam(value = "name", required = false) String name,
                                                 @RequestParam(value = "page", required = false) Integer pageNumber,
                                                 @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
-//        Map<String, String> params = new HashMap<>();
-//        params.put(PageInfo.SEARCH_STRING, name);
-//        PageInfo pageInfo = PageInfo.createPageInfo(pageNumber, numberOfRecords, params);
-//        Page<Dish> page = dishDBService.getAll(pageInfo);
-        List<JsonDishEntity> collect = dishCrudService.findAll().stream().filter(dish -> dish.getName().contains(name)).map(JsonDishEntity::mapFromDish).collect(Collectors.toList());
-
-        return new ResultPage<>(0, 1, collect);
+        PageableSearch.SearchParams<Dish> searchParams = new PageableSearch.SearchParams<>();
+        searchParams.add(DishService.NAME, name, true);
+        searchParams.add(DishService.RECORDS, numberOfRecords, true);
+        searchParams.add(DishService.PAGE, pageNumber, true);
+        Page<Dish> page = dishService.findAll(searchParams);
+        return ResultPage.getResultPage(page, JsonDishEntity::mapFromDish);
     }
 
     @PostMapping("/dishes")
     @ResponseBody
     public Dish createProduct(@RequestBody JsonDishEntity jsonDish) {
         Dish dishFromJson = jsonDish.mapToDish();
-        return dishCrudService.create(dishFromJson);
+        return dishService.create(dishFromJson);
     }
 
     @PutMapping("/dishes/{id}")
     @ResponseBody
     public Dish updateProduct(@PathVariable Long id, @RequestBody JsonDishEntity dish) {
         if (id.equals(dish.getDishId())) {
-            return dishCrudService.update(dish.mapToDish());
+            return dishService.update(dish.mapToDish());
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
@@ -55,7 +54,7 @@ public class DishesController {
 
     @DeleteMapping("/dishes/{id}")
     public ResponseEntity deleteProduct(@PathVariable Long id) {
-        dishCrudService.delete(id);
+        dishService.delete(id);
         return ResponseEntity.ok("Removed");
     }
 }

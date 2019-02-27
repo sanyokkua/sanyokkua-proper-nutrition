@@ -1,6 +1,6 @@
 package com.kostenko.pp.data.repositories.users;
 
-import com.kostenko.pp.data.entities.AppUser;
+import com.kostenko.pp.data.mappings.AppUser;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

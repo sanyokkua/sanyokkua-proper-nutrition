@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.entities;
+package com.kostenko.pp.data.mappings;
 
 import lombok.*;
 import org.hibernate.annotations.NaturalId;

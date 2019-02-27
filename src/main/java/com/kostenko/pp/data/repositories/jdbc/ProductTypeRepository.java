@@ -31,6 +31,7 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
         this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate);
     }
 
+    @Nullable
     @Override
     public ProductType create(@Nonnull @NonNull ProductType entity) {
         String sql = "insert into pp_app.prod_type (name) values (?)";
@@ -38,6 +39,7 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
         return findByField(entity.getName().toUpperCase());
     }
 
+    @Nullable
     @Override
     public ProductType update(@Nonnull @NonNull ProductType entity) {
         String sql = "update pp_app.prod_type set name=? where prod_type_id=?";

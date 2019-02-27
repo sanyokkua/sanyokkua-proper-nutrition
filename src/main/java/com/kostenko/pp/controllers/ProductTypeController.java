@@ -1,6 +1,6 @@
 package com.kostenko.pp.controllers;
 
-import com.kostenko.pp.data.services.ProductTypeCrudService;
+import com.kostenko.pp.data.services.ProductTypeService;
 import com.kostenko.pp.data.views.ProductType;
 import com.kostenko.pp.json.entities.JsonProductTypeEntity;
 import com.kostenko.pp.services.page.ResultPage;
@@ -13,10 +13,10 @@ import java.util.Objects;
 
 @RestController
 public class ProductTypeController {
-    private final ProductTypeCrudService productTypeService;
+    private final ProductTypeService productTypeService;
 
     @Autowired
-    public ProductTypeController(ProductTypeCrudService productTypeService) {
+    public ProductTypeController(ProductTypeService productTypeService) {
         this.productTypeService = Objects.requireNonNull(productTypeService, "Instead of ProductTypeCrudService instance injected null");
     }
 

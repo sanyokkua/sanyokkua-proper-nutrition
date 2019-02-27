@@ -20,7 +20,7 @@ import java.util.Objects;
 
 @Service
 @Slf4j
-public class ProductCrudService implements DBService<Product>, PageableSearch<Product> {
+public class ProductService implements DBService<Product>, PageableSearch<Product> {
     public static final String NAME = "name";
     public static final String TYPE = "type";
     public static final String PAGE = "page";
@@ -29,7 +29,7 @@ public class ProductCrudService implements DBService<Product>, PageableSearch<Pr
     private final ProductTypeRepository productTypeRepository;
 
     @Autowired
-    public ProductCrudService(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
+    public ProductService(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
         this.productRepository = Objects.requireNonNull(productRepository);
         this.productTypeRepository = Objects.requireNonNull(productTypeRepository);
     }

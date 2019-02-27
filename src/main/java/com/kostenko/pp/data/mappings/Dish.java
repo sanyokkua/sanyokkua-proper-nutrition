@@ -1,4 +1,4 @@
-package com.kostenko.pp.data.entities;
+package com.kostenko.pp.data.mappings;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +27,11 @@ public class Dish {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "dishes", fetch = FetchType.EAGER)
     private Set<AppUser> appUsers = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "dish", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DishProducts> products = new HashSet<>();
 }

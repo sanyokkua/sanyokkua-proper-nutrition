@@ -1,7 +1,7 @@
 package com.kostenko.pp.services;
 
 import com.google.common.base.Preconditions;
-import com.kostenko.pp.data.entities.AppUser;
+import com.kostenko.pp.data.mappings.AppUser;
 import com.kostenko.pp.data.repositories.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
