@@ -194,7 +194,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     }
 
     public Page<Dish> findAllByPageAndName(Pageable pageable, String name) {
-        String likeString = String.format("'%%%s%%'", name);
+        String likeString = String.format("'%%%s%%'", name.toUpperCase());
         String countQuery = "select count(1) as row_count from pp_app.dish d where name like " + likeString;
         int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
 

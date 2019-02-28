@@ -30,13 +30,12 @@ public class ProductService implements DBService<Product>, PageableSearch<Produc
 
     @Autowired
     public ProductService(ProductRepository productRepository, ProductTypeRepository productTypeRepository) {
-        this.productRepository = Objects.requireNonNull(productRepository);
-        this.productTypeRepository = Objects.requireNonNull(productTypeRepository);
+        this.productRepository = Objects.requireNonNull(productRepository, "Injected null");
+        this.productTypeRepository = Objects.requireNonNull(productTypeRepository, "Injected null");
     }
 
     @Override
     public Product findById(@Nonnull @NonNull Long id) {
-        Objects.requireNonNull(id, "Product id is null");
         return productRepository.find(id);
     }
 
@@ -45,11 +44,7 @@ public class ProductService implements DBService<Product>, PageableSearch<Produc
         if (StringUtils.isBlank(field)) {
             throw new IllegalArgumentException("Product name is empty");
         }
-        Product founded = productRepository.findByField(field);
-        if (founded == null) {
-            throw new IllegalArgumentException("For product name: '" + field + "' nothing found");
-        }
-        return founded;
+        return productRepository.findByField(field);
     }
 
     @Override
@@ -93,7 +88,9 @@ public class ProductService implements DBService<Product>, PageableSearch<Produc
 
     @Override
     public void delete(@Nonnull @NonNull Long id) {
-        productRepository.delete(id);
+        log.info("Deleting product with id: {}", id);
+        boolean isDeleted =  productRepository.delete(id);
+        log.info("Product with id: {} is deleted: {}", id, isDeleted);
     }
 
     @Override
@@ -111,6 +108,7 @@ public class ProductService implements DBService<Product>, PageableSearch<Produc
         Page<Product> result;
         int pageNumber = getDbPageNumber(searchParams.getInt(PAGE));
         int recordsPerPage = getRecordsPerPage(searchParams.getInt(RECORDS));
+        log.info("searching all records with options: {}", searchParams.toString());
 
         if (searchParams.hasParam(NAME) && searchParams.hasParam(TYPE)) {
             result = productRepository.findAllByNameIsContainingAndProductType(PageRequest.of(pageNumber, recordsPerPage), searchParams.getString(NAME), searchParams.getLong(TYPE));

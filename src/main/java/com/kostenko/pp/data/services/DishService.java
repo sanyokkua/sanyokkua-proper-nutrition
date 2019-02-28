@@ -1,6 +1,7 @@
 package com.kostenko.pp.data.services;
 
 import com.kostenko.pp.data.PageableSearch;
+import com.kostenko.pp.data.RecordAlreadyExistsException;
 import com.kostenko.pp.data.repositories.jdbc.DishRepository;
 import com.kostenko.pp.data.views.Dish;
 import lombok.NonNull;
@@ -26,32 +27,58 @@ public class DishService implements DBService<Dish>, PageableSearch<Dish> {
 
     @Autowired
     public DishService(DishRepository dishRepository) {
-        this.dishRepository = Objects.requireNonNull(dishRepository);
+        this.dishRepository = Objects.requireNonNull(dishRepository, "Injected null");
     }
 
     @Override
     public Dish findById(@Nonnull @NonNull Long id) {
+        log.info("Searching dish with id: {}", id);
         return dishRepository.find(id);
     }
 
     @Override
     public Dish findByField(@Nonnull @NonNull @NotBlank String field) {
+        log.info("Searching dish with name: {}", field);
         return dishRepository.findByField(field);
     }
 
     @Override
     public Dish create(@NonNull @Nonnull Dish dish) {
-        return dishRepository.create(dish);
+        Dish founded = dishRepository.findByField(dish.getName());
+        if (Objects.isNull(founded)) {
+            log.info("Creating dish: {}", dish.toString());
+            if (!dish.getProducts().isEmpty()) {
+                return dishRepository.create(dish);
+            } else {
+                throw new IllegalArgumentException("Dish with name: '" + dish.getName() + "' doesn't have products");
+            }
+        } else {
+            throw new RecordAlreadyExistsException("Dish with name: '" + dish.getName() + "' is already exists in the DB");
+        }
     }
 
     @Override
     public Dish update(@NonNull @Nonnull Dish dish) {
-        return dishRepository.update(dish);
+        Dish founded = dishRepository.findByField(dish.getName());
+        if (!Objects.isNull(founded)) {
+            log.info("Updating dish: {} to {}", founded.toString(), dish);
+            if (!dish.getProducts().isEmpty()) {
+                founded.setName(dish.getName());
+                founded.setProducts(dish.getProducts());
+                return dishRepository.update(founded);
+            } else {
+                throw new IllegalArgumentException("Dish with name: '" + dish.getName() + "' doesn't have products to update");
+            }
+        } else {
+            throw new RecordAlreadyExistsException("Dish with name: '" + dish.getName() + "' is not exists in the DB");
+        }
     }
 
     @Override
     public void delete(@NonNull @Nonnull Long id) {
-        dishRepository.delete(id);
+        log.info("Deleting dish with id: {}", id);
+        boolean isDeleted = dishRepository.delete(id);
+        log.info("Dish with id: {} is deleted: {}", id, isDeleted);
     }
 
     @Override
@@ -61,11 +88,14 @@ public class DishService implements DBService<Dish>, PageableSearch<Dish> {
 
     @Override
     public boolean isExists(@Nonnull @NonNull Dish entity) {
-        return dishRepository.isExists(entity);
+        boolean exists = dishRepository.isExists(entity);
+        log.info("Dish: {} is exists: {}", entity.toString(), exists);
+        return exists;
     }
 
     @Override
     public Page<Dish> findAll(@Nonnull @NonNull SearchParams searchParams) {
+        log.info("searching all records with options: {}", searchParams.toString());
         Page<Dish> result;
         int pageNumber = getDbPageNumber(searchParams.getInt(PAGE));
         int recordsPerPage = getRecordsPerPage(searchParams.getInt(RECORDS));

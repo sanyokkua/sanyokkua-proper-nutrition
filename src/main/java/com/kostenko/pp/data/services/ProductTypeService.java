@@ -25,7 +25,6 @@ public class ProductTypeService implements DBService<ProductType> {
 
     @Override
     public ProductType findById(@Nonnull @NonNull Long id) {
-        Objects.requireNonNull(id, "ProductType id is null");
         return productTypeJpaRepository.find(id);
     }
 

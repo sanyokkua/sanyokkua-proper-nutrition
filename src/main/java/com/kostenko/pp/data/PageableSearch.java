@@ -1,6 +1,7 @@
 package com.kostenko.pp.data;
 
 import lombok.NonNull;
+import lombok.ToString;
 import org.springframework.data.domain.Page;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,7 @@ public interface PageableSearch<T> {
         return Objects.nonNull(recordsPerPage) && recordsPerPage > 0 ? recordsPerPage : DEFAULT_PAGE_SIZE;
     }
 
+    @ToString
     class SearchParams<T> {
         private Map<String, T> entities = new HashMap<>();
         private Map<String, Long> longs = new HashMap<>();
