@@ -1,9 +1,9 @@
 package com.kostenko.pp.data.repositories.jdbc;
 
 import com.google.common.collect.Lists;
+import com.kostenko.pp.data.pojos.Product;
 import com.kostenko.pp.data.repositories.CrudExtensions;
 import com.kostenko.pp.data.repositories.CrudRepository;
-import com.kostenko.pp.data.views.Product;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,9 @@ import java.util.Objects;
 public class ProductRepository implements CrudRepository<Product>, CrudExtensions<Product> {
     private static final RowMapper<Product> ROW_MAPPER = (resultSet, i) -> Product.builder()
                                                                                   .productId(resultSet.getLong("product_id"))
-                                                                                  .name(resultSet.getString("p_name"))
-                                                                                  .energy(resultSet.getDouble("energy"))
-                                                                                  .typeName(resultSet.getString("t_name"))
+                                                                                  .productName(resultSet.getString("p_name"))
+                                                                                  .productEnergy(resultSet.getDouble("energy"))
+                                                                                  .prodTypeName(resultSet.getString("t_name"))
                                                                                   .prodTypeId(resultSet.getLong("prod_type_id"))
                                                                                   .build();
     private final JdbcTemplate jdbcTemplate;
@@ -46,16 +46,16 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
     @Override
     public Product create(@Nonnull @NonNull Product entity) {
         String sql = "insert into pp_app.product (energy, name, prod_type_id) values (?,?,?)";
-        jdbcTemplate.update(sql, entity.getEnergy(), entity.getName().toUpperCase(), entity.getProdTypeId());
-        return findByField(entity.getName().toUpperCase());
+        jdbcTemplate.update(sql, entity.getProductEnergy(), entity.getProductName().toUpperCase(), entity.getProdTypeId());
+        return findByField(entity.getProductName().toUpperCase());
     }
 
     @Nullable
     @Override
     public Product update(@Nonnull @NonNull Product entity) {
         String sql = "update pp_app.product set energy= ?, name=?, prod_type_id=? where product_id=?";
-        jdbcTemplate.update(sql, entity.getEnergy(), entity.getName().toUpperCase(), entity.getProdTypeId(), entity.getProductId());
-        return findByField(entity.getName().toUpperCase());
+        jdbcTemplate.update(sql, entity.getProductEnergy(), entity.getProductName().toUpperCase(), entity.getProdTypeId(), entity.getProductId());
+        return findByField(entity.getProductName().toUpperCase());
     }
 
     @Override
@@ -90,11 +90,11 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
             String sql = "insert into pp_app.product (energy, name, prod_type_id) values (?,?,?)";
             jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override
-                public void setValues(PreparedStatement ps, int i)
+                public void setValues(@Nonnull PreparedStatement ps, int i)
                         throws SQLException {
                     Product product = batch.get(i);
-                    ps.setDouble(1, product.getEnergy());
-                    ps.setString(2, product.getName().toUpperCase());
+                    ps.setDouble(1, product.getProductEnergy());
+                    ps.setString(2, product.getProductName().toUpperCase());
                     ps.setLong(3, product.getProdTypeId());
                 }
 
@@ -114,7 +114,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
     @Nullable
     @Override
     public Product find(@Nonnull @NonNull Product entity) {
-        return findByField(entity.getName());
+        return findByField(entity.getProductName());
     }
 
     @Nullable
@@ -135,7 +135,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
 
     @Override
     public boolean isExists(@Nonnull @NonNull Product entity) {
-        return findByField(entity.getName().toUpperCase()) != null;
+        return findByField(entity.getProductName().toUpperCase()) != null;
     }
 
     public Page<Product> findAllByPage(Pageable pageable) {

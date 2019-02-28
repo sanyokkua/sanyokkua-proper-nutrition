@@ -1,10 +1,11 @@
 package com.kostenko.pp.data.repositories.jdbc;
 
 import com.google.common.collect.Lists;
+import com.kostenko.pp.data.pojos.ProductType;
 import com.kostenko.pp.data.repositories.CrudExtensions;
 import com.kostenko.pp.data.repositories.CrudRepository;
-import com.kostenko.pp.data.views.ProductType;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,8 +23,9 @@ import java.util.Objects;
 
 @Repository
 @Transactional
+@Slf4j
 public class ProductTypeRepository implements CrudRepository<ProductType>, CrudExtensions<ProductType> {
-    private static final RowMapper<ProductType> ROW_MAPPER = (resultSet, i) -> ProductType.builder().prodTypeId(resultSet.getLong("prod_type_id")).name(resultSet.getString("name")).build();
+    private static final RowMapper<ProductType> ROW_MAPPER = (resultSet, i) -> ProductType.builder().prodTypeId(resultSet.getLong("prod_type_id")).prodTypeName(resultSet.getString("name")).build();
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -35,16 +37,16 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
     @Override
     public ProductType create(@Nonnull @NonNull ProductType entity) {
         String sql = "insert into pp_app.prod_type (name) values (?)";
-        jdbcTemplate.update(sql, entity.getName().toUpperCase());
-        return findByField(entity.getName().toUpperCase());
+        jdbcTemplate.update(sql, entity.getProdTypeName().toUpperCase());
+        return findByField(entity.getProdTypeName().toUpperCase());
     }
 
     @Nullable
     @Override
     public ProductType update(@Nonnull @NonNull ProductType entity) {
         String sql = "update pp_app.prod_type set name=? where prod_type_id=?";
-        jdbcTemplate.update(sql, entity.getName().toUpperCase(), entity.getProdTypeId());
-        return findByField(entity.getName().toUpperCase());
+        jdbcTemplate.update(sql, entity.getProdTypeName().toUpperCase(), entity.getProdTypeId());
+        return findByField(entity.getProdTypeName().toUpperCase());
     }
 
     @Override
@@ -75,9 +77,9 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
             String sql = "insert into pp_app.prod_type (name) values (?)";
             jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                public void setValues(@Nonnull PreparedStatement ps, int i) throws SQLException {
                     ProductType product = batch.get(i);
-                    ps.setString(1, product.getName().toUpperCase());
+                    ps.setString(1, product.getProdTypeName().toUpperCase());
                 }
 
                 @Override
@@ -96,7 +98,7 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
     @Nullable
     @Override
     public ProductType find(@Nonnull @NonNull ProductType entity) {
-        return findByField(entity.getName());
+        return findByField(entity.getProdTypeName());
     }
 
     @Nullable
@@ -115,6 +117,6 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
 
     @Override
     public boolean isExists(@Nonnull @NonNull ProductType entity) {
-        return findByField(entity.getName().toUpperCase()) != null;
+        return findByField(entity.getProdTypeName().toUpperCase()) != null;
     }
 }

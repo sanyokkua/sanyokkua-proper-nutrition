@@ -36,6 +36,7 @@ public interface PageableSearch<T> {
         }
 
         private static <K, V> void add(Map<K, V> map, K key, V value, boolean skipIfNull) { // null | object -> null && skip | null && !skip | object && skip | object && !skip
+            //noinspection StatementWithEmptyBody
             if (skipIfNull && value == null) {
 
             } else {

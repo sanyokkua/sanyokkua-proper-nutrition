@@ -1,11 +1,12 @@
 package com.kostenko.pp.data.repositories.jdbc;
 
 import com.google.common.collect.Lists;
+import com.kostenko.pp.data.pojos.Dish;
+import com.kostenko.pp.data.pojos.Product;
 import com.kostenko.pp.data.repositories.CrudExtensions;
 import com.kostenko.pp.data.repositories.CrudRepository;
-import com.kostenko.pp.data.views.Dish;
-import com.kostenko.pp.data.views.Product;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,25 +29,26 @@ import java.util.Optional;
 
 @Repository
 @Transactional
+@Slf4j
 public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish> {
     private static final RowMapper<Dish> ROW_MAPPER_FOR_DISH = (resultSet, i) -> Dish.builder().dishId(resultSet.getLong("dish_id"))
-                                                                                     .name(resultSet.getString("name"))
+                                                                                     .dishName(resultSet.getString("name"))
                                                                                      .build();
     private static final RowMapper<Product> ROW_MAPPER_FOR_PRODUCT = (resultSet, i) -> Product.builder()
                                                                                               .productId(resultSet.getLong("product_id"))
-                                                                                              .name(resultSet.getString("name"))
-                                                                                              .energy(resultSet.getDouble("energy"))
-                                                                                              .amount(resultSet.getLong("amount"))
+                                                                                              .productName(resultSet.getString("name"))
+                                                                                              .productEnergy(resultSet.getDouble("energy"))
+                                                                                              .productAmount(resultSet.getLong("amount"))
                                                                                               .prodTypeId(resultSet.getLong("prod_type_id"))
-                                                                                              .typeName(resultSet.getString("prod_type"))
+                                                                                              .prodTypeName(resultSet.getString("prod_type"))
                                                                                               .build();
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Dish> ROW_MAPPER_FOR_DISH_WITH_PRODUCTS = (resultSet, i) -> {
-        Dish dish = Dish.builder().dishId(resultSet.getLong("dish_id")).name(resultSet.getString("name")).build();
+        Dish dish = Dish.builder().dishId(resultSet.getLong("dish_id")).dishName(resultSet.getString("name")).build();
         Optional<List<Product>> allProductsForDish = findAllProductsForDish(dish.getDishId());
         List<Product> products = allProductsForDish.orElse(Lists.newArrayList());
-        dish.setProducts(products);
-        dish.setTotalEnergy(products.stream().filter(product -> product.getAmount() > 0).map(product -> product.getEnergy() * (((double) product.getAmount()) / 100d)).reduce(Double::sum).orElse(0d));
+        dish.setDishProducts(products);
+        dish.setDishEnergy(products.stream().filter(product -> product.getProductAmount() > 0).map(product -> product.getProductEnergy() * (((double) product.getProductAmount()) / 100d)).reduce(Double::sum).orElse(0d));
         return dish;
     };
 
@@ -59,20 +61,20 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     @Override
     public Dish create(@Nonnull @NonNull Dish entity) {
         String createDishSql = "insert into pp_app.dish (name) values (?)";
-        jdbcTemplate.update(createDishSql, entity.getName().toUpperCase());
+        jdbcTemplate.update(createDishSql, entity.getDishName().toUpperCase());
         createProductsForDish(entity);
-        return findByField(entity.getName().toUpperCase());
+        return findByField(entity.getDishName().toUpperCase());
     }
 
     @Nullable
     @Override
     public Dish update(@Nonnull @NonNull Dish entity) {
         String updateDishSql = "update pp_app.dish set name=? where dish_id=?";
-        jdbcTemplate.update(updateDishSql, entity.getName().toUpperCase(), entity.getDishId());
+        jdbcTemplate.update(updateDishSql, entity.getDishName().toUpperCase(), entity.getDishId());
         String removeDishProductsSql = "delete from pp_app.dish_products where dish_dish_id=?";
         jdbcTemplate.update(removeDishProductsSql, entity.getDishId());
         createProductsForDish(entity);
-        return findByField((entity.getName().toUpperCase()));
+        return findByField((entity.getDishName().toUpperCase()));
     }
 
     @Override
@@ -99,15 +101,15 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     }
 
     private void createProductsForDish(@NonNull @Nonnull Dish entity) {
-        Dish byUniqueField = findByField((entity.getName().toUpperCase()));
+        Dish byUniqueField = findByField((entity.getDishName().toUpperCase()));
         if (byUniqueField != null) {
-            List<Product> batchLists = entity.getProducts();
+            List<Product> batchLists = entity.getDishProducts();
             String createProductsSql = "insert into pp_app.dish_products (amount, dish_dish_id, product_product_id) VALUES (?,?,?)";
             jdbcTemplate.batchUpdate(createProductsSql, new BatchPreparedStatementSetter() {
                 @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                public void setValues(@Nonnull PreparedStatement ps, int i) throws SQLException {
                     Product product = batchLists.get(i);
-                    ps.setLong(1, product.getAmount());
+                    ps.setLong(1, product.getProductAmount());
                     ps.setLong(2, byUniqueField.getDishId());
                     ps.setLong(3, product.getProductId());
                 }
@@ -167,9 +169,9 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
             return Optional.empty();
         }
         List<Product> currentProducts = products.get();
-        double reduce = currentProducts.stream().map(product -> product.getEnergy() * product.getAmount()).reduce((aDouble, aDouble2) -> aDouble + aDouble2).orElse(0D);
-        dish.setProducts(currentProducts);
-        dish.setTotalEnergy(reduce);
+        double reduce = currentProducts.stream().map(product -> product.getProductEnergy() * product.getProductAmount()).reduce((aDouble, aDouble2) -> aDouble + aDouble2).orElse(0D);
+        dish.setDishProducts(currentProducts);
+        dish.setDishEnergy(reduce);
         return Optional.of(dish);
     }
 

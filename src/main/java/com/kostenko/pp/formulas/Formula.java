@@ -30,7 +30,7 @@ public interface Formula {
             }
         }
 
-        double getCoefficient() {
+        public double getCoefficient() {
             return coefficient;
         }
     }

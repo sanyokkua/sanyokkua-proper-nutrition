@@ -1,21 +1,17 @@
 package com.kostenko.pp.configuration;
 
-import com.kostenko.pp.data.repositories.users.RoleRepository;
-import com.kostenko.pp.data.repositories.users.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 @Component
 @PropertySource(value = "classpath:general.properties")
 @Slf4j
 public class StartupCommandLineRunner implements CommandLineRunner {
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
+//    private final RoleRepository roleRepository;
+//    private final UserRepository userRepository;
 //    @Value("${admin.user.login}")
 //    public String adminUserLogin;
 //    @Value("${admin.user.pass}")
@@ -24,9 +20,9 @@ public class StartupCommandLineRunner implements CommandLineRunner {
 //    public String adminUserEmail;
 
     @Autowired
-    public StartupCommandLineRunner(RoleRepository roleRepository, UserRepository userRepository) {
-        this.roleRepository = Objects.requireNonNull(roleRepository, "Instead of RoleRepository instance injected null");
-        this.userRepository = Objects.requireNonNull(userRepository, "Instead of UserRepository instance injected null");
+    public StartupCommandLineRunner() {
+//        this.roleRepository = Objects.requireNonNull(roleRepository, "Instead of RoleRepository instance injected null");
+//        this.userRepository = Objects.requireNonNull(userRepository, "Instead of UserRepository instance injected null");
     }
 
     @Override
