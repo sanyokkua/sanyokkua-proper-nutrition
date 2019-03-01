@@ -18,7 +18,9 @@ public class GenderService implements DBService<Gender> {
     private final GenderRepository genderRepository;
 
     @Autowired
-    public GenderService(@NonNull GenderRepository genderRepository) {this.genderRepository = genderRepository;}
+    public GenderService(@NonNull GenderRepository genderRepository) {
+        this.genderRepository = genderRepository;
+    }
 
     @Override
     public Gender findById(@Nonnull @NonNull Long id) {

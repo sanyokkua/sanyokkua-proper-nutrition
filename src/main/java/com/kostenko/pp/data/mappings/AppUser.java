@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(schema = "pp_app", name = "appuser", uniqueConstraints = {@UniqueConstraint(columnNames = "login"), @UniqueConstraint(columnNames = "email")})
+@Table(schema = "pp_app", name = "appuser", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +24,6 @@ public class AppUser {
     @NaturalId
     @Column(name = "email", nullable = false)
     private String email;
-    @NaturalId
-    @Column(name = "login", nullable = false)
-    private String login;
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "age")

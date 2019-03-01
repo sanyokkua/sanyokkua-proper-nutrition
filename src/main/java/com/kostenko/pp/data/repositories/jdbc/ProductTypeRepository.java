@@ -19,7 +19,6 @@ import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
 @Transactional
@@ -29,8 +28,8 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public ProductTypeRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate);
+    public ProductTypeRepository(@NonNull @Nonnull JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Nullable

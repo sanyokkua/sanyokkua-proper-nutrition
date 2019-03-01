@@ -99,11 +99,10 @@ public class DishService implements PageableDBService<Dish> {
         Page<Dish> result;
         int pageNumber = getDbPageNumber(searchParams.getInt(PAGE));
         int recordsPerPage = getRecordsPerPage(searchParams.getInt(RECORDS));
-
         if (searchParams.hasParam(NAME)) {
-            result = dishRepository.findAllByPageAndName(PageRequest.of(pageNumber, recordsPerPage), searchParams.getString(NAME));
+            result = dishRepository.find().begin(PageRequest.of(pageNumber, recordsPerPage)).addName(searchParams.getString(NAME)).invoke();
         } else {
-            result = dishRepository.findAllByPage(PageRequest.of(pageNumber, recordsPerPage));
+            result = dishRepository.find().begin(PageRequest.of(pageNumber, recordsPerPage)).invoke();
         }
         return result;
     }

@@ -1,6 +1,7 @@
 package com.kostenko.pp.data.services.implementation;
 
 import com.kostenko.pp.data.pojos.Role;
+import com.kostenko.pp.data.repositories.jdbc.RoleRepository;
 import com.kostenko.pp.data.services.DBService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +15,12 @@ import java.util.List;
 @Slf4j
 @Service
 public class RoleService implements DBService<Role> {
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public RoleService(@NonNull RoleService roleService) {this.roleService = roleService;}
+    public RoleService(@NonNull RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public Role findById(@Nonnull @NonNull Long id) {

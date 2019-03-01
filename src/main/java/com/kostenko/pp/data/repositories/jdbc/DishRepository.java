@@ -5,9 +5,12 @@ import com.kostenko.pp.data.pojos.Dish;
 import com.kostenko.pp.data.pojos.Product;
 import com.kostenko.pp.data.repositories.CrudExtensions;
 import com.kostenko.pp.data.repositories.CrudRepository;
+import com.kostenko.pp.data.repositories.ExtendedSearch;
+import com.kostenko.pp.data.repositories.SearchBuilder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,16 +27,13 @@ import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 @Transactional
 @Slf4j
-public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish> {
-    private static final RowMapper<Dish> ROW_MAPPER_FOR_DISH = (resultSet, i) -> Dish.builder().dishId(resultSet.getLong("dish_id"))
-                                                                                     .dishName(resultSet.getString("name"))
-                                                                                     .build();
+public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish>, ExtendedSearch<Dish, DishRepository.DishSearchBuilder> {
+    private static final RowMapper<Dish> ROW_MAPPER_FOR_DISH = (resultSet, i) -> Dish.builder().dishId(resultSet.getLong("dish_id")).dishName(resultSet.getString("name")).build();
     private static final RowMapper<Product> ROW_MAPPER_FOR_PRODUCT = (resultSet, i) -> Product.builder()
                                                                                               .productId(resultSet.getLong("product_id"))
                                                                                               .productName(resultSet.getString("name"))
@@ -53,8 +53,8 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     };
 
     @Autowired
-    public DishRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate);
+    public DishRepository(@NonNull @Nonnull JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Nullable
@@ -182,32 +182,44 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
         return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.query(findAllProductsForDishSql, ROW_MAPPER_FOR_PRODUCT, id));
     }
 
-    public Page<Dish> findAllByPage(Pageable pageable) {
-        String countQuery = "select count(1) as row_count from pp_app.dish d";
-        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
-
-        String querySql = "select d.dish_id, d.name " +
-                "from pp_app.dish d " +
-                "limit " + pageable.getPageSize() + " " +
-                "offset " + pageable.getOffset();
-
-        List<Dish> dishes = jdbcTemplate.query(querySql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS);
-        return new PageImpl<>(dishes, pageable, total);
+    @Override
+    public DishSearchBuilder find() {
+        return new DishSearchBuilder();
     }
 
-    public Page<Dish> findAllByPageAndName(Pageable pageable, String name) {
-        String likeString = String.format("'%%%s%%'", name.toUpperCase());
-        String countQuery = "select count(1) as row_count from pp_app.dish d where name like " + likeString;
-        int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+    public class DishSearchBuilder implements SearchBuilder<Dish> {
+        private final String select = "select d.dish_id, d.name ";
+        private final String from = "from pp_app.dish d ";
+        private String where = null;
+        private Pageable pageable;
 
-        String querySql = "select d.dish_id, d.name " +
-                "from pp_app.dish d " +
-                "where name like " + likeString + " " +
-                "limit " + pageable.getPageSize() + " " +
-                "offset " + pageable.getOffset();
+        @Override
+        public DishSearchBuilder begin(@NonNull Pageable pageable) {
+            this.pageable = pageable;
+            return this;
+        }
 
-        List<Dish> dishes = jdbcTemplate.query(querySql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS);
-        return new PageImpl<>(dishes, pageable, total);
+        @Override
+        public Page<Dish> invoke() {
+            if (pageable == null) {
+                throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
+            }
+            String whereClause = where != null ? where : "";
+            String countQuery = "select count(1) as row_count " + from + whereClause;
+            int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
+
+            String querySql = select + from + whereClause + " limit " + pageable.getPageSize() + " offset " + pageable.getOffset();
+            List<Dish> dishes = jdbcTemplate.query(querySql, ROW_MAPPER_FOR_DISH_WITH_PRODUCTS);
+            return new PageImpl<>(dishes, pageable, total);
+        }
+
+        public DishSearchBuilder addName(@NonNull String name) {
+            if (StringUtils.isNotBlank(name)) {
+                String like = String.format("'%%%s%%'", name.toUpperCase());
+                where = "where name like " + like + " ";
+            }
+            return this;
+        }
     }
 
 }

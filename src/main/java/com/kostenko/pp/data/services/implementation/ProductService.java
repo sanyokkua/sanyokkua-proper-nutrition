@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
@@ -114,14 +115,16 @@ public class ProductService implements PageableDBService<Product> {
         int recordsPerPage = getRecordsPerPage(searchParams.getInt(RECORDS));
         log.info("searching all records with options: {}", searchParams.toString());
 
+        Pageable pageable = PageRequest.of(pageNumber, recordsPerPage);
+
         if (searchParams.hasParam(NAME) && searchParams.hasParam(TYPE)) {
-            result = productRepository.findAllByNameIsContainingAndProductType(PageRequest.of(pageNumber, recordsPerPage), searchParams.getString(NAME), searchParams.getLong(TYPE));
+            result = productRepository.find().begin(pageable).addName(searchParams.getString(NAME)).addProductType(searchParams.getLong(TYPE)).invoke();
         } else if (searchParams.hasParam(TYPE)) {
-            result = productRepository.findAllByProductType(PageRequest.of(pageNumber, recordsPerPage), searchParams.getLong(TYPE));
+            result = productRepository.find().begin(pageable).addProductType(searchParams.getLong(TYPE)).invoke();
         } else if (searchParams.hasParam(NAME)) {
-            result = productRepository.findAllByNameIsContaining(PageRequest.of(pageNumber, recordsPerPage), searchParams.getString(NAME));
+            result = productRepository.find().begin(pageable).addName(searchParams.getString(NAME)).invoke();
         } else {
-            result = productRepository.findAllByPage(PageRequest.of(pageNumber, recordsPerPage));
+            result = productRepository.find().begin(pageable).invoke();
         }
         return result;
     }
