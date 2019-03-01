@@ -141,7 +141,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
     }
 
     @Override
-    public ProductSearchBuilder find() {
+    public ProductSearchBuilder findByPages() {
         return new ProductSearchBuilder();
     }
 
@@ -169,14 +169,14 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
             return new PageImpl<>(products, pageable, total);
         }
 
-        public ProductSearchBuilder addProductType(long productTypeId) {
-            if (productTypeId > 0) {
+        public ProductSearchBuilder addProductType(Long productTypeId) {
+            if (productTypeId != null && productTypeId > 0) {
                 where += " and p.prod_type_id = " + productTypeId + " ";
             }
             return this;
         }
 
-        public ProductSearchBuilder addName(@NonNull String name) {
+        public ProductSearchBuilder addName(String name) {
             if (StringUtils.isNotBlank(name)) {
                 String like = String.format("'%%%s%%'", name.toUpperCase());
                 where += "  and p.name like " + like;

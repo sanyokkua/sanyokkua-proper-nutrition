@@ -114,18 +114,8 @@ public class ProductService implements PageableDBService<Product> {
         int pageNumber = getDbPageNumber(searchParams.getInt(PAGE));
         int recordsPerPage = getRecordsPerPage(searchParams.getInt(RECORDS));
         log.info("searching all records with options: {}", searchParams.toString());
-
         Pageable pageable = PageRequest.of(pageNumber, recordsPerPage);
-
-        if (searchParams.hasParam(NAME) && searchParams.hasParam(TYPE)) {
-            result = productRepository.find().begin(pageable).addName(searchParams.getString(NAME)).addProductType(searchParams.getLong(TYPE)).invoke();
-        } else if (searchParams.hasParam(TYPE)) {
-            result = productRepository.find().begin(pageable).addProductType(searchParams.getLong(TYPE)).invoke();
-        } else if (searchParams.hasParam(NAME)) {
-            result = productRepository.find().begin(pageable).addName(searchParams.getString(NAME)).invoke();
-        } else {
-            result = productRepository.find().begin(pageable).invoke();
-        }
+        result = productRepository.findByPages().begin(pageable).addName(searchParams.getString(NAME)).addProductType(searchParams.getLong(TYPE)).invoke();
         return result;
     }
 }

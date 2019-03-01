@@ -183,7 +183,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     }
 
     @Override
-    public DishSearchBuilder find() {
+    public DishSearchBuilder findByPages() {
         return new DishSearchBuilder();
     }
 
@@ -213,7 +213,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
             return new PageImpl<>(dishes, pageable, total);
         }
 
-        public DishSearchBuilder addName(@NonNull String name) {
+        public DishSearchBuilder addName(String name) {
             if (StringUtils.isNotBlank(name)) {
                 String like = String.format("'%%%s%%'", name.toUpperCase());
                 where = "where name like " + like + " ";

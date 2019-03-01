@@ -140,7 +140,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
     }
 
     @Override
-    public UserSearchBuilder find() {
+    public UserSearchBuilder findByPages() {
         return new UserSearchBuilder();
     }
 
@@ -168,21 +168,21 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
             return new PageImpl<>(users, pageable, total);
         }
 
-        public UserSearchBuilder addRole(long roleId) {
-            if (roleId >= 0) {
+        public UserSearchBuilder addRole(Long roleId) {
+            if (roleId != null && roleId >= 0) {
                 where += " and u.role_id = " + roleId + " ";
             }
             return this;
         }
 
-        public UserSearchBuilder addGender(long genderId) {
-            if (genderId >= 0) {
+        public UserSearchBuilder addGender(Long genderId) {
+            if (genderId != null && genderId >= 0) {
                 where += " and u.gender_id = " + genderId + " ";
             }
             return this;
         }
 
-        public UserSearchBuilder addEmail(@NonNull String email) {
+        public UserSearchBuilder addEmail(String email) {
             if (StringUtils.isNotBlank(email)) {
                 String like = String.format("'%%%s%%'", email.toLowerCase());
                 where += " and u.email like " + like;
