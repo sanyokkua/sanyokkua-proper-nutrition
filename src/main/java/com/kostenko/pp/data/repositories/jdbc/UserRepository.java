@@ -151,7 +151,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
         private Pageable pageable;
 
         @Override
-        public SearchBuilder<User> begin(@NonNull Pageable pageable) {
+        public UserSearchBuilder begin(@NonNull Pageable pageable) {
             this.pageable = pageable;
             return this;
         }

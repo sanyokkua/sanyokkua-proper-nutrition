@@ -22,7 +22,10 @@ public class ProductsController {
     }
 
     @GetMapping("/products")
-    public ResultPage<JsonProduct> getAllProductsLike(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "page", required = false) Integer pageNumber, @RequestParam(value = "currentType", required = false) Long currentType, @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+    public ResultPage<JsonProduct> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
+                                                      @RequestParam(value = "page", required = false) Integer pageNumber,
+                                                      @RequestParam(value = "currentType", required = false) Long currentType,
+                                                      @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
         SearchParams<Product> searchParams = new SearchParams<>();
         searchParams.add(ProductService.NAME, name, true);
         searchParams.add(ProductService.TYPE, currentType, true);

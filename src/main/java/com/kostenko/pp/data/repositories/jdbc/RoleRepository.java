@@ -1,9 +1,11 @@
 package com.kostenko.pp.data.repositories.jdbc;
 
 import com.kostenko.pp.data.pojos.Role;
+import com.kostenko.pp.data.repositories.CrudExtensions;
 import com.kostenko.pp.data.repositories.CrudRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
+import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -20,7 +23,7 @@ import java.util.List;
 @Repository
 @Transactional
 @Slf4j
-public class RoleRepository implements CrudRepository<Role> {
+public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role> {
     private static final RowMapper<Role> ROW_MAPPER = (resultSet, i) -> Role.builder().roleId(resultSet.getLong("role_id"))
                                                                             .roleName(resultSet.getString("name"))
                                                                             .build();
@@ -70,5 +73,38 @@ public class RoleRepository implements CrudRepository<Role> {
     public List<Role> findAll() {
         String sql = "select * from pp_app.role";
         return jdbcTemplate.query(sql, ROW_MAPPER);
+    }
+
+    @Override
+    public void createAll(Iterable<Role> entities) {
+        throw new NotImplementedException("Method createAll has not implemented yet");
+    }
+
+    @Override
+    public boolean delete(@Nonnull @NonNull Role entity) {
+        return delete(entity.getRoleId());
+    }
+
+    @Nullable
+    @Override
+    public Role find(@Nonnull @NonNull Role entity) {
+        return findByField(entity.getRoleName());
+    }
+
+    @Nullable
+    @Override
+    public Role findByField(@NotBlank String fieldValue) {
+        String sql = "select * from pp_app.role r where r.name = ?";
+        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue)).orElse(null);
+    }
+
+    @Override
+    public boolean isExistsId(@Nonnull @NonNull Long id) {
+        return find(id) != null;
+    }
+
+    @Override
+    public boolean isExists(@Nonnull @NonNull Role entity) {
+        return findByField(entity.getRoleName()) != null;
     }
 }

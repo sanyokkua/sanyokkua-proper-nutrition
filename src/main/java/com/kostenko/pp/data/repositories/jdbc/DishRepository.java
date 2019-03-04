@@ -135,7 +135,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
     @Nullable
     @Override
     public Dish find(@Nonnull @NonNull Dish entity) {
-        return null;
+        return findByField(entity.getDishName());
     }
 
     @Nullable
