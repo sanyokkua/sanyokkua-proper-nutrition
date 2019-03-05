@@ -19,6 +19,8 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Service
 public class UserService implements DBService<User>, PageableSearch<User> {
@@ -74,11 +76,11 @@ public class UserService implements DBService<User>, PageableSearch<User> {
     }
 
     private boolean isNotValid(User entity) {
-        return entity == null || StringUtils.isBlank(entity.getEmail()) || StringUtils.isBlank(entity.getPassword());
+        return isNull(entity) || StringUtils.isBlank(entity.getEmail()) || StringUtils.isBlank(entity.getPassword());
     }
 
     private void fillDefaultValues(User entity) {
-        if (entity.getRoleId() == null) {
+        if (isNull(entity.getRoleId())) {
             Role defaultRole = roleRepository.findByField(UserRoles.USER.getRoleName());
             entity.setRoleId(defaultRole.getRoleId());
             entity.setRoleName(defaultRole.getRoleName());

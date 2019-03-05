@@ -9,6 +9,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
+
 @Data
 @Builder
 @Slf4j
@@ -33,7 +35,7 @@ public class JsonDish {
 
     public Dish mapToDish() {
         Dish dish;
-        if (dishId != null) {
+        if (!isNull(dishId)) {
             dish = Dish.builder()
                        .dishId(dishId)
                        .dishName(name)

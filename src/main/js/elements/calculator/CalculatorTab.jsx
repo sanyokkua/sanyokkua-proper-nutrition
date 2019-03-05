@@ -1,15 +1,17 @@
 import React        from 'react';
+import Calculator   from './Calculator';
 import PropTypes    from "prop-types";
 import TextPropType from "../../utils/TextPropType";
 
-class User extends React.Component {
+class CalculatorTab extends React.Component {
     render() {
         return <div>
+            <Calculator text={ this.props.text } isUpdating={ false }/>
         </div>
     }
 }
 
-User.propTypes = {
+CalculatorTab.propTypes = {
     text: PropTypes.oneOfType([TextPropType]).isRequired
 };
-export default User;
+export default CalculatorTab;

@@ -13,6 +13,8 @@ import javax.annotation.Nonnull;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Service
 public class GenderService implements DBService<Gender> {
@@ -52,7 +54,7 @@ public class GenderService implements DBService<Gender> {
 
     @Override
     public Gender update(@Nonnull @NonNull Gender entity) {
-        if (entity.getGenderId() == null && StringUtils.isBlank(entity.getGenderName())) {
+        if (isNull(entity.getGenderId()) && StringUtils.isBlank(entity.getGenderName())) {
             throw new IllegalArgumentException("Gender id or name is null. Gender can't be updated. Gender = " + entity);
         }
         if (!isExists(entity)) {

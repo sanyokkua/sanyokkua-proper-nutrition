@@ -192,7 +192,6 @@ class UserProfileEditView extends React.Component {
                                              age: Number(fields.age.value),
                                              weight: Number(fields.weight.value),
                                              height: Number(fields.height.value),
-                                             login: fields.login.value,
                                              email: fields.email.value,
                                              gender: fields.gender.value,
                                              lastCalculatedEnergy: 0
@@ -204,15 +203,6 @@ class UserProfileEditView extends React.Component {
         return <div>
             <Row>
                 <Col s={ 6 }>
-                    <div>
-                        <Input required validate defaultValue={ this.props.user.login }
-                               placeholder={ this.props.text.userProfile.inputLogin }
-                               label={ this.props.text.userProfile.inputLogin }
-                               success={ this.state.fields.login.isValid ? this.props.text.userProfile.validationSuccessLogin : null }
-                               onChange={ this.onLoginChange }
-                        />
-                        <span className="red-text"> { this.state.fields.login.error } </span>
-                    </div>
                     <div>
                         <Input required validate type="email" defaultValue={ this.props.user.email }
                                label={ this.props.text.userProfile.inputEmail }
@@ -280,13 +270,12 @@ class UserProfileEditView extends React.Component {
 UserProfileEditView.propTypes = {
     onSaveButtonClick: PropTypes.func.isRequired,
     onSaveButtonText: PropTypes.string.isRequired,
-    text: TextPropType,
+    text: PropTypes.oneOfType([TextPropType]).isRequired,
     user: PropTypes.shape({
                               id: PropTypes.number.isRequired,
                               age: PropTypes.number.isRequired,
                               weight: PropTypes.number.isRequired,
                               height: PropTypes.number.isRequired,
-                              login: PropTypes.string.isRequired,
                               email: PropTypes.string.isRequired,
                               gender: PropTypes.string.isRequired,
                               lastCalculatedEnergy: PropTypes.number.isRequired

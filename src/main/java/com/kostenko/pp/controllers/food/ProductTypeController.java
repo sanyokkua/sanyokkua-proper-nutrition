@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @RestController
 public class ProductTypeController {
     private final ProductTypeService productTypeService;
@@ -49,7 +51,7 @@ public class ProductTypeController {
     @DeleteMapping("/types/{id}")
     public ResponseEntity deleteProductType(@PathVariable Long id) {
         ProductType byId = productTypeService.findById(id);
-        if (byId == null) {
+        if (isNull(byId)) {
             throw new IllegalArgumentException("ProductType with id " + id + " doesn't exists. Delete can't be done");
         } else {
             productTypeService.delete(id);

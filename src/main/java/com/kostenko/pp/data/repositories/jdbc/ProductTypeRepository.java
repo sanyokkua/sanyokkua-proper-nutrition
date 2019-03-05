@@ -20,6 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Repository
 @Transactional
 @Slf4j
@@ -116,6 +118,6 @@ public class ProductTypeRepository implements CrudRepository<ProductType>, CrudE
 
     @Override
     public boolean isExists(@Nonnull @NonNull ProductType entity) {
-        return findByField(entity.getProdTypeName().toUpperCase()) != null;
+        return !isNull(findByField(entity.getProdTypeName().toUpperCase()));
     }
 }

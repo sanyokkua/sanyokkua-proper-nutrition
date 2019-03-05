@@ -23,6 +23,8 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Repository
 @Transactional
 @Slf4j
@@ -78,7 +80,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
 
     @Override
     public boolean isExists(@Nonnull @NonNull User entity) {
-        return findByField(entity.getEmail()) != null;
+        return !isNull(findByField(entity.getEmail()));
     }
 
     @Nullable
@@ -158,7 +160,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
 
         @Override
         public Page<User> invoke() {
-            if (pageable == null) {
+            if (isNull(pageable)) {
                 throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
             }
             String countQuery = "select count(1) as row_count " + from + where;
@@ -169,14 +171,14 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
         }
 
         public UserSearchBuilder addRole(Long roleId) {
-            if (roleId != null && roleId >= 0) {
+            if (!isNull(roleId) && roleId >= 0) {
                 where += " and u.role_id = " + roleId + " ";
             }
             return this;
         }
 
         public UserSearchBuilder addGender(Long genderId) {
-            if (genderId != null && genderId >= 0) {
+            if (!isNull(genderId) && genderId >= 0) {
                 where += " and u.gender_id = " + genderId + " ";
             }
             return this;

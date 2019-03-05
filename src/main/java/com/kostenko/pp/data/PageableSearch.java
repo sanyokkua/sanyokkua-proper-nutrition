@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 public interface PageableSearch<T> {
     int DEFAULT_PAGE_SIZE = 10;
 
@@ -37,7 +39,7 @@ public interface PageableSearch<T> {
 
         private static <K, V> void add(Map<K, V> map, K key, V value, boolean isNotRequired) { // null | object -> null && skip | null && !skip | object && skip | object && !skip
             //noinspection StatementWithEmptyBody
-            if (isNotRequired && value == null) {
+            if (isNotRequired && isNull(value)) {
 
             } else {
                 map.put(key, Objects.requireNonNull(value));

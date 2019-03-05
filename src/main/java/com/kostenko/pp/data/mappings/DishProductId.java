@@ -10,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
+import static java.util.Objects.isNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,7 +33,7 @@ public class DishProductId implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (isNull(o) || getClass() != o.getClass()) {
             return false;
         }
         DishProductId that = (DishProductId) o;

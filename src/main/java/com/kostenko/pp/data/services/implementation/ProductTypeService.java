@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Slf4j
 public class ProductTypeService implements DBService<ProductType> {
@@ -43,7 +45,7 @@ public class ProductTypeService implements DBService<ProductType> {
             throw new IllegalArgumentException("Given ProductType has blank name");
         }
         ProductType fromDb = productTypeJpaRepository.findByField(entity.getProdTypeName());
-        if (fromDb == null) {
+        if (isNull(fromDb)) {
             fromDb = productTypeJpaRepository.create(entity);
         }
         return fromDb;
@@ -55,7 +57,7 @@ public class ProductTypeService implements DBService<ProductType> {
             throw new IllegalArgumentException("Given ProductType has blank name");
         }
         ProductType fromDb = productTypeJpaRepository.find(entity.getProdTypeId());
-        if (fromDb == null) {
+        if (isNull(fromDb)) {
             throw new IllegalArgumentException("ProductType with id: " + entity.getProdTypeId() + " is not exists");
         }
         fromDb.setProdTypeName(entity.getProdTypeName());
@@ -76,10 +78,10 @@ public class ProductTypeService implements DBService<ProductType> {
     @Override
     public boolean isExists(@Nonnull @NonNull ProductType entity) {
         boolean result = false;
-        if (entity.getProdTypeId() != null) {
+        if (!isNull(entity.getProdTypeId())) {
             result = productTypeJpaRepository.isExistsId(entity.getProdTypeId());
         } else if (StringUtils.isNotBlank(entity.getProdTypeName())) {
-            result = productTypeJpaRepository.findByField(entity.getProdTypeName()) != null;
+            result = !isNull(productTypeJpaRepository.findByField(entity.getProdTypeName()));
         }
         return result;
     }

@@ -5,7 +5,8 @@
         "tabProducts": "Продукти",
         "tabDishes": "Страви",
         "tabLogout": "Вийти",
-        "tabEditMode": "Режим редагування"
+        "tabEditMode": "Режим редагування",
+        "tabCalculator": "Калькулятор"
     },
     "calculator": {
         "age": "Вік",

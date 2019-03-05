@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @RestController
 public class ProductsController {
     private final ProductService productService;
@@ -60,7 +62,7 @@ public class ProductsController {
     @DeleteMapping("/products/{id}")
     public ResponseEntity deleteProduct(@PathVariable Long id) {
         Product product = productService.findById(id);
-        if (product == null) {
+        if (isNull(product)) {
             throw new IllegalArgumentException("Product with id " + id + " doesn't exists. Delete can't be done");
         } else {
             productService.delete(product.getProductId());

@@ -5,7 +5,8 @@
         "tabProducts": "Products",
         "tabDishes": "Dishes",
         "tabLogout": "Logout",
-        "tabEditMode": "Edit mode"
+        "tabEditMode": "Edit mode",
+        "tabCalculator": "Calculator"
     },
     "calculator": {
         "age": "Age",
@@ -19,7 +20,7 @@
         "benedict": "Benedict",
         "mifflin": "Mifflin",
         "low": "Low",
-        "medium":"Medium",
+        "medium": "Medium",
         "high": "High",
         "very_high": "Very high",
         "buttonCalculate": "Calculate",

@@ -16,15 +16,15 @@ export default class UserService {
              .catch(error => fail(error));
     }
 
-    getUser(loadParams, success, fail){
+    getUser(loadParams, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
     }
 
-    emailIsInUse(email, success, fail){
+    emailIsInUse(email, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
     }
 
-    loginIsInUse(login, success, fail){
+    loginIsInUse(login, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
     }
 

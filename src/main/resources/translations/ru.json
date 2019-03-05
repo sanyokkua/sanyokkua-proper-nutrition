@@ -5,7 +5,8 @@
         "tabProducts": "Продукты",
         "tabDishes": "Блюда",
         "tabLogout": "Выйти",
-        "tabEditMode": "Режим редактирования"
+        "tabEditMode": "Режим редактирования",
+        "tabCalculator": "Калькулятор"
     },
     "calculator": {
         "age": "Возраст",
@@ -19,7 +20,7 @@
         "benedict": "Бенедикт",
         "mifflin": "Миффлин",
         "low": "Низкая",
-        "medium":"Средняя",
+        "medium": "Средняя",
         "high": "Высокая",
         "very_high": "Очень высокая",
         "buttonCalculate": "Рассчитать",

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Nullable;
 
 import static com.kostenko.pp.data.services.implementation.UserDishService.*;
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Controller
@@ -57,7 +58,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
         User entityForCreation = jsonEntity.mapToUser();
         entityForCreation.setPassword(passwordEncoder.encode(entityForCreation.getPassword()));
         User user = userService.create(entityForCreation);
-        if (user != null) {
+        if (!isNull(user)) {
             log.info("Created user: {}", user.toString());
             return JsonUser.mapToJsonUser(user);
         }
@@ -73,7 +74,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
         User entityForUpdating = jsonEntity.mapToUser();
         entityForUpdating.setPassword(passwordEncoder.encode(entityForUpdating.getPassword()));
         User user = userService.update(entityForUpdating);
-        if (user != null) {
+        if (!isNull(user)) {
             log.info("Updated user: {}", user.toString());
             return JsonUser.mapToJsonUser(user);
         }
@@ -99,7 +100,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
         searchParams.add(SEARCH, params.getSearchString(), true);
         searchParams.add(RECORDS, params.getRecordsPerPage(), true);
         searchParams.add(PAGE, params.getPage(), true);
-        searchParams.add(USER, user != null ? user.getUserId() : null, false);
+        searchParams.add(USER, !isNull(user) ? user.getUserId() : null, false);
         Page<Dish> page = userDishService.findAll(searchParams);
         return ResultPage.getResultPage(page, JsonDish::mapFromDish);
     }

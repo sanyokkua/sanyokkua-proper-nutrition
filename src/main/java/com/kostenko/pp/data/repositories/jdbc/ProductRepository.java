@@ -26,6 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Repository
 @Transactional
 @Slf4j
@@ -137,7 +139,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
 
     @Override
     public boolean isExists(@Nonnull @NonNull Product entity) {
-        return findByField(entity.getProductName().toUpperCase()) != null;
+        return !isNull(findByField(entity.getProductName().toUpperCase()));
     }
 
     @Override
@@ -159,7 +161,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
 
         @Override
         public Page<Product> invoke() {
-            if (pageable == null) {
+            if (isNull(pageable)) {
                 throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
             }
             String countQuery = "select count(1) as row_count " + from + where;
@@ -170,7 +172,7 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
         }
 
         public ProductSearchBuilder addProductType(Long productTypeId) {
-            if (productTypeId != null && productTypeId > 0) {
+            if (!isNull(productTypeId) && productTypeId > 0) {
                 where += " and p.prod_type_id = " + productTypeId + " ";
             }
             return this;

@@ -22,11 +22,11 @@ public class JsonUser {
     private Long roleId;
     private String roleName;
 
-    public User mapToUser(){
-        return User.builder().build();
+    public static JsonUser mapToJsonUser(User user) {
+        return JsonUser.builder().build();
     }
 
-    public static JsonUser mapToJsonUser(User user){
-        return JsonUser.builder().build();
+    public User mapToUser() {
+        return User.builder().build();
     }
 }

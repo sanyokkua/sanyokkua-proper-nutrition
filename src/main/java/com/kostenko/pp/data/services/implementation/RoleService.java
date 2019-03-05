@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Service
 public class RoleService implements DBService<Role> {
@@ -50,7 +52,7 @@ public class RoleService implements DBService<Role> {
 
     @Override
     public Role update(@Nonnull @NonNull Role entity) {
-        if (entity.getRoleId() == null && StringUtils.isBlank(entity.getRoleName())) {
+        if (isNull(entity.getRoleId()) && StringUtils.isBlank(entity.getRoleName())) {
             throw new IllegalArgumentException("Role id or name is null. Role can't be updated. Role = " + entity);
         }
         if (!isExists(entity)) {

@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Component
 @PropertySource(value = "classpath:general.properties")
 @Slf4j
@@ -42,11 +44,11 @@ public class StartupCommandLineRunner implements CommandLineRunner {
     public void run(String... args) {
         UserRoles.getAllRoles().stream()
                  .map(userRoles -> Role.builder().roleName(userRoles.getRoleName()).build())
-                 .filter(role -> roleRepository.findByField(role.getRoleName()) == null)
+                 .filter(role -> isNull(roleRepository.findByField(role.getRoleName())))
                  .forEach(roleRepository::create);
         UserGenders.getAllGenders().stream()
                    .map(userGender -> Gender.builder().genderName(userGender.getGenderName()).build())
-                   .filter(gender -> genderRepository.findByField(gender.getGenderName()) == null)
+                   .filter(gender -> isNull(genderRepository.findByField(gender.getGenderName())))
                    .forEach(genderRepository::create);
         Role adminRole = roleRepository.findByField(UserRoles.ADMIN.getRoleName());
         Gender adminGender = genderRepository.findByField(UserGenders.MALE.getGenderName());

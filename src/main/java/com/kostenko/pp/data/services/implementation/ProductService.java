@@ -19,6 +19,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
+
 @Service
 @Slf4j
 public class ProductService implements PageableDBService<Product> {
@@ -56,7 +58,7 @@ public class ProductService implements PageableDBService<Product> {
                 ProductType productTypeFromDatabase;
                 if (product.getProdTypeId() > 0 && !productTypeRepository.isExistsId(product.getProdTypeId())) {
                     productTypeFromDatabase = productTypeRepository.create(ProductType.builder().prodTypeName(product.getProdTypeName()).build());
-                } else if (productTypeRepository.findByField(product.getProdTypeName()) == null) {
+                } else if (isNull(productTypeRepository.findByField(product.getProdTypeName()))) {
                     productTypeFromDatabase = productTypeRepository.create(ProductType.builder().prodTypeName(product.getProdTypeName()).build());
                 } else {
                     productTypeFromDatabase = productTypeRepository.findByField(product.getProdTypeName());

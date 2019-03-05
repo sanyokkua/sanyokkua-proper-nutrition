@@ -20,6 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Repository
 @Transactional
 @Slf4j
@@ -45,7 +47,7 @@ public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role
             return statement;
         }, holder);
         Object role_id = holder.getKeys().get("role_id");
-        return find((long)role_id);
+        return find((long) role_id);
     }
 
     @Nullable
@@ -101,11 +103,11 @@ public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role
 
     @Override
     public boolean isExistsId(@Nonnull @NonNull Long id) {
-        return find(id) != null;
+        return !isNull(find(id));
     }
 
     @Override
     public boolean isExists(@Nonnull @NonNull Role entity) {
-        return findByField(entity.getRoleName()) != null;
+        return !isNull(findByField(entity.getRoleName()));
     }
 }

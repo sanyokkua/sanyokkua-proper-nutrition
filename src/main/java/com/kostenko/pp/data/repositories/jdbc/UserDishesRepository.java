@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+
 @Slf4j
 @Repository
 public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<Dish>> {
@@ -93,10 +95,10 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
 
         @Override
         public Page<Dish> invoke() {
-            if (pageable == null) {
+            if (isNull(pageable)) {
                 throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
             }
-            String whereClause = where != null ? where : "";
+            String whereClause = !isNull(where) ? where : "";
             String countQuery = "select count(1) as row_count " + from + whereClause;
             int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
 
@@ -106,7 +108,7 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
         }
 
         public UserDishSearchBuilder addUser(Long userId) {
-            if (userId != null && userId >= 0) {
+            if (!isNull(userId) && userId >= 0) {
                 if (StringUtils.isBlank(where)) {
                     where = "where u.user_id = " + userId + " ";
                 } else {
