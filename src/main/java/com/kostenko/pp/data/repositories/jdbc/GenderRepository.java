@@ -42,7 +42,8 @@ public class GenderRepository implements CrudRepository<Gender>, CrudExtensions<
             statement.setString(1, entity.getGenderName().toUpperCase());
             return statement;
         }, holder);
-        return find(holder.getKey().longValue());
+        Object gender_id = holder.getKeys().get("gender_id");
+        return find((long) gender_id);
     }
 
     @Nullable
@@ -93,7 +94,7 @@ public class GenderRepository implements CrudRepository<Gender>, CrudExtensions<
     @Override
     public Gender findByField(@NotBlank String fieldValue) {
         String sql = "select * from pp_app.gender where name = ?";
-        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue)).orElse(null);
+        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue.toUpperCase())).orElse(null);
     }
 
     @Override

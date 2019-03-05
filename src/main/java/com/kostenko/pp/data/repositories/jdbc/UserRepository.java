@@ -63,7 +63,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
     @Nullable
     @Override
     public User findByField(@NotBlank String fieldValue) {
-        String sql = "select u.user_id, u.age, u.email, u.height, u.login, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
+        String sql = "select u.user_id, u.age, u.email, u.height, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
                 "from pp_app.appuser u, pp_app.gender g, pp_app.role r " +
                 "where u.gender_id = g.gender_id and u.role_id = r.role_id and u.email = ?";
         return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER_USER, fieldValue.toLowerCase())).orElse(null);
@@ -86,11 +86,11 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
     public User create(@Nonnull @NonNull User entity) {
         String email = entity.getEmail().toLowerCase();
         String password = entity.getPassword();
-        long role_id = entity.getRoleId();
-        long gender_id = entity.getGenderId();
-        int age = entity.getAge();
-        int height = entity.getHeight();
-        int weight = entity.getWeight();
+        Long role_id = entity.getRoleId();
+        Long gender_id = entity.getGenderId();
+        Integer age = entity.getAge();
+        Integer height = entity.getHeight();
+        Integer weight = entity.getWeight();
 
         String sql = "insert into pp_app.appuser (age, email, height, password, weight, gender_id, role_id) values (?,?,?,?,?,?,?)";
         jdbcTemplate.update(sql, age, email, height, password, weight, gender_id, role_id);
@@ -125,7 +125,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
     @Nullable
     @Override
     public User find(@Nonnull @NonNull Long id) {
-        String sql = "select u.user_id, u.age, u.email, u.height, u.login, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
+        String sql = "select u.user_id, u.age, u.email, u.height, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
                 "from pp_app.appuser u, pp_app.gender g, pp_app.role r " +
                 "where u.gender_id = g.gender_id and u.role_id = r.role_id and u.user_id = ?";
         return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER_USER, id)).orElse(null);
@@ -133,7 +133,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
 
     @Override
     public List<User> findAll() {
-        String sql = "select u.user_id, u.age, u.email, u.height, u.login, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
+        String sql = "select u.user_id, u.age, u.email, u.height, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
                 "from pp_app.appuser u, pp_app.gender g, pp_app.role r " +
                 "where u.gender_id = g.gender_id and u.role_id = r.role_id";
         return jdbcTemplate.query(sql, ROW_MAPPER_USER);
@@ -145,7 +145,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
     }
 
     public class UserSearchBuilder implements SearchBuilder<User> {
-        private final String select = "select u.user_id, u.age, u.email, u.height, u.login, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name ";
+        private final String select = "select u.user_id, u.age, u.email, u.height, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name ";
         private final String from = "from pp_app.appuser u, pp_app.gender g, pp_app.role r ";
         private String where = "where u.gender_id = g.gender_id and u.role_id = r.role_id ";
         private Pageable pageable;

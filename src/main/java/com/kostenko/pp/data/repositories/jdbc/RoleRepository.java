@@ -44,7 +44,8 @@ public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role
             statement.setString(1, entity.getRoleName().toUpperCase());
             return statement;
         }, holder);
-        return find(holder.getKey().longValue());
+        Object role_id = holder.getKeys().get("role_id");
+        return find((long)role_id);
     }
 
     @Nullable
@@ -95,7 +96,7 @@ public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role
     @Override
     public Role findByField(@NotBlank String fieldValue) {
         String sql = "select * from pp_app.role r where r.name = ?";
-        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue)).orElse(null);
+        return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue.toUpperCase())).orElse(null);
     }
 
     @Override

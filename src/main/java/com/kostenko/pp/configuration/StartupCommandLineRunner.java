@@ -1,50 +1,70 @@
 package com.kostenko.pp.configuration;
 
+import com.kostenko.pp.data.pojos.Gender;
+import com.kostenko.pp.data.pojos.Role;
+import com.kostenko.pp.data.pojos.User;
+import com.kostenko.pp.data.repositories.jdbc.GenderRepository;
+import com.kostenko.pp.data.repositories.jdbc.RoleRepository;
+import com.kostenko.pp.data.repositories.jdbc.UserRepository;
+import com.kostenko.pp.security.PasswordEncoder;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @PropertySource(value = "classpath:general.properties")
 @Slf4j
 public class StartupCommandLineRunner implements CommandLineRunner {
-//    private final RoleRepository roleRepository;
-//    private final UserRepository userRepository;
-//    @Value("${admin.user.login}")
-//    public String adminUserLogin;
-//    @Value("${admin.user.pass}")
-//    public String adminUserPass;
-//    @Value("${admin.user.email}")
-//    public String adminUserEmail;
+    private final RoleRepository roleRepository;
+    private final GenderRepository genderRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    @Value("${admin.user.pass}")
+    public String adminUserPass;
+    @Value("${admin.user.email}")
+    public String adminUserEmail;
 
     @Autowired
-    public StartupCommandLineRunner() {
-//        this.roleRepository = Objects.requireNonNull(roleRepository, "Instead of RoleRepository instance injected null");
-//        this.userRepository = Objects.requireNonNull(userRepository, "Instead of UserRepository instance injected null");
+    public StartupCommandLineRunner(@NonNull RoleRepository roleRepository, @NonNull GenderRepository genderRepository, @NonNull UserRepository userRepository, @NonNull PasswordEncoder encoder) {
+        this.roleRepository = roleRepository;
+        this.genderRepository = genderRepository;
+        this.userRepository = userRepository;
+        this.encoder = encoder;
     }
 
     @Override
     public void run(String... args) {
-//        UserRoles.getAllRoles().stream()
-//                 .map(userRoles -> new Role(userRoles.getId(), userRoles.getRoleName()))
-//                 .filter(role -> !roleRepository.findById(role.getId()).isPresent())
-//                 .forEach(roleRepository::save);
-//        User admin = new User.UserBuilder()
-//                .setId(0)
-//                .setLogin(adminUserLogin)
-//                .setPassword(adminUserPass)
-//                .setEmail(adminUserEmail)
-//                .build();
-//        User byLogin = userRepository.findByLogin(adminUserLogin);
-//        User byEmail = userRepository.findByEmail(adminUserEmail);
-//        log.debug("Created user: ", admin.toString());
-//        if (Objects.nonNull(byLogin) && Objects.nonNull(byEmail) && !byLogin.equals(byEmail)) {
-//            log.error("Default admin user is already exists and login or email is not equal to them from properties");
-//        } else if (Objects.isNull(byLogin) && Objects.isNull(byEmail)) {
-//            userRepository.save(admin);
-//            log.info("Created default admin user");
-//        }
+        UserRoles.getAllRoles().stream()
+                 .map(userRoles -> Role.builder().roleName(userRoles.getRoleName()).build())
+                 .filter(role -> roleRepository.findByField(role.getRoleName()) == null)
+                 .forEach(roleRepository::create);
+        UserGenders.getAllGenders().stream()
+                   .map(userGender -> Gender.builder().genderName(userGender.getGenderName()).build())
+                   .filter(gender -> genderRepository.findByField(gender.getGenderName()) == null)
+                   .forEach(genderRepository::create);
+        Role adminRole = roleRepository.findByField(UserRoles.ADMIN.getRoleName());
+        Gender adminGender = genderRepository.findByField(UserGenders.MALE.getGenderName());
+        User admin = User.builder()
+                         .password(encoder.encode(adminUserPass))
+                         .email(adminUserEmail)
+                         .roleId(adminRole.getRoleId())
+                         .roleName(adminRole.getRoleName())
+                         .genderId(adminGender.getGenderId())
+                         .genderName(adminGender.getGenderName())
+                         .build();
+        User byEmail = userRepository.findByField(adminUserEmail);
+        log.debug("Created user: ", admin.toString());
+        if (Objects.nonNull(byEmail)) {
+            log.error("Default admin user is already exists and login or email is not equal to them from properties");
+        } else {
+            userRepository.create(admin);
+            log.info("Created default admin user");
+        }
     }
 }

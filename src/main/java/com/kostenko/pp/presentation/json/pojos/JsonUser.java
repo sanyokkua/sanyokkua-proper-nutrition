@@ -25,4 +25,8 @@ public class JsonUser {
     public User mapToUser(){
         return User.builder().build();
     }
+
+    public static JsonUser mapToJsonUser(User user){
+        return JsonUser.builder().build();
+    }
 }
