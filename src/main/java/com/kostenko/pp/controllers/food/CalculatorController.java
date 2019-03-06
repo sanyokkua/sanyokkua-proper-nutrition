@@ -15,7 +15,7 @@ public class CalculatorController {
     public long calculate(CalculatorParams parameters) {
         Formula finalFormula = "benedict".equals(parameters.getFormula()) ? new HarrisBenedictFormula() : new MifflinSanJeoreFormula();
         Formula.Activity formulaActivity = Formula.Activity.getActivity(parameters.getActivity());
-        Formula.Gender formulaGender = "male".equals(parameters.getGender()) ? Formula.Gender.MALE : Formula.Gender.FEMALE;
+        Formula.Gender formulaGender = "male".equalsIgnoreCase(parameters.getGender()) ? Formula.Gender.MALE : Formula.Gender.FEMALE;
         final long calculate = finalFormula.calculate(parameters.getWeight(), parameters.getHeight(), parameters.getAge(), formulaGender, formulaActivity);
         log.info("calculated: {}, by age {} height {} weight {} gender {} activity {} ", calculate, parameters.getAge(), parameters.getHeight(), parameters.getWeight(), formulaGender, formulaActivity);
         return calculate;

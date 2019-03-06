@@ -4,7 +4,6 @@ import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 
 public interface CrudExtensions<T> {
     void createAll(Iterable<T> entities);
@@ -12,7 +11,7 @@ public interface CrudExtensions<T> {
     @Nullable
     T find(@NonNull @Nonnull T entity);
     @Nullable
-    T findByField(@NotBlank String fieldValue);
+    T findByField(@NonNull String fieldValue);
     boolean isExistsId(@NonNull @Nonnull Long id);
     boolean isExists(@NonNull @Nonnull T entity);
 

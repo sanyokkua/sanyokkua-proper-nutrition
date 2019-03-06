@@ -21,7 +21,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -123,7 +122,10 @@ public class ProductRepository implements CrudRepository<Product>, CrudExtension
 
     @Nullable
     @Override
-    public Product findByField(@NotBlank String fieldValue) {
+    public Product findByField(@NonNull String fieldValue) {
+        if (StringUtils.isBlank(fieldValue)) {
+            return null;
+        }
         String sql = "select p.product_id, p.name as p_name, p.energy, t.name as t_name, t.prod_type_id " +
                 "from pp_app.product p, pp_app.prod_type t " +
                 "where p.name = ? and p.prod_type_id = t.prod_type_id";

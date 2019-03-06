@@ -6,6 +6,7 @@ import com.kostenko.pp.data.repositories.CrudRepository;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -94,7 +94,10 @@ public class GenderRepository implements CrudRepository<Gender>, CrudExtensions<
 
     @Nullable
     @Override
-    public Gender findByField(@NotBlank String fieldValue) {
+    public Gender findByField(@NonNull String fieldValue) {
+        if (StringUtils.isBlank(fieldValue)) {
+            return null;
+        }
         String sql = "select * from pp_app.gender where name = ?";
         return CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(sql, ROW_MAPPER, fieldValue.toUpperCase())).orElse(null);
     }

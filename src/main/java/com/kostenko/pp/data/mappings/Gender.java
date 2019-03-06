@@ -1,5 +1,6 @@
 package com.kostenko.pp.data.mappings;
 
+import com.kostenko.pp.data.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,14 +16,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(schema = "pp_app", name = "gender", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(schema = Constants.SCHEMA, name = Constants.Gender.TABLE, uniqueConstraints = {@UniqueConstraint(columnNames = Constants.Gender.NAME)})
 public class Gender {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "gender_id", nullable = false, columnDefinition = "serial")
+    @Column(name = Constants.Gender.ID, nullable = false, columnDefinition = "serial")
     private Long genderId;
     @NaturalId
-    @Column(name = "name", nullable = false)
+    @Column(name = Constants.Gender.NAME, nullable = false)
     private String name;
 
     @Builder.Default

@@ -16,23 +16,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static com.kostenko.pp.data.services.implementation.UserDishService.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
-@Controller
+@RestController
 public class UserCrudController implements RestCrudController<JsonUser> {
     private final UserService userService;
     private final UserDishService userDishService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserCrudController(@NonNull UserService userService, @NonNull UserDishService userDishService, @NonNull PasswordEncoder passwordEncoder) {
+    public UserCrudController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull UserDishService userDishService, @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userDishService = userDishService;
         this.passwordEncoder = passwordEncoder;
@@ -53,7 +53,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
     @ResponseBody
     @Nullable
     @Override
-    public JsonUser create(@RequestBody @NonNull JsonUser jsonEntity) {
+    public JsonUser create(@RequestBody @Nonnull @NonNull JsonUser jsonEntity) {
         log.info("Creating user: {}", jsonEntity.toString());
         User entityForCreation = jsonEntity.mapToUser();
         entityForCreation.setPassword(passwordEncoder.encode(entityForCreation.getPassword()));
@@ -69,7 +69,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
     @ResponseBody
     @Nullable
     @Override
-    public JsonUser update(@PathVariable @NonNull Long id, @RequestBody JsonUser jsonEntity) {
+    public JsonUser update(@PathVariable @Nonnull @NonNull Long id, @RequestBody JsonUser jsonEntity) {
         log.info("Updating user: {}", jsonEntity.toString());
         User entityForUpdating = jsonEntity.mapToUser();
         entityForUpdating.setPassword(passwordEncoder.encode(entityForUpdating.getPassword()));
@@ -83,7 +83,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
 
     @DeleteMapping("/users/{id}")
     @Override
-    public ResponseEntity delete(@PathVariable @NonNull Long id) {
+    public ResponseEntity delete(@PathVariable @Nonnull @NonNull Long id) {
         userService.delete(id);
         return ResponseEntity.ok("Removed");
     }

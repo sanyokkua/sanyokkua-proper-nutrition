@@ -1,5 +1,6 @@
 package com.kostenko.pp.data.mappings;
 
+import com.kostenko.pp.data.Constants;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(schema = "pp_app", name = "dish_products")
+@Table(schema = Constants.SCHEMA, name = Constants.DishProducts.TABLE)
 public class DishProducts {
 
     @EmbeddedId
@@ -22,7 +23,7 @@ public class DishProducts {
     @MapsId("productId")
     private Product product;
 
-    @Column(name = "amount")
+    @Column(name = Constants.DishProducts.AMOUNT)
     private Long amount;
 
     public DishProducts(Dish dish, Product product) {

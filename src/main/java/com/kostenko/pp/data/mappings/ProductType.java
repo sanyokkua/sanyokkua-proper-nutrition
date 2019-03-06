@@ -1,5 +1,6 @@
 package com.kostenko.pp.data.mappings;
 
+import com.kostenko.pp.data.Constants;
 import lombok.*;
 import org.hibernate.annotations.NaturalId;
 
@@ -13,16 +14,16 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(schema = "pp_app", name = "prod_type", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(schema = Constants.SCHEMA, name = Constants.ProductType.TABLE, uniqueConstraints = {@UniqueConstraint(columnNames = Constants.ProductType.NAME)})
 public class ProductType {
     @EqualsAndHashCode.Exclude
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "prod_type_id", nullable = false, columnDefinition = "serial")
+    @Column(name = Constants.ProductType.ID, nullable = false, columnDefinition = "serial")
     private Long prodTypeId;
     @EqualsAndHashCode.Include
     @NaturalId
-    @Column(name = "name", nullable = false)
+    @Column(name = Constants.ProductType.TABLE, nullable = false)
     private String name;
 
     @Builder.Default

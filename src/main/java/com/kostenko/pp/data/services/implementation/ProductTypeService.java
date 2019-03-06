@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +31,7 @@ public class ProductTypeService implements DBService<ProductType> {
     }
 
     @Override
-    public ProductType findByField(@Nonnull @NonNull @NotBlank String field) {
+    public ProductType findByField(@Nonnull @NonNull String field) {
         if (StringUtils.isBlank(field)) {
             throw new IllegalArgumentException("ProductType name is empty");
         }

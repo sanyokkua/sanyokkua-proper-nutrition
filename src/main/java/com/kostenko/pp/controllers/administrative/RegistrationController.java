@@ -6,13 +6,15 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Nonnull;
+
 @Controller
 public class RegistrationController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public RegistrationController(@NonNull UserService userService, @NonNull PasswordEncoder passwordEncoder) {
+    public RegistrationController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }

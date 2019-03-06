@@ -23,7 +23,7 @@ public class UserDishService implements PageableSearch<Dish> {
     private final UserDishesRepository repository;
 
     @Autowired
-    public UserDishService(@NonNull UserDishesRepository repository) {
+    public UserDishService(@Nonnull @NonNull UserDishesRepository repository) {
         this.repository = repository;
     }
 

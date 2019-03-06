@@ -1,6 +1,7 @@
 package com.kostenko.pp.data.mappings;
 
 import com.google.common.base.Objects;
+import com.kostenko.pp.data.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +19,9 @@ import static java.util.Objects.isNull;
 @Builder
 @Embeddable
 public class DishProductId implements Serializable {
-    @Column(name = "dish_id")
+    @Column(name = Constants.Dish.ID)
     private Long dishId;
-    @Column(name = "product_id")
+    @Column(name = Constants.Product.ID)
     private Long productId;
 
     @Override

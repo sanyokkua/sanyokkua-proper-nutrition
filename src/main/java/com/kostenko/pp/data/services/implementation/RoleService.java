@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ public class RoleService implements DBService<Role> {
     private final RoleRepository roleRepository;
 
     @Autowired
-    public RoleService(@NonNull RoleRepository roleRepository) {
+    public RoleService(@Nonnull @NonNull RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
@@ -35,8 +34,11 @@ public class RoleService implements DBService<Role> {
     }
 
     @Override
-    public Role findByField(@Nonnull @NonNull @NotBlank String field) {
-        return null;
+    public Role findByField(@Nonnull @NonNull String field) {
+        if (StringUtils.isBlank(field)) {
+            return null;
+        }
+        return roleRepository.findByField(field);
     }
 
     @Override

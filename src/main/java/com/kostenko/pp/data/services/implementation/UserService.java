@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -33,7 +32,7 @@ public class UserService implements DBService<User>, PageableSearch<User> {
     private final RoleRepository roleRepository;
     private final GenderRepository genderRepository;
 
-    public UserService(@NonNull UserRepository userRepository, @NonNull RoleRepository roleRepository, @NonNull GenderRepository genderRepository) {
+    public UserService(@Nonnull @NonNull UserRepository userRepository, @Nonnull @NonNull RoleRepository roleRepository, @Nonnull @NonNull GenderRepository genderRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.genderRepository = genderRepository;
@@ -59,7 +58,10 @@ public class UserService implements DBService<User>, PageableSearch<User> {
     }
 
     @Override
-    public User findByField(@Nonnull @NonNull @NotBlank String field) {
+    public User findByField(@Nonnull @NonNull String field) {
+        if (StringUtils.isBlank(field)) {
+            return null;
+        }
         return userRepository.findByField(field);
     }
 

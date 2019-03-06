@@ -23,7 +23,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -142,7 +141,10 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
 
     @Nullable
     @Override
-    public Dish findByField(@NotBlank String fieldValue) {
+    public Dish findByField(@NonNull String fieldValue) {
+        if (StringUtils.isBlank(fieldValue)) {
+            return null;
+        }
         String findDishByIdSql = "select d.dish_id, d.name from pp_app.dish d where d.name = ?";
         return queryForDish(findDishByIdSql, fieldValue).orElse(null);
     }
@@ -157,7 +159,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
         return !isNull(find(entity));
     }
 
-    private Optional<Dish> queryForDish(String findDishByIdSql, Object param) {
+    private Optional<Dish> queryForDish(@NonNull String findDishByIdSql, Object param) {
         Optional<Dish> dish = CrudRepository.getNullableResultIfException(() -> jdbcTemplate.queryForObject(findDishByIdSql, ROW_MAPPER_FOR_DISH, param));
         if (dish.isPresent()) {
             return makeDish(dish.get());

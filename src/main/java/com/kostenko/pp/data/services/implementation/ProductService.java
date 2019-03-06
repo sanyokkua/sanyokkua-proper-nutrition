@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,7 +42,7 @@ public class ProductService implements PageableDBService<Product> {
     }
 
     @Override
-    public Product findByField(@Nonnull @NonNull @NotBlank String field) {
+    public Product findByField(@Nonnull @NonNull String field) {
         if (StringUtils.isBlank(field)) {
             throw new IllegalArgumentException("Product name is empty");
         }

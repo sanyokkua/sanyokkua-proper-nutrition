@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -21,7 +20,7 @@ public class GenderService implements DBService<Gender> {
     private final GenderRepository genderRepository;
 
     @Autowired
-    public GenderService(@NonNull GenderRepository genderRepository) {
+    public GenderService(@Nonnull @NonNull GenderRepository genderRepository) {
         this.genderRepository = genderRepository;
     }
 
@@ -34,11 +33,14 @@ public class GenderService implements DBService<Gender> {
     }
 
     @Override
-    public Gender findByField(@Nonnull @NonNull @NotBlank String field) {
+    public Gender findByField(@Nonnull @NonNull String field) {
         log.info("Looking for gender with name: {}", field);
+        if (StringUtils.isBlank(field)) {
+            return null;
+        }
         Gender gender = genderRepository.findByField(field);
         log.info("Found gender for name = {} -> {}", field, gender);
-        return null;
+        return gender;
     }
 
     @Override

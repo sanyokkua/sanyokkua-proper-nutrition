@@ -1,5 +1,6 @@
 package com.kostenko.pp.data.mappings;
 
+import com.kostenko.pp.data.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,14 +18,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @NaturalIdCache
-@Table(schema = "pp_app", name = "dish", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(schema = Constants.SCHEMA, name = Constants.Dish.TABLE, uniqueConstraints = {@UniqueConstraint(columnNames = Constants.Dish.NAME)})
 public class Dish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dish_id", nullable = false, columnDefinition = "serial")
+    @Column(name = Constants.Dish.ID, nullable = false, columnDefinition = "serial")
     private Long dishId;
     @NaturalId
-    @Column(name = "name", nullable = false)
+    @Column(name = Constants.Dish.NAME, nullable = false)
     private String name;
 
     @Builder.Default

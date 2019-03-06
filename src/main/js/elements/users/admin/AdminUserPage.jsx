@@ -32,11 +32,10 @@ class AdminUserPage extends React.Component {
                 </thead>
                 <tbody>
                 <tr>
-                    <td>login</td>
                     <td>email</td>
                     <td><Input s={ 12 } type='select' label="Role" defaultValue='0'>
                         <option value='1'>Admin</option>
-                        <option value='2'>Content</option>
+                        <option value='2'>Manager</option>
                         <option value='3'>User</option>
                     </Input></td>
                     <td>

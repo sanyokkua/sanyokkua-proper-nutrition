@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public final class UserRequestParam {
     private Map<String, Object> additionalParams;
 
     @Nullable
-    public Object get(@NonNull String paramName) {
+    public Object get(@Nonnull @NonNull String paramName) {
         if (StringUtils.isBlank(paramName)) {
             return null;
         }

@@ -34,13 +34,13 @@ public class ProductsController {
         searchParams.add(ProductService.RECORDS, numberOfRecords, true);
         searchParams.add(ProductService.PAGE, pageNumber, true);
         Page<Product> page = productService.findAll(searchParams);
-        return ResultPage.getResultPage(page, product -> JsonProduct.mapFromProduct(com.kostenko.pp.data.pojos.Product.builder()
-                                                                                                                      .productId(product.getProductId())
-                                                                                                                      .productName(product.getProductName())
-                                                                                                                      .productEnergy(product.getProductEnergy())
-                                                                                                                      .prodTypeId(product.getProdTypeId())
-                                                                                                                      .prodTypeName(product.getProdTypeName())
-                                                                                                                      .build()));
+        return ResultPage.getResultPage(page, product -> JsonProduct.mapFromProduct(Product.builder()
+                                                                                           .productId(product.getProductId())
+                                                                                           .productName(product.getProductName())
+                                                                                           .productEnergy(product.getProductEnergy())
+                                                                                           .prodTypeId(product.getProdTypeId())
+                                                                                           .prodTypeName(product.getProdTypeName())
+                                                                                           .build()));
     }
 
     @PostMapping("/products")

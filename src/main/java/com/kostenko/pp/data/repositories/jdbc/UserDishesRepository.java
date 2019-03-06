@@ -49,21 +49,21 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void addDishToUser(@NonNull Long dishId, @NonNull Long userId) {
+    public void addDishToUser(@Nonnull @NonNull Long dishId, @Nonnull @NonNull Long userId) {
         log.info("Adding dish with id {} to user with id {}", dishId, userId);
         String createDishSql = "insert into pp_app.user_dishes (user_id, dish_id) values (?,?)";
         int updated = jdbcTemplate.update(createDishSql, userId, dishId);
         log.info("Added records to table user_dishes: {}", updated);
     }
 
-    public void removeDishFromUser(@NonNull Long dishId, @NonNull Long userId) {
+    public void removeDishFromUser(@Nonnull @NonNull Long dishId, @Nonnull @NonNull Long userId) {
         log.info("Removing dish with id {} from user with id {}", dishId, userId);
         String removeDishFromUserSql = "delete from pp_app.user_dishes where user_id=? and dish_id = ?";
         int updated = jdbcTemplate.update(removeDishFromUserSql, userId, dishId);
         log.info("Removed records from table user_dishes: {}", updated);
     }
 
-    public boolean isDishExistsInUserList(@NonNull Long dishId, @NonNull Long userId) {
+    public boolean isDishExistsInUserList(@Nonnull @NonNull Long dishId, @Nonnull @NonNull Long userId) {
         String sql = "select count(dish_id) from pp_app.user_dishes where user_id = ? and dish_id = ?";
         long numberOfRows = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong(1), userId, dishId);
         return numberOfRows > 0;
@@ -88,7 +88,7 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
         private Pageable pageable;
 
         @Override
-        public UserDishSearchBuilder begin(@NonNull Pageable pageable) {
+        public UserDishSearchBuilder begin(@Nonnull @NonNull Pageable pageable) {
             this.pageable = pageable;
             return this;
         }

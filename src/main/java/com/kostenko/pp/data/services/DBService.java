@@ -4,14 +4,13 @@ import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public interface DBService<T> {
     @Nullable
     T findById(@Nonnull @NonNull Long id);
     @Nullable
-    T findByField(@Nonnull @NonNull @NotBlank String field);
+    T findByField(@Nonnull @NonNull String field);
     @Nullable
     T create(@Nonnull @NonNull T entity);
     @Nullable

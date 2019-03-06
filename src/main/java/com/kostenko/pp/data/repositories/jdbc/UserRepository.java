@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -64,7 +63,10 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
 
     @Nullable
     @Override
-    public User findByField(@NotBlank String fieldValue) {
+    public User findByField(@NonNull String fieldValue) {
+        if (StringUtils.isBlank(fieldValue)) {
+            return null;
+        }
         String sql = "select u.user_id, u.age, u.email, u.height, u.password, u.weight, u.gender_id, u.role_id, r.name as r_name, g.name as g_name " +
                 "from pp_app.appuser u, pp_app.gender g, pp_app.role r " +
                 "where u.gender_id = g.gender_id and u.role_id = r.role_id and u.email = ?";
@@ -153,7 +155,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
         private Pageable pageable;
 
         @Override
-        public UserSearchBuilder begin(@NonNull Pageable pageable) {
+        public UserSearchBuilder begin(@Nonnull @NonNull Pageable pageable) {
             this.pageable = pageable;
             return this;
         }

@@ -6,13 +6,13 @@ import com.kostenko.pp.data.repositories.jdbc.DishRepository;
 import com.kostenko.pp.data.services.PageableDBService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,8 +37,11 @@ public class DishService implements PageableDBService<Dish> {
     }
 
     @Override
-    public Dish findByField(@Nonnull @NonNull @NotBlank String field) {
+    public Dish findByField(@Nonnull @NonNull String field) {
         log.info("Searching dish with name: {}", field);
+        if (StringUtils.isBlank(field)) {
+            return null;
+        }
         return dishRepository.findByField(field);
     }
 
