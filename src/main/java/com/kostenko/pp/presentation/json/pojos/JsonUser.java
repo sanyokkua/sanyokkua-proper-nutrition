@@ -13,17 +13,21 @@ import lombok.NoArgsConstructor;
 public class JsonUser {
     private Long userId;
     private String email;
-    private String password;
     private Integer age;
     private Integer height;
     private Integer weight;
     private Long genderId;
-    private String genderName;
     private Long roleId;
-    private String roleName;
 
     public static JsonUser mapToJsonUser(User user) {
-        return JsonUser.builder().build();
+        return JsonUser.builder().userId(user.getUserId())
+                       .email(user.getEmail())
+                       .age(user.getAge())
+                       .height(user.getHeight())
+                       .weight(user.getWeight())
+                       .genderId(user.getGenderId())
+                       .roleId(user.getRoleId())
+                       .build();
     }
 
     public User mapToUser() {

@@ -20,6 +20,7 @@ public class UserDishService implements PageableSearch<Dish> {
     public static final String PAGE = "page";
     public static final String RECORDS = "records";
     public static final String USER = "user";
+    public static final String ROLE = "role";
     private final UserDishesRepository repository;
 
     @Autowired

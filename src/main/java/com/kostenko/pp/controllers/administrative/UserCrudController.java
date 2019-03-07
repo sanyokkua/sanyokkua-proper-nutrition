@@ -5,10 +5,12 @@ import com.kostenko.pp.controllers.extensions.UserRequestParam;
 import com.kostenko.pp.data.PageableSearch;
 import com.kostenko.pp.data.pojos.Dish;
 import com.kostenko.pp.data.pojos.User;
+import com.kostenko.pp.data.services.implementation.RoleService;
 import com.kostenko.pp.data.services.implementation.UserDishService;
 import com.kostenko.pp.data.services.implementation.UserService;
 import com.kostenko.pp.presentation.ResultPage;
 import com.kostenko.pp.presentation.json.pojos.JsonDish;
+import com.kostenko.pp.presentation.json.pojos.JsonRole;
 import com.kostenko.pp.presentation.json.pojos.JsonUser;
 import com.kostenko.pp.security.PasswordEncoder;
 import lombok.NonNull;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.kostenko.pp.data.services.implementation.UserDishService.*;
 import static java.util.Objects.isNull;
@@ -29,18 +33,20 @@ import static java.util.Objects.isNull;
 public class UserCrudController implements RestCrudController<JsonUser> {
     private final UserService userService;
     private final UserDishService userDishService;
+    private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserCrudController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull UserDishService userDishService, @NonNull PasswordEncoder passwordEncoder) {
+    public UserCrudController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull UserDishService userDishService, @NonNull @Nonnull RoleService roleService, @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userDishService = userDishService;
+        this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users")
     @Override
-    public ResultPage<JsonUser> findAll(@RequestParam(value = "params", required = false) UserRequestParam params) {
+    public ResultPage<JsonUser> findAll(UserRequestParam params) {
         PageableSearch.SearchParams<User> searchParams = new PageableSearch.SearchParams<>();
         searchParams.add(SEARCH, params.getSearchString(), true);
         searchParams.add(RECORDS, params.getRecordsPerPage(), true);
@@ -103,5 +109,10 @@ public class UserCrudController implements RestCrudController<JsonUser> {
         searchParams.add(USER, !isNull(user) ? user.getUserId() : null, false);
         Page<Dish> page = userDishService.findAll(searchParams);
         return ResultPage.getResultPage(page, JsonDish::mapFromDish);
+    }
+
+    @GetMapping("/roles")
+    public List<JsonRole> getRoles() {
+        return roleService.findAll().stream().map(JsonRole::mapFrom).collect(Collectors.toList());
     }
 }

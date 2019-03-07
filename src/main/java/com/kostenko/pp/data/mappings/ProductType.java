@@ -23,7 +23,7 @@ public class ProductType {
     private Long prodTypeId;
     @EqualsAndHashCode.Include
     @NaturalId
-    @Column(name = Constants.ProductType.TABLE, nullable = false)
+    @Column(name = Constants.ProductType.NAME, nullable = false)
     private String name;
 
     @Builder.Default

@@ -33,10 +33,10 @@ export default class UserService {
         axios.get('/users', {
                  headers: {[this.header]: this.token},
                  params: {
+                     searchString: loadParams.search,
                      page: loadParams.currentPage,
-                     name: loadParams.search,
-                     currentType: loadParams.currentType,
-                     numberOfRecords: loadParams.numberOfRecords
+                     recordsPerPage: loadParams.numberOfRecords,
+                     // additionalParams: {"role": loadParams.currentRole}
                  }
              })
              .then(response => {
