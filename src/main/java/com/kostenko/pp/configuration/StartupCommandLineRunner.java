@@ -56,9 +56,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
                          .password(encoder.encode(adminUserPass))
                          .email(adminUserEmail)
                          .roleId(adminRole.getRoleId())
-                         .roleName(adminRole.getRoleName())
                          .genderId(adminGender.getGenderId())
-                         .genderName(adminGender.getGenderName())
                          .build();
         User byEmail = userRepository.findByField(adminUserEmail);
         log.debug("Created user: ", admin.toString());

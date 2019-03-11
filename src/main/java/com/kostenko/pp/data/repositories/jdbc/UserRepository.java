@@ -36,9 +36,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
                                                                           .height(resultSet.getInt("height"))
                                                                           .age(resultSet.getInt("age"))
                                                                           .genderId(resultSet.getLong("gender_id"))
-                                                                          .genderName(resultSet.getString("g_name"))
                                                                           .roleId(resultSet.getLong("role_id"))
-                                                                          .roleName(resultSet.getString("r_name"))
                                                                           .build();
     private final JdbcTemplate jdbcTemplate;
 

@@ -33,8 +33,9 @@ public interface PageableSearch<T> {
         private Map<String, Integer> ints = new HashMap<>();
         private Map<String, String> strings = new HashMap<>();
 
-        public void add(@Nonnull @NonNull String key, T value, boolean isNotRequired) {
+        public SearchParams add(@Nonnull @NonNull String key, T value, boolean isNotRequired) {
             add(entities, key, value, isNotRequired);
+            return this;
         }
 
         private static <K, V> void add(Map<K, V> map, K key, V value, boolean isNotRequired) { // null | object -> null && skip | null && !skip | object && skip | object && !skip
@@ -46,16 +47,19 @@ public interface PageableSearch<T> {
             }
         }
 
-        public void add(@Nonnull @NonNull String key, Long value, boolean isNotRequired) {
+        public SearchParams add(@Nonnull @NonNull String key, Long value, boolean isNotRequired) {
             add(longs, key, value, isNotRequired);
+            return this;
         }
 
-        public void add(@Nonnull @NonNull String key, Integer value, boolean isNotRequired) {
+        public SearchParams add(@Nonnull @NonNull String key, Integer value, boolean isNotRequired) {
             add(ints, key, value, isNotRequired);
+            return this;
         }
 
-        public void add(@Nonnull @NonNull String key, String value, boolean isNotRequired) {
+        public SearchParams add(@Nonnull @NonNull String key, String value, boolean isNotRequired) {
             add(strings, key, value, isNotRequired);
+            return this;
         }
 
         @Nullable

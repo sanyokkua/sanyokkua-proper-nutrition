@@ -85,7 +85,6 @@ public class UserService implements DBService<User>, PageableSearch<User> {
         if (isNull(entity.getRoleId())) {
             Role defaultRole = roleRepository.findByField(UserRoles.USER.getRoleName());
             entity.setRoleId(defaultRole.getRoleId());
-            entity.setRoleName(defaultRole.getRoleName());
         }
     }
 

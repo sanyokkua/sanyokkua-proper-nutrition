@@ -15,9 +15,7 @@ public class User {
     private Integer height;
     private Integer weight;
     private Long genderId;
-    private String genderName;
     private Long roleId;
-    private String roleName;
 
     public void update(User another) {
         this.email = another.email;

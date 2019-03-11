@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 
 import javax.annotation.Nonnull;
 
-public interface RestCrudController<T> {
+public interface RestCrudController<T, R extends RequestParams> {
 
-    ResultPage<T> findAll(UserRequestParam params);
+    ResultPage<T> findAll(R params);
 
     T create(@Nonnull @NonNull T jsonEntity);
 

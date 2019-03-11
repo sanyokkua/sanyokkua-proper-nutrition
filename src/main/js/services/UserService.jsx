@@ -36,7 +36,7 @@ export default class UserService {
                      searchString: loadParams.search,
                      page: loadParams.currentPage,
                      recordsPerPage: loadParams.numberOfRecords,
-                     // additionalParams: {"role": loadParams.currentRole}
+                     roleId: loadParams.currentRole
                  }
              })
              .then(response => {
