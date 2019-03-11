@@ -18,4 +18,13 @@ public class User {
     private String genderName;
     private Long roleId;
     private String roleName;
+
+    public void update(User another) {
+        this.email = another.email;
+        this.age = another.age;
+        this.height = another.height;
+        this.weight = another.weight;
+        this.genderId = another.genderId;
+        this.roleId = another.roleId;
+    }
 }

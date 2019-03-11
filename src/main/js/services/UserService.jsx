@@ -55,7 +55,7 @@ export default class UserService {
 
     updateUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/users/' + user.user_id, user, {headers: {[this.header]: this.token}})
+        axios.put('/users/' + user.userId, user, {headers: {[this.header]: this.token}})
              .then(() => {
                  success();
              })
@@ -64,7 +64,7 @@ export default class UserService {
 
     deleteUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/users/' + user.user_id, {
+        axios.delete('/users/' + user.userId, {
                  headers: {[this.header]: this.token}
              })
              .then(() => {

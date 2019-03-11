@@ -15,6 +15,7 @@ import com.kostenko.pp.presentation.json.pojos.JsonUser;
 import com.kostenko.pp.security.PasswordEncoder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.kostenko.pp.data.services.implementation.UserDishService.*;
+import static com.kostenko.pp.data.services.implementation.UserService.EMAIL;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -48,7 +51,7 @@ public class UserCrudController implements RestCrudController<JsonUser> {
     @Override
     public ResultPage<JsonUser> findAll(UserRequestParam params) {
         PageableSearch.SearchParams<User> searchParams = new PageableSearch.SearchParams<>();
-        searchParams.add(SEARCH, params.getSearchString(), true);
+        searchParams.add(EMAIL, params.getSearchString(), true);
         searchParams.add(RECORDS, params.getRecordsPerPage(), true);
         searchParams.add(PAGE, params.getPage(), true);
         Page<User> page = userService.findAll(searchParams);
@@ -77,8 +80,15 @@ public class UserCrudController implements RestCrudController<JsonUser> {
     @Override
     public JsonUser update(@PathVariable @Nonnull @NonNull Long id, @RequestBody JsonUser jsonEntity) {
         log.info("Updating user: {}", jsonEntity.toString());
+        User fromDB = userService.findByField(jsonEntity.getEmail());
+        if (Objects.isNull(fromDB)) {
+            return null;
+        }
         User entityForUpdating = jsonEntity.mapToUser();
-        entityForUpdating.setPassword(passwordEncoder.encode(entityForUpdating.getPassword()));
+        fromDB.update(entityForUpdating);
+        if (StringUtils.isNotBlank(jsonEntity.getPassword())) {
+            entityForUpdating.setPassword(passwordEncoder.encode(entityForUpdating.getPassword()));
+        }
         User user = userService.update(entityForUpdating);
         if (!isNull(user)) {
             log.info("Updated user: {}", user.toString());

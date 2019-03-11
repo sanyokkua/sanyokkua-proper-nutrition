@@ -53,8 +53,8 @@ class AdminUserPage extends React.Component {
         this.setState({currentPage: pageNumber}, this.reloadData);
     }
 
-    onNumberOfRecordsChange(event, value) {
-        this.setState({numberOfRecords: Number(value)}, this.loadAllData);
+    onNumberOfRecordsChange(value) {
+        this.setState({numberOfRecords: Number(value), currentPage: 0}, this.reloadData);
     }
 
     onSearchChange(searchString) {

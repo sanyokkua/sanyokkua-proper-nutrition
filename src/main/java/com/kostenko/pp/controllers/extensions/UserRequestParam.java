@@ -15,8 +15,8 @@ import java.util.Map;
 @NoArgsConstructor
 public final class UserRequestParam {
     private String searchString;
-    private Long page;
-    private Long recordsPerPage;
+    private Integer page;
+    private Integer recordsPerPage;
     private Map<String, Object> additionalParams;
 
     @Nullable

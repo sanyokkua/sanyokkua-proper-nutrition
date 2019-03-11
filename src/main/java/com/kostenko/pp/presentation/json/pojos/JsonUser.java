@@ -18,19 +18,31 @@ public class JsonUser {
     private Integer weight;
     private Long genderId;
     private Long roleId;
+    private String password;
 
     public static JsonUser mapToJsonUser(User user) {
-        return JsonUser.builder().userId(user.getUserId())
+        return JsonUser.builder()
+                       .userId(user.getUserId())
                        .email(user.getEmail())
                        .age(user.getAge())
                        .height(user.getHeight())
                        .weight(user.getWeight())
                        .genderId(user.getGenderId())
                        .roleId(user.getRoleId())
+                       .password("")
                        .build();
     }
 
     public User mapToUser() {
-        return User.builder().build();
+        return User.builder()
+                   .userId(userId)
+                   .email(email)
+                   .age(age)
+                   .weight(weight)
+                   .height(height)
+                   .genderId(genderId)
+                   .roleId(roleId)
+                   .password(password)
+                   .build();
     }
 }

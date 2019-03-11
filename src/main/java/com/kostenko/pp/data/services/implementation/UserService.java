@@ -67,7 +67,7 @@ public class UserService implements DBService<User>, PageableSearch<User> {
 
     @Override
     public User create(@Nonnull @NonNull User entity) {
-        if (isNotValid(entity)) {
+        if (isNotValid(entity) && StringUtils.isBlank(entity.getPassword())) {
             throw new IllegalArgumentException("User entity is not valid");
         }
         if (userRepository.isExists(entity)) {
@@ -78,7 +78,7 @@ public class UserService implements DBService<User>, PageableSearch<User> {
     }
 
     private boolean isNotValid(User entity) {
-        return isNull(entity) || StringUtils.isBlank(entity.getEmail()) || StringUtils.isBlank(entity.getPassword());
+        return isNull(entity) || StringUtils.isBlank(entity.getEmail());
     }
 
     private void fillDefaultValues(User entity) {
@@ -94,7 +94,7 @@ public class UserService implements DBService<User>, PageableSearch<User> {
         if (isNotValid(entity)) {
             throw new IllegalArgumentException("User entity is not valid");
         }
-        if (userRepository.isExists(entity)) {
+        if (!userRepository.isExists(entity)) {
             throw new IllegalArgumentException("User with email: " + entity.getEmail() + " is not exists");
         }
         fillDefaultValues(entity);

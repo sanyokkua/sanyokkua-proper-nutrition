@@ -1,14 +1,15 @@
 import React                                                     from 'react';
 import { Button, CardPanel, Col, Input, Pagination, Row, Table } from "react-materialize";
 import PropTypes                                                 from "prop-types";
-import TextPropType                                              from "../../../utils/TextPropType";
 import RoleSelect                                                from "./RoleSelect";
 import SearchForm                                                from "../../common/SearchForm";
+import TextPropType                                              from "../../../utils/TextPropType";
 
 class UsersList extends React.Component {
     constructor(props) {
         super(props);
         this.onPageChange = this.onPageChange.bind(this);
+        this.onNumberOfRecordsChange = this.onNumberOfRecordsChange.bind(this);
         this.onSearchTextChanged = this.onSearchTextChanged.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onRoleSelected = this.onRoleSelected.bind(this);
@@ -27,7 +28,8 @@ class UsersList extends React.Component {
         if (value) {
             this.props.onSearchChange(value);
         } else {
-            console.warn("onSearchTextChanged: empty search text")
+            console.warn("onSearchTextChanged: empty search text");
+            this.props.onSearchChange(value);
         }
     }
 
@@ -41,7 +43,7 @@ class UsersList extends React.Component {
 
     onRoleSelected(user, roleId) {
         if (user && roleId) {
-            user.roleId = roleId;
+            user.roleId = Number(roleId);
             this.onSave(user);
         } else {
             console.warn("onRoleSelected: Problem with updating user. User or role is null")
@@ -52,8 +54,17 @@ class UsersList extends React.Component {
         if (user) {
             this.props.onUserDelete(user);
         } else {
-            console.warn("onDelete: Problem with deleting user. User is null ")
+            console.warn("onDelete: Problem with deleting user. User is null ");
         }
+    }
+
+    onNumberOfRecordsChange(event, page) {
+        if (page) {
+            this.props.onNumberOfRecordsChange(page);
+        } else {
+            console.warn("onNumberOfRecordsChange: Page is null ")
+        }
+
     }
 
     render() {
@@ -66,7 +77,7 @@ class UsersList extends React.Component {
                         <SearchForm onChange={ this.onSearchTextChanged }/>
                     </Col>
                     <Col s={ 3 }>
-                        <Input s={ 12 } type="number" min="1" onChange={ this.props.onNumberOfRecordsChange } label={ "Number of records per page" } defaultValue={ this.props.numberOfRecords }/>
+                        <Input s={ 12 } type="number" min="1" onChange={ this.onNumberOfRecordsChange } label={ "Number of records per page" } defaultValue={ this.props.numberOfRecords }/>
                     </Col>
                 </Row>
                 <Table hoverable responsive striped>
@@ -81,12 +92,12 @@ class UsersList extends React.Component {
                     {
                         isNotEmpty ? users.map((user) =>
                                                    <tr key={ user.userId }>
-                                                       <td> { user.email }</td>
+                                                       <td>{ user.email }</td>
                                                        <td><
                                                            RoleSelect text={ this.props.text }
                                                                       rolesList={ this.props.rolesList }
                                                                       defaultValue={ user.roleId }
-                                                                      onRoleSelected={ (roleId) => this.onSave(user, roleId) }/>
+                                                                      onRoleSelected={ (roleId) => this.onRoleSelected(user, roleId) }/>
                                                        </td>
                                                        <td>
                                                            <Button waves='purple' className='red darken-4 white-text' onClick={ () => this.onDelete(user) }>Delete</Button>
@@ -96,7 +107,7 @@ class UsersList extends React.Component {
                     }
                     </tbody>
                 </Table>
-                <Pagination className='center-align' items={ this.props.totalPages } activePage={ this.props.currentPage } maxButtons={ 10 } onSelect={ this.props.onNumberOfRecordsChange }/>
+                <Pagination className='center-align' items={ this.props.totalPages } activePage={ this.props.currentPage } maxButtons={ 10 } onSelect={ this.onPageChange }/>
             </CardPanel>
         </div>
     }
