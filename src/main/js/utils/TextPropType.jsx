@@ -8,7 +8,8 @@ const TextPropType = PropTypes.shape({
                                                                       tabDishes: PropTypes.string.isRequired,
                                                                       tabLogout: PropTypes.string.isRequired,
                                                                       tabEditMode: PropTypes.string.isRequired,
-                                                                      tabCalculator: PropTypes.string.isRequired
+                                                                      tabCalculator: PropTypes.string.isRequired,
+                                                                      tabAdmin: PropTypes.string.isRequired
                                                                   }).isRequired,
                                          calculator: PropTypes.shape({
                                                                          age: PropTypes.string.isRequired,
@@ -107,6 +108,14 @@ const TextPropType = PropTypes.shape({
                                                                           validationErrorPasswordAndConfirmDiff: PropTypes.string.isRequired,
                                                                           validationErrorPasswordLength: PropTypes.string.isRequired,
                                                                           userInfoTitle: PropTypes.string.isRequired
-                                                                      })
+                                                                      }),
+                                         admin: PropTypes.shape({
+                                                                    roleSelect: PropTypes.string.isRequired,
+                                                                    numberOfRecords: PropTypes.string.isRequired,
+                                                                    tableHeaderEmail: PropTypes.string.isRequired,
+                                                                    tableHeaderRole: PropTypes.string.isRequired,
+                                                                    tableHeaderActions: PropTypes.string.isRequired,
+                                                                    tableActionDelete: PropTypes.string.isRequired
+                                                                }).isRequired
                                      });
 export default TextPropType;

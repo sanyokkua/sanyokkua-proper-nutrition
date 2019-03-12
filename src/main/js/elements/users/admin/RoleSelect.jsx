@@ -22,7 +22,7 @@ class RoleSelect extends React.Component {
         const roleListHasValues = this.props.rolesList && this.props.rolesList.length > 0;
         const selectDefaultValue = roleListHasValues && this.props.defaultValue ? this.props.defaultValue : this.props.rolesList[0].roleId;
         return roleListHasValues ? (
-            <Input s={ 6 } type='select' label={ "Roles Select" } defaultValue={ selectDefaultValue } onChange={ (event, value) => this.onRoleSelected(value) }>
+            <Input s={ 6 } type='select' label={ this.props.text.admin.roleSelect } defaultValue={ selectDefaultValue } onChange={ (event, value) => this.onRoleSelected(value) }>
                 { this.props.rolesList.map((role) => <option key={ role.roleId } value={ role.roleId }>{ role.roleName }</option>) }
             </Input>) : null;
     }

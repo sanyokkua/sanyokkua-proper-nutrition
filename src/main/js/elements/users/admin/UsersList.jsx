@@ -91,15 +91,15 @@ class UsersList extends React.Component {
                         <RoleSelect text={ this.props.text } rolesList={ rolesListForFilter } defaultValue={ -1 } onRoleSelected={ this.onRoleFilterChanged }/>
                     </Col>
                     <Col s={ 2 }>
-                        <Input type="number" min="1" onChange={ this.onNumberOfRecordsChange } label={ "Number of records per page" } defaultValue={ this.props.numberOfRecords }/>
+                        <Input type="number" min="1" onChange={ this.onNumberOfRecordsChange } label={ this.props.text.admin.numberOfRecords } defaultValue={ this.props.numberOfRecords }/>
                     </Col>
                 </Row>
                 <Table hoverable responsive striped>
                     <thead>
                     <tr>
-                        <th data-field="email">Email</th>
-                        <th data-field="role">User Role</th>
-                        <th data-field="actions">Actions</th>
+                        <th data-field="email">{ this.props.text.admin.tableHeaderEmail }</th>
+                        <th data-field="role">{ this.props.text.admin.tableHeaderRole }</th>
+                        <th data-field="actions">{ this.props.text.admin.tableHeaderActions }</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -114,7 +114,7 @@ class UsersList extends React.Component {
                                                                       onRoleSelected={ (roleId) => this.onRoleSelected(user, roleId) }/>
                                                        </td>
                                                        <td>
-                                                           <Button waves='purple' className='red darken-4 white-text' onClick={ () => this.onDelete(user) }>Delete</Button>
+                                                           <Button waves='purple' className='red darken-4 white-text' onClick={ () => this.onDelete(user) }>{ this.props.text.admin.tableActionDelete }</Button>
                                                        </td>
                                                    </tr>
                         ) : null

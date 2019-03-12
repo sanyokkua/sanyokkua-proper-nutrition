@@ -6,7 +6,8 @@
         "tabDishes": "Страви",
         "tabLogout": "Вийти",
         "tabEditMode": "Режим редагування",
-        "tabCalculator": "Калькулятор"
+        "tabCalculator": "Калькулятор",
+        "tabAdmin": "Адмiнiстрацiя"
     },
     "calculator": {
         "age": "Вік",
@@ -105,5 +106,13 @@
         "validationErrorPasswordAndConfirmDiff": "Пароль і Підтвердження пароля не рівні",
         "validationErrorPasswordLength": "Довжина повинна бути від 6 до 14 символів",
         "userInfoTitle": "Коротка інформація"
+    },
+    "admin": {
+        "roleSelect": "Вибiр типу",
+        "numberOfRecords": "Кiлькiсть записiв",
+        "tableHeaderEmail": "Пошта",
+        "tableHeaderRole": "Тип",
+        "tableHeaderActions": "Дii",
+        "tableActionDelete": "Видалити"
     }
 }

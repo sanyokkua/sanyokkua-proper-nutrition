@@ -37,10 +37,10 @@ class AdminContent extends React.Component {
         return <HashRouter>
             <div>
                 <Navbar className='light-blue darken-2' brand={ this.state.header } right>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabUsers') } to='/users'>{ this.props.text.general.tabUser }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabAdmin') } to='/users'>{ this.props.text.general.tabAdmin }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabProducts') } to='/products'>{ this.props.text.general.tabProducts }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabProfile') } to='/profile'>{ this.props.text.general.tabUser }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabProfile') } to='/profile'>{ this.props.text.general.tabUserProfile }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
                     <NavItem href='/logout'>{ this.props.text.general.tabLogout }</NavItem>
                 </Navbar>

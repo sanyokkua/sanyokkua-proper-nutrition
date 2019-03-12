@@ -6,7 +6,8 @@
         "tabDishes": "Dishes",
         "tabLogout": "Logout",
         "tabEditMode": "Edit mode",
-        "tabCalculator": "Calculator"
+        "tabCalculator": "Calculator",
+        "tabAdmin": "Administration"
     },
     "calculator": {
         "age": "Age",
@@ -105,5 +106,13 @@
         "validationErrorPasswordAndConfirmDiff": "Password and Confirm password is not equal",
         "validationErrorPasswordLength": "Length should be from 6 to 14 symbols",
         "userInfoTitle": "Short info"
+    },
+    "admin": {
+        "roleSelect": "Role select",
+        "numberOfRecords": "Number of records",
+        "tableHeaderEmail": "Email",
+        "tableHeaderRole": "Role",
+        "tableHeaderActions": "Actions",
+        "tableActionDelete": "Delete"
     }
 }
