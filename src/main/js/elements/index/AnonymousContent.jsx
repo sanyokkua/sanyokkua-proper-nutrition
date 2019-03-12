@@ -6,14 +6,15 @@ import Products                       from "../products/Products";
 import Dishes                         from "../dishes/Dishes";
 import TextPropType                   from "../../utils/TextPropType";
 import CalculatorTab                  from "../calculator/CalculatorTab";
+import Login                          from "../users/Login";
 
 class AnonymousContent extends React.Component {
     constructor(props) {
         super(props);
         this.editable = false;
         this.state = {
-            header: this.props.text.general.tabUser,
-            currentTab: 'tabUsers',
+            header: this.props.text.general.tabProducts,
+            currentTab: 'tabProducts',
             isUserLoggedIn: false,
             userPermissions: null
         };
@@ -38,7 +39,7 @@ class AnonymousContent extends React.Component {
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabCalculator') } to='/calculator'>{ this.props.text.general.tabCalculator }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
-                    <NavItem href='/login'>{ "Login" }</NavItem>
+                    <li><Login text={ this.props.text } loginButtonTrigger={ <a> { "Login" }</a> }/></li>
                 </Navbar>
                 <div className='container'>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ this.editable } numberOfRecords={ 10 }/>} }/>

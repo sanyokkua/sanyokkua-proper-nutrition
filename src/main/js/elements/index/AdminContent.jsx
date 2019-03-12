@@ -14,8 +14,8 @@ class AdminContent extends React.Component {
         super(props);
         this.editable = true;
         this.state = {
-            header: this.props.text.general.tabUser,
-            currentTab: 'tabUsers',
+            header: this.props.text.general.tabAdmin,
+            currentTab: 'tabAdmin',
             isUserLoggedIn: false,
             userPermissions: Permissions.ADMIN
         };
@@ -40,7 +40,7 @@ class AdminContent extends React.Component {
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabAdmin') } to='/users'>{ this.props.text.general.tabAdmin }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabProducts') } to='/products'>{ this.props.text.general.tabProducts }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
-                    <li><NavLink onClick={ () => this.onNavLinkClick('tabProfile') } to='/profile'>{ this.props.text.general.tabUserProfile }</NavLink></li>
+                    <li><NavLink onClick={ () => this.onNavLinkClick('tabUserProfile') } to='/profile'>{ this.props.text.general.tabUserProfile }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
                     <NavItem href='/logout'>{ this.props.text.general.tabLogout }</NavItem>
                 </Navbar>

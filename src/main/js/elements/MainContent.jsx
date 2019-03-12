@@ -16,7 +16,7 @@ class MainContent extends React.Component {
         Utils.checkRequiredProperty(this.props.currentLanguage, "currentLanguage");
         this.state = {
             isUserLoggedIn: true,
-            userPermissions: Permissions.ADMIN
+            userPermissions: Permissions.ANONYMOUS
         };
         this.onLangSelect = this.onLangSelect.bind(this);
     }
