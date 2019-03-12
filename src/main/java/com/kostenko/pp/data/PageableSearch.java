@@ -90,7 +90,7 @@ public interface PageableSearch<T> {
             }
         }
 
-        public boolean hasParam(@Nonnull @NonNull String key) {
+        boolean hasParam(@Nonnull @NonNull String key) {
             return entities.containsKey(key) || longs.containsKey(key) || strings.containsKey(key);
         }
     }

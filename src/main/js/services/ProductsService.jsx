@@ -22,10 +22,10 @@ export default class ProductsService {
         axios.get('/products', {
                  headers: {[this.header]: this.token},
                  params: {
-                     page: loadParams.currentPage,
-                     name: loadParams.search,
+                     searchString: loadParams.search,
                      currentType: loadParams.currentType.prodTypeId,
-                     numberOfRecords: loadParams.numberOfRecords
+                     recordsPerPage: loadParams.numberOfRecords,
+                     page: loadParams.currentPage
                  }
              })
              .then(response => {

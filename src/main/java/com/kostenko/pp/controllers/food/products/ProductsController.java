@@ -1,21 +1,24 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.products;
 
+import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.PageableSearch.SearchParams;
 import com.kostenko.pp.data.pojos.Product;
 import com.kostenko.pp.data.services.implementation.ProductService;
 import com.kostenko.pp.presentation.ResultPage;
 import com.kostenko.pp.presentation.json.pojos.JsonProduct;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
 @RestController
-public class ProductsController {
+public class ProductsController implements RestCrudController<JsonProduct, ProductParams> {
     private final ProductService productService;
 
     @Autowired
@@ -24,15 +27,13 @@ public class ProductsController {
     }
 
     @GetMapping("/products")
-    public ResultPage<JsonProduct> getAllProductsLike(@RequestParam(value = "name", required = false) String name,
-                                                      @RequestParam(value = "page", required = false) Integer pageNumber,
-                                                      @RequestParam(value = "currentType", required = false) Long currentType,
-                                                      @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+    @Override
+    public ResultPage<JsonProduct> findAll(ProductParams params) {
         SearchParams<Product> searchParams = new SearchParams<>();
-        searchParams.add(ProductService.NAME, name, true);
-        searchParams.add(ProductService.TYPE, currentType, true);
-        searchParams.add(ProductService.RECORDS, numberOfRecords, true);
-        searchParams.add(ProductService.PAGE, pageNumber, true);
+        searchParams.add(ProductService.NAME, params.getSearchString(), true)
+                    .add(ProductService.TYPE, params.getCurrentType(), true)
+                    .add(ProductService.RECORDS, params.getRecordsPerPage(), true)
+                    .add(ProductService.PAGE, params.getPage(), true);
         Page<Product> page = productService.findAll(searchParams);
         return ResultPage.getResultPage(page, product -> JsonProduct.mapFromProduct(Product.builder()
                                                                                            .productId(product.getProductId())
@@ -45,22 +46,29 @@ public class ProductsController {
 
     @PostMapping("/products")
     @ResponseBody
-    public Product createProduct(@RequestBody Product product) {
-        return productService.create(product);
+    @Override
+    public JsonProduct create(@Nonnull @NonNull JsonProduct jsonEntity) {
+        Product product = jsonEntity.mapToProduct();
+        Product created = productService.create(product);
+        return Objects.isNull(created) ? null : JsonProduct.mapFromProduct(created);
     }
 
     @PutMapping("/products/{id}")
     @ResponseBody
-    public Product updateProduct(@PathVariable Long id, @RequestBody JsonProduct product) {
+    @Override
+    public JsonProduct update(@PathVariable @Nonnull @NonNull Long id, JsonProduct jsonEntity) {
+        Product product = jsonEntity.mapToProduct();
         if (id.equals(product.getProductId())) {
-            return productService.update(product.mapToProduct());
+            Product updated = productService.update(product);
+            return Objects.isNull(updated) ? null : JsonProduct.mapFromProduct(updated);
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
     }
 
     @DeleteMapping("/products/{id}")
-    public ResponseEntity deleteProduct(@PathVariable Long id) {
+    @Override
+    public ResponseEntity delete(@PathVariable @Nonnull @NonNull Long id) {
         Product product = productService.findById(id);
         if (isNull(product)) {
             throw new IllegalArgumentException("Product with id " + id + " doesn't exists. Delete can't be done");
@@ -69,5 +77,4 @@ public class ProductsController {
         }
         return ResponseEntity.ok("OK");
     }
-
 }

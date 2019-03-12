@@ -1,6 +1,5 @@
 package com.kostenko.pp.controllers.administrative;
 
-import com.kostenko.pp.controllers.extensions.RequestParams;
 import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.PageableSearch;
 import com.kostenko.pp.data.pojos.Dish;
@@ -13,7 +12,6 @@ import com.kostenko.pp.presentation.json.pojos.JsonDish;
 import com.kostenko.pp.presentation.json.pojos.JsonRole;
 import com.kostenko.pp.presentation.json.pojos.JsonUser;
 import com.kostenko.pp.security.PasswordEncoder;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,13 +26,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.kostenko.pp.data.services.implementation.UserDishService.*;
-import static com.kostenko.pp.data.services.implementation.UserService.EMAIL;
+import static com.kostenko.pp.data.services.implementation.UserDishService.SEARCH;
+import static com.kostenko.pp.data.services.implementation.UserDishService.USER;
+import static com.kostenko.pp.data.services.implementation.UserService.*;
 import static java.util.Objects.isNull;
 
 @Slf4j
 @RestController
-public class UserCrudController implements RestCrudController<JsonUser, UserCrudController.UserParams> {
+public class UserCrudController implements RestCrudController<JsonUser, UserParams> {
     private final UserService userService;
     private final UserDishService userDishService;
     private final RoleService roleService;
@@ -124,27 +123,4 @@ public class UserCrudController implements RestCrudController<JsonUser, UserCrud
         return roleService.findAll().stream().map(JsonRole::mapFrom).collect(Collectors.toList());
     }
 
-    @Data
-    class UserParams implements RequestParams {
-        private String searchString;
-        private Integer page;
-        private Integer recordsPerPage;
-        private Long roleId;
-        private Long userId;
-
-        @Override
-        public String getSearchString() {
-            return this.searchString;
-        }
-
-        @Override
-        public Integer getPage() {
-            return this.page;
-        }
-
-        @Override
-        public Integer getRecordsPerPage() {
-            return this.recordsPerPage;
-        }
-    }
 }

@@ -1,4 +1,4 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.calculator;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CalculatorParams {
+public final class CalculatorParams {
     private Integer age;
     private Integer height;
     private Integer weight;

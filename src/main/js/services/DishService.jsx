@@ -30,9 +30,9 @@ export default class DishService {
         axios.get('/dishes', {
                  headers: {[this.header]: this.token},
                  params: {
+                     searchString: loadParams.name,
                      page: loadParams.currentPage,
-                     name: loadParams.name,
-                     numberOfRecords: loadParams.numberOfRecords
+                     recordsPerPage: loadParams.numberOfRecords
                  }
              })
              .then(response => {

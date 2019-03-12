@@ -1,4 +1,4 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.products;
 
 import com.kostenko.pp.data.pojos.Product;
 import com.kostenko.pp.data.services.implementation.ProductService;

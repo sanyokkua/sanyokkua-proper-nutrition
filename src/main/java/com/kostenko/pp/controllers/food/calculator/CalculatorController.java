@@ -1,4 +1,4 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.calculator;
 
 import com.kostenko.pp.formulas.Formula;
 import com.kostenko.pp.formulas.implementation.HarrisBenedictFormula;

@@ -24,6 +24,7 @@ class AdminUserPage extends React.Component {
         this.onSearchChange = this.onSearchChange.bind(this);
         this.onUserSave = this.onUserSave.bind(this);
         this.onUserDelete = this.onUserDelete.bind(this);
+        this.onRoleFilterChanged = this.onRoleFilterChanged.bind(this);
     }
 
     componentDidMount() {
@@ -71,9 +72,16 @@ class AdminUserPage extends React.Component {
         this.userService.deleteUser(user, () => this.reloadData(), error => console.log(error));
     }
 
+    onRoleFilterChanged(roleId) {
+        const currentRoleId = roleId && roleId > 0 ? roleId : null;
+        const lastSearch = this.state.search;
+        this.setState({search: lastSearch, currentPage: 0, totalPages: 0, currentRole: currentRoleId}, () => {
+            this.reloadData();
+        });
+    }
+
     render() {
         return <div>
-
             <UsersList onPageChange={ this.onPageChange }
                        onUserSave={ this.onUserSave }
                        onSearchChange={ this.onSearchChange }
@@ -85,7 +93,7 @@ class AdminUserPage extends React.Component {
                        totalPages={ this.state.totalPages }
                        currentPage={ this.state.currentPage }
                        text={ this.props.text }
-            />
+                       onRoleFilterChanged={ this.onRoleFilterChanged }/>
         </div>
     }
 }

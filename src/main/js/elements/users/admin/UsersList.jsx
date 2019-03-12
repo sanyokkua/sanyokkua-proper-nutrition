@@ -13,6 +13,7 @@ class UsersList extends React.Component {
         this.onSearchTextChanged = this.onSearchTextChanged.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onRoleSelected = this.onRoleSelected.bind(this);
+        this.onRoleFilterChanged = this.onRoleFilterChanged.bind(this);
         this.onDelete = this.onDelete.bind(this);
     }
 
@@ -64,20 +65,33 @@ class UsersList extends React.Component {
         } else {
             console.warn("onNumberOfRecordsChange: Page is null ")
         }
+    }
 
+    onRoleFilterChanged(roleId) {
+        if (roleId) {
+            this.props.onRoleFilterChanged(roleId);
+        } else {
+            console.warn("onRoleFilterChanged: Role is null ");
+            this.props.onRoleFilterChanged(roleId);
+        }
     }
 
     render() {
         const users = this.props.usersList;
         const isNotEmpty = users && users.length > 0;
+        const rolesListForFilter = JSON.parse(JSON.stringify(this.props.rolesList));
+        rolesListForFilter.unshift({roleId: -1, roleName: ""});
         return <div>
             <CardPanel className="blue lighten-5 black-text">
                 <Row>
-                    <Col s={ 9 }>
+                    <Col s={ 6 }>
                         <SearchForm onChange={ this.onSearchTextChanged }/>
                     </Col>
-                    <Col s={ 3 }>
-                        <Input s={ 12 } type="number" min="1" onChange={ this.onNumberOfRecordsChange } label={ "Number of records per page" } defaultValue={ this.props.numberOfRecords }/>
+                    <Col s={ 4 }>
+                        <RoleSelect text={ this.props.text } rolesList={ rolesListForFilter } defaultValue={ -1 } onRoleSelected={ this.onRoleFilterChanged }/>
+                    </Col>
+                    <Col s={ 2 }>
+                        <Input type="number" min="1" onChange={ this.onNumberOfRecordsChange } label={ "Number of records per page" } defaultValue={ this.props.numberOfRecords }/>
                     </Col>
                 </Row>
                 <Table hoverable responsive striped>
@@ -119,6 +133,7 @@ UsersList.propTypes = {
     onSearchChange: PropTypes.func.isRequired,
     onUserDelete: PropTypes.func.isRequired,
     onNumberOfRecordsChange: PropTypes.func.isRequired,
+    onRoleFilterChanged: PropTypes.func.isRequired,
 
     usersList: PropTypes.array.isRequired,
     rolesList: PropTypes.array.isRequired,

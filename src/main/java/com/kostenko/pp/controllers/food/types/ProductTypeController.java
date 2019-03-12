@@ -1,20 +1,23 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.types;
 
+import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.pojos.ProductType;
 import com.kostenko.pp.data.services.implementation.ProductTypeService;
 import com.kostenko.pp.presentation.ResultPage;
 import com.kostenko.pp.presentation.json.pojos.JsonProductType;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 import static java.util.Objects.isNull;
 
 @RestController
-public class ProductTypeController {
+public class ProductTypeController implements RestCrudController<JsonProductType, ProductTypeParams> {
     private final ProductTypeService productTypeService;
 
     @Autowired
@@ -23,25 +26,33 @@ public class ProductTypeController {
     }
 
     @GetMapping("/types")
-    public ResultPage<JsonProductType> getAllProductTypes() {
+    @Override
+    public ResultPage<JsonProductType> findAll(ProductTypeParams params) {
         PageImpl<ProductType> productTypes = new PageImpl<>(productTypeService.findAll());
         return ResultPage.getResultPage(productTypes, JsonProductType::mapFromProductType);
     }
 
     @PostMapping("/types")
     @ResponseBody
-    public ProductType createProductType(@RequestBody ProductType productType) {
-        return productTypeService.create(productType);
+    @Override
+    public JsonProductType create(@Nonnull @NonNull JsonProductType jsonEntity) {
+        ProductType productType = jsonEntity.mapToProductType();
+        ProductType created = productTypeService.create(productType);
+        return Objects.isNull(created) ? null : JsonProductType.mapFromProductType(created);
     }
 
     @PutMapping("/types/{id}")
     @ResponseBody
-    public ProductType updateProductType(@PathVariable Long id, @RequestBody ProductType productType) {
+    @Override
+    public JsonProductType update(@PathVariable @Nonnull @NonNull Long id, JsonProductType jsonEntity) {
+        ProductType productType = jsonEntity.mapToProductType();
         if (id.equals(productType.getProdTypeId())) {
             if (productTypeService.isExists(productType)) {
-                return productTypeService.update(productType);
+                ProductType updated = productTypeService.update(productType);
+                return Objects.isNull(updated) ? null : JsonProductType.mapFromProductType(updated);
             } else {
-                return productTypeService.create(productType);
+                ProductType created = productTypeService.create(productType);
+                return Objects.isNull(created) ? null : JsonProductType.mapFromProductType(created);
             }
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
@@ -49,7 +60,8 @@ public class ProductTypeController {
     }
 
     @DeleteMapping("/types/{id}")
-    public ResponseEntity deleteProductType(@PathVariable Long id) {
+    @Override
+    public ResponseEntity delete(@PathVariable @Nonnull @NonNull Long id) {
         ProductType byId = productTypeService.findById(id);
         if (isNull(byId)) {
             throw new IllegalArgumentException("ProductType with id " + id + " doesn't exists. Delete can't be done");

@@ -14,6 +14,6 @@ import java.util.List;
 public class Dish {
     private long dishId;
     private String dishName;
-    private List<Product> dishProducts;
     private double dishEnergy;
+    private List<Product> dishProducts;
 }

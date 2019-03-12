@@ -1,21 +1,24 @@
-package com.kostenko.pp.controllers.food;
+package com.kostenko.pp.controllers.food.dishes;
 
+import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.PageableSearch;
 import com.kostenko.pp.data.pojos.Dish;
 import com.kostenko.pp.data.services.implementation.DishService;
 import com.kostenko.pp.presentation.ResultPage;
 import com.kostenko.pp.presentation.json.pojos.JsonDish;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 @RestController
 @Slf4j
-public class DishesController {
+public class DishesController implements RestCrudController<JsonDish, DishParams> {
     private final DishService dishService;
 
     @Autowired
@@ -24,37 +27,42 @@ public class DishesController {
     }
 
     @GetMapping("/dishes")
-    public ResultPage<JsonDish> getDishes(@RequestParam(value = "name", required = false) String name,
-                                          @RequestParam(value = "page", required = false) Integer pageNumber,
-                                          @RequestParam(value = "numberOfRecords", required = false) Integer numberOfRecords) {
+    @Override
+    public ResultPage<JsonDish> findAll(DishParams params) {
         PageableSearch.SearchParams<Dish> searchParams = new PageableSearch.SearchParams<>();
-        searchParams.add(DishService.NAME, name, true);
-        searchParams.add(DishService.RECORDS, numberOfRecords, true);
-        searchParams.add(DishService.PAGE, pageNumber, true);
+        searchParams.add(DishService.NAME, params.getSearchString(), true)
+                    .add(DishService.RECORDS, params.getRecordsPerPage(), true)
+                    .add(DishService.PAGE, params.getPage(), true);
         Page<Dish> page = dishService.findAll(searchParams);
         return ResultPage.getResultPage(page, JsonDish::mapFromDish);
     }
 
     @PostMapping("/dishes")
     @ResponseBody
-    public Dish createProduct(@RequestBody JsonDish jsonDish) {
-        Dish dishFromJson = jsonDish.mapToDish();
-        return dishService.create(dishFromJson);
+    @Override
+    public JsonDish create(@Nonnull @NonNull JsonDish jsonEntity) {
+        Dish dishFromJson = jsonEntity.mapToDish();
+        Dish dish = dishService.create(dishFromJson);
+        return Objects.isNull(dish) ? null : JsonDish.mapFromDish(dish);
     }
 
     @PutMapping("/dishes/{id}")
     @ResponseBody
-    public Dish updateProduct(@PathVariable Long id, @RequestBody JsonDish dish) {
-        if (id.equals(dish.getDishId())) {
-            return dishService.update(dish.mapToDish());
+    @Override
+    public JsonDish update(@PathVariable @Nonnull @NonNull Long id, JsonDish jsonEntity) {
+        if (id.equals(jsonEntity.getDishId())) {
+            Dish dish = dishService.update(jsonEntity.mapToDish());
+            return Objects.isNull(dish) ? null : JsonDish.mapFromDish(dish);
         } else {
             throw new IllegalArgumentException("Id from path and in object are different");
         }
     }
 
     @DeleteMapping("/dishes/{id}")
-    public ResponseEntity deleteProduct(@PathVariable Long id) {
+    @Override
+    public ResponseEntity delete(@PathVariable @Nonnull @NonNull Long id) {
         dishService.delete(id);
         return ResponseEntity.ok("Removed");
     }
+
 }

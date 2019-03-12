@@ -1,14 +1,12 @@
 package com.kostenko.pp.presentation.json.pojos;
 
 import com.kostenko.pp.data.pojos.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "password")
 @Builder
 public class JsonUser {
     private Long userId;
