@@ -14,11 +14,11 @@ public class JsonRole {
     private Long roleId;
     private String roleName;
 
-    public static JsonRole mapFrom(Role role){
+    public static JsonRole mapFrom(Role role) {
         return JsonRole.builder().roleId(role.getRoleId()).roleName(role.getRoleName()).build();
     }
 
-    public Role mapTo(){
+    public Role mapTo() {
         return Role.builder().roleId(this.roleId).roleName(this.roleName).build();
     }
 }

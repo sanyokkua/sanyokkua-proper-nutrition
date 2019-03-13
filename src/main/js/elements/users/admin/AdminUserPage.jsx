@@ -87,13 +87,15 @@ class AdminUserPage extends React.Component {
                        onSearchChange={ this.onSearchChange }
                        onUserDelete={ this.onUserDelete }
                        onNumberOfRecordsChange={ this.onNumberOfRecordsChange }
+                       onRoleFilterChanged={ this.onRoleFilterChanged }
+
                        numberOfRecords={ this.state.numberOfRecords }
                        usersList={ this.state.usersList }
                        rolesList={ this.state.rolesList }
                        totalPages={ this.state.totalPages }
                        currentPage={ this.state.currentPage }
                        text={ this.props.text }
-                       onRoleFilterChanged={ this.onRoleFilterChanged }/>
+            />
         </div>
     }
 }

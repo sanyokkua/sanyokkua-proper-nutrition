@@ -5,9 +5,7 @@ import TextPropType from "../../utils/TextPropType";
 
 class CalculatorTab extends React.Component {
     render() {
-        return <div>
-            <Calculator text={ this.props.text } isUpdating={ false }/>
-        </div>
+        return <Calculator text={ this.props.text }/>
     }
 }
 

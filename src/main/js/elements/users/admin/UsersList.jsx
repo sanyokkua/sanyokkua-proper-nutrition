@@ -4,10 +4,24 @@ import PropTypes                                                 from "prop-type
 import RoleSelect                                                from "./RoleSelect";
 import SearchForm                                                from "../../common/SearchForm";
 import TextPropType                                              from "../../../utils/TextPropType";
+import Utils                                                     from "../../../utils/Utils";
 
 class UsersList extends React.Component {
     constructor(props) {
         super(props);
+        Utils.checkRequiredProperty(this.props.usersList, "usersList");
+        Utils.checkRequiredProperty(this.props.rolesList, "rolesList");
+        Utils.checkRequiredProperty(this.props.totalPages, "totalPages");
+        Utils.checkRequiredProperty(this.props.currentPage, "currentPage");
+        Utils.checkRequiredProperty(this.props.numberOfRecords, "numberOfRecords");
+        Utils.checkRequiredProperty(this.props.text, "text");
+        Utils.checkCallback(this.props.onPageChange, "onPageChange");
+        Utils.checkCallback(this.props.onUserSave, "onUserSave");
+        Utils.checkCallback(this.props.onSearchChange, "onSearchChange");
+        Utils.checkCallback(this.props.onUserDelete, "onUserDelete");
+        Utils.checkCallback(this.props.onNumberOfRecordsChange, "onNumberOfRecordsChange");
+        Utils.checkCallback(this.props.onRoleFilterChanged, "onRoleFilterChanged");
+
         this.onPageChange = this.onPageChange.bind(this);
         this.onNumberOfRecordsChange = this.onNumberOfRecordsChange.bind(this);
         this.onSearchTextChanged = this.onSearchTextChanged.bind(this);
@@ -82,7 +96,7 @@ class UsersList extends React.Component {
         const rolesListForFilter = JSON.parse(JSON.stringify(this.props.rolesList));
         rolesListForFilter.unshift({roleId: -1, roleName: ""});
         return <div>
-            <CardPanel className="blue lighten-5 black-text">
+            <CardPanel className="teal lighten-5 black-text">
                 <Row>
                     <Col s={ 6 }>
                         <SearchForm onChange={ this.onSearchTextChanged }/>
@@ -107,11 +121,10 @@ class UsersList extends React.Component {
                         isNotEmpty ? users.map((user) =>
                                                    <tr key={ user.userId }>
                                                        <td>{ user.email }</td>
-                                                       <td><
-                                                           RoleSelect text={ this.props.text }
-                                                                      rolesList={ this.props.rolesList }
-                                                                      defaultValue={ user.roleId }
-                                                                      onRoleSelected={ (roleId) => this.onRoleSelected(user, roleId) }/>
+                                                       <td><RoleSelect text={ this.props.text }
+                                                                       rolesList={ this.props.rolesList }
+                                                                       defaultValue={ user.roleId }
+                                                                       onRoleSelected={ (roleId) => this.onRoleSelected(user, roleId) }/>
                                                        </td>
                                                        <td>
                                                            <Button waves='purple' className='red darken-4 white-text' onClick={ () => this.onDelete(user) }>{ this.props.text.admin.tableActionDelete }</Button>

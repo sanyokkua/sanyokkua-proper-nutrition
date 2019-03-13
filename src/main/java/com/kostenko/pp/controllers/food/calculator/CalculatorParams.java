@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public final class CalculatorParams {
+final class CalculatorParams {
     private Integer age;
     private Integer height;
     private Integer weight;

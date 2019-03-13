@@ -6,21 +6,17 @@ import UserProfileMainPage            from "../users/profile/UserProfileMainPage
 import Products                       from "../products/Products";
 import Dishes                         from "../dishes/Dishes";
 import TextPropType                   from "../../utils/TextPropType";
-import Permissions                    from "../../utils/Permissions";
 
 class ManagerContent extends React.Component {
     constructor(props) {
         super(props);
-        this.editable = true;
         this.state = {
             header: this.props.text.general.tabUserProfile,
             currentTab: 'tabProfile',
-            isUserLoggedIn: false,
-            userPermissions: Permissions.MANAGER
+            currentUser: this.props.user
         };
         this.onLangSelect = this.onLangSelect.bind(this);
         this.onNavLinkClick = this.onNavLinkClick.bind(this);
-        this.adminUser = {id: 0, age: 25, weight: 82, height: 182, login: "alexK", email: "alex@mail.com", gender: "Male", lastCalculatedEnergy: 1888};
     }
 
     onLangSelect(lang) {
@@ -43,9 +39,9 @@ class ManagerContent extends React.Component {
                     <NavItem href='/logout'>{ this.props.text.general.tabLogout }</NavItem>
                 </Navbar>
                 <div className='container'>
-                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ this.editable } numberOfRecords={ 10 }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ this.editable }/>} }/>
-                    <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.adminUser }/>} }/>
+                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ true } numberOfRecords={ 10 }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true }/>} }/>
+                    <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
                 </div>
             </div>
         </HashRouter>
@@ -56,6 +52,7 @@ ManagerContent.propTypes = {
     text: PropTypes.oneOfType([TextPropType]).isRequired,
     onLanguageChanged: PropTypes.func.isRequired,
     currentLanguage: PropTypes.string.isRequired,
-    langList: PropTypes.arrayOf(PropTypes.string).isRequired
+    langList: PropTypes.arrayOf(PropTypes.string).isRequired,
+    user: PropTypes.object.isRequired
 };
 export default ManagerContent;

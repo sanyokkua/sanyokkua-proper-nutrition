@@ -11,15 +11,13 @@ import Login                          from "../users/Login";
 class AnonymousContent extends React.Component {
     constructor(props) {
         super(props);
-        this.editable = false;
         this.state = {
             header: this.props.text.general.tabProducts,
-            currentTab: 'tabProducts',
-            isUserLoggedIn: false,
-            userPermissions: null
+            currentTab: 'tabProducts'
         };
         this.onLangSelect = this.onLangSelect.bind(this);
         this.onNavLinkClick = this.onNavLinkClick.bind(this);
+        this.onLoginSuccess = this.onLoginSuccess.bind(this);
     }
 
     onLangSelect(lang) {
@@ -28,6 +26,12 @@ class AnonymousContent extends React.Component {
 
     onNavLinkClick(lastTab) {
         this.setState({currentTab: lastTab, header: this.props.text.general[lastTab]});
+    }
+
+    onLoginSuccess(userId) {
+        if (userId) {
+            this.props.onUserLoggedIn(userId);
+        }
     }
 
     render() {
@@ -39,11 +43,11 @@ class AnonymousContent extends React.Component {
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabCalculator') } to='/calculator'>{ this.props.text.general.tabCalculator }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
-                    <li><Login text={ this.props.text } loginButtonTrigger={ <a> { "Login" }</a> }/></li>
+                    <li><Login text={ this.props.text } loginButtonTrigger={ <a> { "Login" }</a> } onLoginSuccess={ this.onLoginSuccess }/></li>
                 </Navbar>
                 <div className='container'>
-                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ this.editable } numberOfRecords={ 10 }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ this.editable }/>} }/>
+                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ false } numberOfRecords={ 10 }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ false }/>} }/>
                     <Route path="/calculator" render={ () => {return <CalculatorTab text={ this.props.text }/>} }/>
                 </div>
             </div>
@@ -54,6 +58,7 @@ class AnonymousContent extends React.Component {
 AnonymousContent.propTypes = {
     text: PropTypes.oneOfType([TextPropType]).isRequired,
     onLanguageChanged: PropTypes.func.isRequired,
+    onUserLoggedIn: PropTypes.func.isRequired,
     currentLanguage: PropTypes.string.isRequired,
     langList: PropTypes.arrayOf(PropTypes.string).isRequired
 };

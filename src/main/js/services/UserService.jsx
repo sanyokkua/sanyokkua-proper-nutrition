@@ -7,6 +7,10 @@ export default class UserService {
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
+    static emailIsInUse(email, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
+    }
+
     createUser(user, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
         axios.post('/users', user, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
@@ -14,18 +18,6 @@ export default class UserService {
                  success();
              })
              .catch(error => fail(error));
-    }
-
-    getUser(loadParams, success, fail) {
-        Utils.checkDefaultCallbacks(success, fail);
-    }
-
-    emailIsInUse(email, success, fail) {
-        Utils.checkDefaultCallbacks(success, fail);
-    }
-
-    loginIsInUse(login, success, fail) {
-        Utils.checkDefaultCallbacks(success, fail);
     }
 
     getUsers(loadParams, success, fail) {

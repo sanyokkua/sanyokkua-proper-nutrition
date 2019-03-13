@@ -8,29 +8,25 @@ import LoginService                  from "../../services/LoginService";
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.loginService = new LoginService();
-        this.state = {
-            email: '',
-            password: '',
-            isReadyForLogin: false,
-            errorMessage: ''
-        };
+        Utils.checkCallback(this.props.onLoginSuccess, "onLoginSuccess");
+        Utils.checkRequiredProperty(this.props.loginButtonTrigger, "loginButtonTrigger");
+        Utils.checkRequiredProperty(this.props.text, "text");
+
+        this.state = {email: '', password: '', isReadyForLogin: false, errorMessage: ''};
 
         this.onLogin = this.onLogin.bind(this);
         this.onEmailTextChange = this.onEmailTextChange.bind(this);
         this.onPasswordTextChange = this.onPasswordTextChange.bind(this);
+        this.onLoginAndPasswordValidate = this.onLoginAndPasswordValidate.bind(this);
     }
 
     onLogin() {
         console.log("Email: " + this.state.email);
         console.log("Password: " + this.state.password);
-        this.loginService.login({
-                                    email: this.state.email,
-                                    password: this.state.password
-                                }, userId => {
-            console.log("User logged in; UserId: " + userId);
-            //this.props.onLoginSuccess(userId);
+        LoginService.login({email: this.state.email, password: this.state.password}, user => {
+            console.log("User logged in; UserId: " + user.userId);
             $('.modal').modal('close');
+            this.props.onLoginSuccess(user);
         }, error => {
             this.setState({errorMessage: error});
         });

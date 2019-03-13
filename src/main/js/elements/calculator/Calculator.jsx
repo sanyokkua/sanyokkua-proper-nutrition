@@ -1,34 +1,24 @@
-import { Button, CardPanel, Input, Modal, Row } from 'react-materialize';
-import React                                    from 'react';
-import PropTypes                                from 'prop-types';
-import CalculatorService                        from '../../services/CalculatorService';
-import TextPropType                             from "../../utils/TextPropType";
+import { Button, CardPanel, Input, Row } from 'react-materialize';
+import React                             from 'react';
+import PropTypes                         from 'prop-types';
+import CalculatorService                 from '../../services/CalculatorService';
+import TextPropType                      from "../../utils/TextPropType";
 
 class Calculator extends React.Component {
     constructor(props) {
         super(props);
-        let user = null;
-        let submitState = true;
-        if (this.props.user) {
-            user = this.props.user;
-            submitState = false;
-        } else {
-            user = {
-                age: null,
-                height: null,
-                weight: null,
-                login: null,
-                email: null,
-                gender: 'male',
-                lastCalculatedEnergy: 0
-            }
-        }
         this.state = {
-            user: user,
-            formula: 'benedict',
-            activity: 'low',
-            result: '',
-            submitState: submitState
+            age: null,
+            height: null,
+            weight: null,
+            formula: null,
+            activity: null,
+            gender: null,
+            result: null,
+            submitState: true,
+            formulasList: [],
+            gendersList: [],
+            activitiesList: [],
         };
         this.handleAgeChange = this.handleAgeChange.bind(this);
         this.handleHeightChange = this.handleHeightChange.bind(this);
@@ -40,27 +30,19 @@ class Calculator extends React.Component {
     }
 
     handleAgeChange(event) {
-        let user = this.state.user;
-        user.age = Number(event.target.value);
-        this.update({user: user});
+        this.update({age: Number(event.target.value)});
     }
 
     handleHeightChange(event) {
-        let user = this.state.user;
-        user.height = Number(event.target.value);
-        this.update({user: user});
+        this.update({height: Number(event.target.value)});
     }
 
     handleWeightChange(event) {
-        let user = this.state.user;
-        user.weight = Number(event.target.value);
-        this.update({user: user});
+        this.update({weight: Number(event.target.value)});
     }
 
     handleGenderChange(event) {
-        let user = this.state.user;
-        user.gender = event.target.value;
-        this.update({user: user});
+        this.update({gender: event.target.value});
     }
 
     handleFormulaChange(event) {
@@ -76,7 +58,7 @@ class Calculator extends React.Component {
     }
 
     switchCalculateButtonState() {
-        if (this.state.user.age && this.state.user.height && this.state.user.weight) {
+        if (this.state.age && this.state.height && this.state.weight) {
             this.setState({submitState: false});
         } else {
             this.setState({submitState: true});
@@ -84,35 +66,40 @@ class Calculator extends React.Component {
     }
 
     handleSubmit(event) {
-        CalculatorService.calculate({
-                                        age: this.state.user.age,
-                                        height: this.state.user.height,
-                                        weight: this.state.user.weight,
-                                        gender: this.state.user.gender,
-                                        formula: this.state.formula,
-                                        activity: this.state.activity
-                                    }, result => {
-            let user = this.state.user;
-            user.lastCalculatedEnergy = Number(result);
-            this.setState({user: user}, () => {
-                if (this.state.user.lastCalculatedEnergy) {
-                    if (this.props.onResultCalculated) {
-                        window.Materialize.toast(this.state.result, 5000);
-                        this.props.onResultCalculated(this.state.user);
-                    } else {
-                        $('#calcResultModal').modal('open');
-                    }
-                }
-            });
-        }, (error, message) => {
-            console.log(error);
-            window.Materialize.toast(message, 5000);
-        });
+        const params = {
+            age: this.state.age,
+            height: this.state.height,
+            weight: this.state.weight,
+            gender: this.state.gender,
+            formula: this.state.formula,
+            activity: this.state.activity
+        };
+        CalculatorService.calculate(params,
+                                    result => this.setState({result: Number(result)}),
+                                    (error, message) => {
+                                        console.log(error);
+                                        window.Materialize.toast(message, 5000);
+                                    });
         event.preventDefault();
     }
 
     componentDidMount() {
         console.log("did mount");
+        CalculatorService.getFormulas(formulas => {
+            this.setState({formulasList: formulas, formula: formulas[0]});
+        }, error => {
+            console.warn(error);
+        });
+        CalculatorService.getGenders(genders => {
+            this.setState({gendersList: genders, gender: genders[0]});
+        }, error => {
+            console.warn(error);
+        });
+        CalculatorService.getActivities(activities => {
+            this.setState({activitiesList: activities, activity: activities[0]});
+        }, error => {
+            console.warn(error);
+        });
     }
 
     componentWillUnmount() {
@@ -120,58 +107,40 @@ class Calculator extends React.Component {
     }
 
     render() {
-        return <div>
-            <CardPanel className="blue darken-2 white-text z-depth-3">
-                <h3>{ this.props.text.calculator.modalHeaderCalculate }</h3>
-                <br/>
-                <Row>
-                    <Input required type="number" s={ 4 } defaultValue={ this.state.user.age } onChange={ this.handleAgeChange } label={ this.props.text.calculator.age }/>
-                    <Input required type="number" s={ 4 } defaultValue={ this.state.user.height } onChange={ this.handleHeightChange } label={ this.props.text.calculator.height }/>
-                    <Input required type="number" s={ 4 } defaultValue={ this.state.user.weight } onChange={ this.handleWeightChange } label={ this.props.text.calculator.weight }/>
-                    <Input s={ 4 } value={ this.state.user.gender } onChange={ this.handleGenderChange } type='select' label="Gender">
-                        <option value='male'>{ this.props.text.calculator.genderMale }</option>
-                        <option value='female'>{ this.props.text.calculator.genderFemale }</option>
-                    </Input>
-                    <Input s={ 4 } value={ this.state.activity } onChange={ this.handleActivityChange } type='select' label={ this.props.text.calculator.activity }>
-                        <option value='low'>{ this.props.text.calculator.low }</option>
-                        <option value='medium'>{ this.props.text.calculator.medium }</option>
-                        <option value='high'>{ this.props.text.calculator.height }</option>
-                        <option value='very_high'>{ this.props.text.calculator.very_high }</option>
-                    </Input>
-                    <Input s={ 4 } value={ this.state.formula } onChange={ this.handleFormulaChange } type='select' label={ this.props.text.calculator.formula }>
-                        <option value='benedict'>{ this.props.text.calculator.benedict }</option>
-                        <option value='mifflin'>{ this.props.text.calculator.mifflin }</option>
-                    </Input>
-                    <div>
-                        <Button waves='light'
-                                className='green darken-4'
-                                disabled={ this.state.submitState }
-                                modal={ this.props.isUpdating ? "close" : null }
-                                onClick={ this.handleSubmit }>{ this.props.text.calculator.buttonCalculate }</Button>
-                        <Modal id='calcResultModal' header={ this.props.text.calculator.modalHeaderCalculate } actions={ <div>
-                            <Button flat modal="close" waves="light">{ this.props.text.calculator.modalButtonCancel }</Button>
-                        </div>
-                        }>
-                            <p>{ this.props.text.calculator.modalResultText }{ this.state.user.lastCalculatedEnergy }</p>
-                        </Modal>
-                    </div>
-                </Row>
-            </CardPanel>
-        </div>
+        const activity = this.state.activity ? this.state.activity : '';
+        const formula = this.state.formula ? this.state.formula : '';
+        const gender = this.state.gender ? this.state.gender : '';
+        const result = this.state.result ? this.state.result : 0;
+
+        return <CardPanel className="light-blue lighten-5 black-text z-depth-1">
+            <h3>{ this.props.text.calculator.modalHeaderCalculate }{ result <= 0 ? null : ' : ' + result }</h3>
+            <br/>
+            <Row>
+                <Input required type="number" s={ 4 } defaultValue={ this.state.age } onChange={ this.handleAgeChange } label={ this.props.text.calculator.age }/>
+                <Input required type="number" s={ 4 } defaultValue={ this.state.height } onChange={ this.handleHeightChange } label={ this.props.text.calculator.height }/>
+                <Input required type="number" s={ 4 } defaultValue={ this.state.weight } onChange={ this.handleWeightChange } label={ this.props.text.calculator.weight }/>
+                <Input s={ 4 } value={ gender } onChange={ this.handleGenderChange } type='select' label={ this.props.text.calculator.gender }>
+                    { this.state.gendersList ? this.state.gendersList.map(value => {
+                        return <option key={ value } value={ value }>{ value ? this.props.text.calculator[value] : null }</option>
+                    }) : null }
+                </Input>
+                <Input s={ 4 } value={ activity } onChange={ this.handleActivityChange } type='select' label={ this.props.text.calculator.activity }>
+                    { this.state.activitiesList ? this.state.activitiesList.map(value => {
+                        return <option key={ value } value={ value }>{ value ? this.props.text.calculator[value] : null }</option>
+                    }) : null }
+                </Input>
+                <Input s={ 4 } value={ formula } onChange={ this.handleFormulaChange } type='select' label={ this.props.text.calculator.formula }>
+                    { this.state.formulasList ? this.state.formulasList.map(value => {
+                        return <option key={ value } value={ value }>{ value ? this.props.text.calculator[value] : null }</option>
+                    }) : null }
+                </Input>
+                <Button waves='light' className='green darken-4' disabled={ this.state.submitState } onClick={ this.handleSubmit }>{ this.props.text.calculator.buttonCalculate }</Button>
+            </Row>
+        </CardPanel>
     }
 }
 
 Calculator.propTypes = {
-    isUpdating: PropTypes.bool.isRequired,
-    user: PropTypes.shape({
-                              age: PropTypes.number.isRequired,
-                              weight: PropTypes.number.isRequired,
-                              height: PropTypes.number.isRequired,
-                              email: PropTypes.string.isRequired,
-                              gender: PropTypes.string.isRequired,
-                              lastCalculatedEnergy: PropTypes.number.isRequired
-                          }),
-    onResultCalculated: PropTypes.func,
     text: PropTypes.oneOfType([TextPropType]).isRequired
 };
 export default Calculator;

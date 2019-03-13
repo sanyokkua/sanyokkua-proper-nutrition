@@ -1,6 +1,8 @@
 package com.kostenko.pp.presentation.json.pojos;
 
 import com.kostenko.pp.data.pojos.User;
+import com.kostenko.pp.formulas.Formula;
+import com.kostenko.pp.formulas.implementation.HarrisBenedictFormula;
 import lombok.*;
 
 @Data
@@ -17,8 +19,12 @@ public class JsonUser {
     private Long genderId;
     private Long roleId;
     private String password;
+    private Double energy;
+    private int permissionsId;
 
     public static JsonUser mapToJsonUser(User user) {
+        Formula.Gender gender = user.getGenderId() == 2 ? Formula.Gender.FEMALE : Formula.Gender.MALE;
+        double calculated = new HarrisBenedictFormula().calculate(user.getWeight(), user.getHeight(), user.getAge(), gender, Formula.Activity.LOW);
         return JsonUser.builder()
                        .userId(user.getUserId())
                        .email(user.getEmail())
@@ -28,6 +34,7 @@ public class JsonUser {
                        .genderId(user.getGenderId())
                        .roleId(user.getRoleId())
                        .password("")
+                       .energy(calculated)
                        .build();
     }
 

@@ -4,6 +4,7 @@ import PropTypes                   from "prop-types";
 import Utils                       from "../../../utils/Utils";
 import UserService                 from "../../../services/UserService";
 import TextPropType                from "../../../utils/TextPropType"
+import CalculatorService           from "../../../services/CalculatorService";
 
 class UserProfileEditView extends React.Component {
     constructor(props) {
@@ -14,11 +15,6 @@ class UserProfileEditView extends React.Component {
         this.state = {
             isValid: false,
             fields: {
-                login: {
-                    isValid: userIsDefined,
-                    value: !userIsDefined ? null : this.props.user.login,
-                    error: null
-                },
                 email: {
                     isValid: userIsDefined,
                     value: !userIsDefined ? null : this.props.user.email,
@@ -51,15 +47,13 @@ class UserProfileEditView extends React.Component {
                 },
                 gender: {
                     isValid: userIsDefined,
-                    value: !userIsDefined ? null : this.props.user.gender,
+                    value: !userIsDefined ? null : this.props.user.genderId,
                     error: null
                 },
             },
             isEditingCurrentUser: userIsDefined,
             passwordsIsSame: true,
         };
-        this.userService = new UserService();
-        this.onLoginChange = this.onLoginChange.bind(this);
         this.onEmailChange = this.onEmailChange.bind(this);
         this.onAgeChange = this.onAgeChange.bind(this);
         this.onHeightChange = this.onHeightChange.bind(this);
@@ -105,18 +99,8 @@ class UserProfileEditView extends React.Component {
     generalUpdateState(value, fieldName, invalidText, validatorFunc, callback) {
         let isValid = validatorFunc(value);
         if (!this.state.isEditingCurrentUser) {
-            if (isValid && "login" === fieldName) {
-                this.userService.loginIsInUse(value, (isInUse) => {
-                    isValid &= !isInUse;
-                    let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-                    this.updateState(fieldName, result, callback);
-                }, () => {
-                    isValid = false;
-                    let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-                    this.updateState(fieldName, result, callback);
-                });
-            } else if (isValid && "email" === fieldName) {
-                this.userService.emailIsInUse(value, (isInUse) => {
+            if (isValid && "email" === fieldName) {
+                UserService.emailIsInUse(value, (isInUse) => {
                     isValid &= !isInUse;
                     let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
                     this.updateState(fieldName, result, callback);
@@ -133,10 +117,6 @@ class UserProfileEditView extends React.Component {
             let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
             this.updateState(fieldName, result, callback);
         }
-    }
-
-    onLoginChange(event, value) {
-        this.generalUpdateState(value, "login", this.props.text.userProfile.validationErrorLogin, Utils.isValidText);
     }
 
     onEmailChange(event, value) {
@@ -187,15 +167,35 @@ class UserProfileEditView extends React.Component {
     onProfileUpdateButtonClick() {
         if (this.state.isValid) {
             let fields = this.state.fields;
-            this.props.onSaveButtonClick({
-                                             id: this.props.user ? this.props.user.user_id : null,
-                                             age: Number(fields.age.value),
-                                             weight: Number(fields.weight.value),
-                                             height: Number(fields.height.value),
-                                             email: fields.email.value,
-                                             gender: fields.gender.value,
-                                             lastCalculatedEnergy: 0
-                                         });
+            const age = Number(fields.age.value);
+            const weight = Number(fields.weight.value);
+            const height = Number(fields.height.value);
+
+            const params = {
+                age: age,
+                height: height,
+                weight: weight,
+                gender: 'MALE',
+                formula: 'HarrisBenedictFormula',
+                activity: 'LOW'
+            };
+            CalculatorService.calculate(params,
+                                        result => {
+                                            const energy = Number(result);
+                                            this.props.onSaveButtonClick({
+                                                                             userId: this.props.user ? this.props.user.userId : null,
+                                                                             age: age,
+                                                                             weight: weight,
+                                                                             height: height,
+                                                                             email: fields.email.value,
+                                                                             genderId: fields.gender.value,
+                                                                             energy: energy,
+                                                                         });
+                                        },
+                                        (error, message) => {
+                                            console.log(error);
+                                            window.Materialize.toast(message, 5000);
+                                        });
         }
     }
 
@@ -236,7 +236,7 @@ class UserProfileEditView extends React.Component {
                         <span className="red-text"> { this.state.fields.weight.error } </span>
                     </div>
                     <div>
-                        <Input type='select' label={ this.props.text.userProfile.selectGender } onChange={ this.onGenderChange } defaultValue={ this.props.user.gender }>
+                        <Input type='select' label={ this.props.text.userProfile.selectGender } onChange={ this.onGenderChange } defaultValue={ this.props.user.genderId }>
                             <option value='male'>{ this.props.text.userProfile.selectGenderMale }</option>
                             <option value='female'>{ this.props.text.userProfile.selectGenderFemale }</option>
                         </Input>
@@ -272,14 +272,16 @@ UserProfileEditView.propTypes = {
     onSaveButtonText: PropTypes.string.isRequired,
     text: PropTypes.oneOfType([TextPropType]).isRequired,
     user: PropTypes.shape({
-                              id: PropTypes.number.isRequired,
-                              age: PropTypes.number.isRequired,
-                              weight: PropTypes.number.isRequired,
-                              height: PropTypes.number.isRequired,
+                              userId: PropTypes.number.isRequired,
                               email: PropTypes.string.isRequired,
-                              gender: PropTypes.string.isRequired,
-                              lastCalculatedEnergy: PropTypes.number.isRequired
-                          }),
+                              age: PropTypes.number.isRequired,
+                              height: PropTypes.number.isRequired,
+                              weight: PropTypes.number.isRequired,
+                              genderId: PropTypes.number.isRequired,
+                              roleId: PropTypes.number,
+                              password: PropTypes.string,
+                              energy: PropTypes.number.isRequired
+                          })
 
 };
 export default UserProfileEditView;

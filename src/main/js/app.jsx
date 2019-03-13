@@ -30,8 +30,11 @@ class Application extends React.Component {
     }
 
     render() {
-        return this.state.isLangLoaded ? <div><MainContent text={ this.state.text } onLanguageChanged={ this.onLanguageChanged } currentLanguage={ this.state.lang } langList={ this.props.langList }/></div>
-                                       : <div>Problem with text loading</div>
+        return this.state.isLangLoaded ? <div><MainContent text={ this.state.text }
+                                                           onLanguageChanged={ this.onLanguageChanged }
+                                                           currentLanguage={ this.state.lang }
+                                                           langList={ this.props.langList }/>
+        </div> : <div>Problem with text loading</div>
     }
 }
 

@@ -14,34 +14,35 @@ class MainContent extends React.Component {
         Utils.checkCallback(this.props.onLanguageChanged, "onLanguageChanged");
         Utils.checkRequiredProperty(this.props.text, "text");
         Utils.checkRequiredProperty(this.props.currentLanguage, "currentLanguage");
-        this.state = {
-            isUserLoggedIn: true,
-            userPermissions: Permissions.ANONYMOUS
-        };
+        Utils.checkRequiredProperty(this.props.langList, "langList");
+        this.state = {userPermissions: Permissions.ANONYMOUS, currentUser: null};
         this.onLangSelect = this.onLangSelect.bind(this);
+        this.onUserLoggedIn = this.onUserLoggedIn.bind(this);
     }
 
     onLangSelect(lang) {
         this.props.onLanguageChanged(lang);
     }
 
-    render() {
-        if (this.state.isUserLoggedIn) {
-            let permissions = this.state.userPermissions;
-            switch (permissions) {
-                case Permissions.ANONYMOUS:
-                    return <AnonymousContent text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
-                case Permissions.ADMIN:
-                    return <AdminContent text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
-                case Permissions.MANAGER:
-                    return <ManagerContent text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
-                case Permissions.USER:
-                    return <UserContentPage text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
-                default:
-                    return <AnonymousContent text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
-            }
+    onUserLoggedIn(user) {
+        if (user) {
+            this.setState({currentUser: user, userPermissions: Permissions.getPermission(user.permissionsId)});
         } else {
-            return <AnonymousContent text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
+            console.warn("Problem with userID");
+        }
+    }
+
+    render() {
+        let permissions = this.state.userPermissions;
+        switch (permissions) {
+            case Permissions.ADMIN:
+                return <AdminContent user={ this.state.currentUser } text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
+            case Permissions.MANAGER:
+                return <ManagerContent user={ this.state.currentUser } text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
+            case Permissions.USER:
+                return <UserContentPage user={ this.state.currentUser } text={ this.props.text } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
+            default:
+                return <AnonymousContent text={ this.props.text } onUserLoggedIn={ this.onUserLoggedIn } onLanguageChanged={ this.props.onLanguageChanged } currentLanguage={ this.props.currentLanguage } langList={ this.props.langList }/>;
         }
     }
 }
