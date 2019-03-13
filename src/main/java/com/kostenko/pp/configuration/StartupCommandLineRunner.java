@@ -16,6 +16,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static java.util.Objects.isNull;
 
@@ -66,5 +67,27 @@ public class StartupCommandLineRunner implements CommandLineRunner {
             userRepository.create(admin);
             log.info("Created default admin user");
         }
+        createAdditionalUsers();
+    }
+
+    private void createAdditionalUsers(){
+        Gender male = genderRepository.findByField(UserGenders.MALE.getGenderName());
+        Gender female = genderRepository.findByField(UserGenders.FEMALE.getGenderName());
+        Role adminRole = roleRepository.findByField(UserRoles.ADMIN.getRoleName());
+        Role managerRole = roleRepository.findByField(UserRoles.MANAGER.getRoleName());
+        Role userRole = roleRepository.findByField(UserRoles.USER.getRoleName());
+
+        User manager = User.builder().email("manager@manager.com").genderId(female.getGenderId()).roleId(managerRole.getRoleId()).password(encoder.encode("welcome")).age(21).weight(70).height(170).build();
+        User user = User.builder().email("user@user.com").genderId(female.getGenderId()).roleId(userRole.getRoleId()).password(encoder.encode("welcome")).age(23).weight(75).height(180).build();
+        User adminTwo = User.builder().email("admin@admin.com").genderId(male.getGenderId()).roleId(adminRole.getRoleId()).password(encoder.encode("welcome")).age(18).weight(65).height(165).build();
+        Stream.of(manager, user, adminTwo).forEach(toSave -> {
+            User byEmail = userRepository.findByField(toSave.getEmail());
+            if (Objects.nonNull(byEmail)) {
+                log.error("Default user is already exists and login or email is not equal to them from properties");
+            } else {
+                userRepository.create(toSave);
+                log.info("Created user");
+            }
+        });
     }
 }
