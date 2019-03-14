@@ -1,9 +1,9 @@
-import React                                                                 from 'react';
-import { Button, Col, Collapsible, CollapsibleItem, Pagination, Row, Table } from "react-materialize";
-import PropTypes                                                             from "prop-types";
-import DishesEdit                                                            from "./DishesEdit";
-import Utils                                                                 from "../../utils/Utils";
-import TextPropType                                                          from "../../utils/TextPropType";
+import React                                                                       from 'react';
+import { Button, Col, Collapsible, CollapsibleItem, Icon, Pagination, Row, Table } from "react-materialize";
+import PropTypes                                                                   from "prop-types";
+import DishesEdit                                                                  from "./DishesEdit";
+import Utils                                                                       from "../../utils/Utils";
+import TextPropType                                                                from "../../utils/TextPropType";
 
 class DishesList extends React.Component {
     constructor(props) {
@@ -35,18 +35,23 @@ class DishesList extends React.Component {
 
     render() {
         return <div>
-            <Collapsible accordion className="white">
+            <Collapsible accordion>
                 { this.isDishListExists() ? (this.props.dishList.map(dish => {
-                    return <CollapsibleItem key={ dish.dishId } header={ <Table>
+                    const icon = dish.inCurrentUser ? <Icon right medium>favorite</Icon> : <Icon right medium>favorite_border</Icon>;
+                    let likeButton = this.props.onDishSelect ? <a className="cyan pulse" onClick={ () => {
+                        window.Materialize.toast(dish.name, 3000);
+                        this.props.onDishSelect(dish.dishId);
+                    } }>{ icon }</a> : null;
+                    return <CollapsibleItem key={ dish.dishId } className="light-blue lighten-5" header={ <Table>
                         <tbody>
                         <tr>
                             <td className="left-align">{ dish.name }</td>
-                            <td className="right-align">{ dish.energy.toFixed(2) }</td>
+                            <td className="right-align">{ dish.energy.toFixed(2) }{ likeButton }</td>
                         </tr>
                         </tbody>
                     </Table>
                     }>
-                        <Table hoverable responsive bordered className="z-depth-1">
+                        <Table hoverable responsive bordered className="light-blue lighten-3 z-depth-1">
                             <thead>
                             <tr>
                                 <th data-field="name">{ this.props.text.dishes.tableHeadName }</th>
@@ -68,7 +73,7 @@ class DishesList extends React.Component {
                         { this.props.editable ? (<Row className="right-align">
                             <Col s={ 6 }/>
                             <Col s={ 3 }>
-                                <Button large waves='yellow' className='red darken-4' onClick={ () => this.onDelete(dish) }>
+                                <Button waves='yellow' className='red darken-4' onClick={ () => this.onDelete(dish) }>
                                     { this.props.text.dishes.buttonDelete }
                                 </Button>
                             </Col>
@@ -77,11 +82,10 @@ class DishesList extends React.Component {
                                             isCreation={ true }
                                             onSave={ this.onSave }
                                             dish={ dish }
-                                            modalTrigger={ <Button large={ true } waves='green' className='green darken-2'>{ this.props.text.dishes.buttonEdit } </Button> }
+                                            modalTrigger={ <Button waves='green' className='green darken-2'>{ this.props.text.dishes.buttonEdit } </Button> }
                                 />
                             </Col>
                         </Row>) : null }
-                        { this.props.onDishSelect ? <Button floating className='green' waves='light' onClick={ () => this.props.onDishSelect(dish.dishId) } icon='favorite'/> : null }
                     </CollapsibleItem>
                 })) : (null) }
             </Collapsible>

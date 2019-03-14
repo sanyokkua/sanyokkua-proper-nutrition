@@ -21,6 +21,7 @@ public class JsonDish {
     private double energy;
     @JsonProperty("products")
     private Set<JsonProduct> products;
+    private boolean inCurrentUser;
 
     public static JsonDish mapFromDish(Dish dish) {
         return JsonDish.builder()
@@ -29,6 +30,7 @@ public class JsonDish {
                        .energy(dish.getDishEnergy())
                        .products(dish.getDishProducts().stream()
                                      .map(JsonProduct::mapFromProduct).collect(Collectors.toSet()))
+                       .inCurrentUser(dish.isInCurrentUser())
                        .build();
 
     }

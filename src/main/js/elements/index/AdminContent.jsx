@@ -33,10 +33,11 @@ class AdminContent extends React.Component {
 
     onDishSelect(dishId) {
         console.log(dishId);
-        const userId = this.props.user.userId;
+        const userId = this.state.currentUser.userId;
         console.log(userId);
         if (dishId && userId) {
             this.userDishService.addDishToUser({dishId: dishId, userId: userId}, () => {}, error => {console.warn("Error with adding dish to user " + error)});
+
         } else {
             console.warn("userId or dishId is not correct number");
         }
@@ -57,7 +58,7 @@ class AdminContent extends React.Component {
                 <div className='container'>
                     <Route exact path="/users" render={ () => { return <AdminUserPage text={ this.props.text }/>} }/>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ true } numberOfRecords={ 10 }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect } currentUser={ this.state.currentUser }/>} }/>
                     <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
                 </div>
             </div>

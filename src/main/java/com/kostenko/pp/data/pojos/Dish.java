@@ -16,4 +16,5 @@ public class Dish {
     private String dishName;
     private double dishEnergy;
     private List<Product> dishProducts;
+    private boolean inCurrentUser;
 }

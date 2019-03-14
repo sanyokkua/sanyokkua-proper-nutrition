@@ -44,7 +44,12 @@ public class UserController {
                     .add(PAGE, params.getPage(), true)
                     .add(USER, nonNull(userId) ? userId : null, false);
         Page<Dish> page = userDishService.findAll(searchParams);
-        return ResultPage.getResultPage(page, JsonDish::mapFromDish);
+        return ResultPage.getResultPage(page, dish -> {
+            if (nonNull(userId)) {
+                dish.setInCurrentUser(true);
+            }
+            return JsonDish.mapFromDish(dish);
+        });
     }
 
     @PostMapping("/user/dishes")

@@ -30,7 +30,13 @@ class Dishes extends React.Component {
     }
 
     reloadDishes() {
-        this.dishService.getDishes({currentPage: this.state.currentPage, name: this.state.name, numberOfRecords: this.state.numberOfRecords},
+        const userId = this.props && this.props.currentUser && this.props.currentUser.userId ? this.props.currentUser.userId : null;
+        this.dishService.getDishes({
+                                       currentPage: this.state.currentPage,
+                                       name: this.state.name,
+                                       numberOfRecords: this.state.numberOfRecords,
+                                       userId: userId
+                                   },
                                    result => this.setState({dishList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
                                    error => console.log(error));
     }
@@ -67,7 +73,7 @@ class Dishes extends React.Component {
 
     render() {
         return <div>
-            <CardPanel className="white lighten-1 black-text z-depth-4">
+            <CardPanel className="white lighten-1 black-text z-depth-1">
                 <Row>
                     <Col s={ this.props.editable ? 9 : 12 }>
                         <SearchForm onChange={ this.onDishSearch }/>
@@ -103,7 +109,8 @@ Dishes.propTypes = {
     editable: PropTypes.bool.isRequired,
     text: PropTypes.oneOfType([TextPropType]).isRequired,
     numberOfRecords: PropTypes.number,
-    onDishSelect: PropTypes.func
+    onDishSelect: PropTypes.func,
+    currentUser: PropTypes.object
 };
 
 export default Dishes;

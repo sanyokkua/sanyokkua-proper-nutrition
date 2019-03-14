@@ -14,7 +14,7 @@ class ProfileDishView extends React.Component {
 
     render() {
         return <div>
-            <CardPanel className="white lighten-1 black-text z-depth-4">
+            <CardPanel className="white lighten-1 black-text z-depth-1">
                 <Row s={ 12 }><SearchForm onChange={ this.props.onDishSearch }/></Row>
                 <DishesList text={ this.props.text }
                             editable={ false }

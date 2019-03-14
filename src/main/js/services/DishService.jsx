@@ -32,7 +32,8 @@ export default class DishService {
                  params: {
                      searchString: loadParams.name,
                      page: loadParams.currentPage,
-                     recordsPerPage: loadParams.numberOfRecords
+                     recordsPerPage: loadParams.numberOfRecords,
+                     userId: loadParams.userId
                  }
              })
              .then(response => {

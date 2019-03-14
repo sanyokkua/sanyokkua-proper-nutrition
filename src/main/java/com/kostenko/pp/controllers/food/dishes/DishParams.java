@@ -8,6 +8,7 @@ class DishParams implements RequestParams {
     private String searchString;
     private Integer page;
     private Integer recordsPerPage;
+    private Long userId;
 
     @Override
     public String getSearchString() {

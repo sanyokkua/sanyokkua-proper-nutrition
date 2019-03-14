@@ -32,7 +32,7 @@ class ManagerContent extends React.Component {
 
     onDishSelect(dishId) {
         console.log(dishId);
-        const userId = this.props.user.userId;
+        const userId = this.state.currentUser.userId;
         console.log(userId);
         if (dishId && userId) {
             this.userDishService.addDishToUser({dishId: dishId, userId: userId}, () => {}, error => {console.warn("Error with adding dish to user " + error)});
@@ -54,7 +54,7 @@ class ManagerContent extends React.Component {
                 </Navbar>
                 <div className='container'>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ true } numberOfRecords={ 10 }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect } currentUser={ this.state.currentUser }/>} }/>
                     <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
                 </div>
             </div>
