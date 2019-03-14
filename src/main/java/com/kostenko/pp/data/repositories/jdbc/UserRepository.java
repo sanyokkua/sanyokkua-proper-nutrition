@@ -23,6 +23,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Repository
 @Transactional
@@ -80,7 +81,7 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
 
     @Override
     public boolean isExists(@Nonnull @NonNull User entity) {
-        return !isNull(findByField(entity.getEmail()));
+        return nonNull(findByField(entity.getEmail()));
     }
 
     @Nullable
@@ -171,14 +172,14 @@ public class UserRepository implements CrudRepository<User>, CrudExtensions<User
         }
 
         public UserSearchBuilder addRole(Long roleId) {
-            if (!isNull(roleId) && roleId >= 0) {
+            if (nonNull(roleId) && roleId >= 0) {
                 where += " and u.role_id = " + roleId + " ";
             }
             return this;
         }
 
         public UserSearchBuilder addGender(Long genderId) {
-            if (!isNull(genderId) && genderId >= 0) {
+            if (nonNull(genderId) && genderId >= 0) {
                 where += " and u.gender_id = " + genderId + " ";
             }
             return this;

@@ -1,14 +1,13 @@
-package com.kostenko.pp.controllers.administrative;
+package com.kostenko.pp.controllers.general;
 
 import com.kostenko.pp.controllers.extensions.RequestParams;
 import lombok.Data;
 
 @Data
-class UserParams implements RequestParams {
+public class UserParam implements RequestParams {
     private String searchString;
     private Integer page;
     private Integer recordsPerPage;
-    private Long roleId;
     private Long userId;
 
     @Override

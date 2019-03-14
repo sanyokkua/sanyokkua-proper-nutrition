@@ -20,7 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Repository
 @Transactional
@@ -104,11 +104,11 @@ public class GenderRepository implements CrudRepository<Gender>, CrudExtensions<
 
     @Override
     public boolean isExistsId(@Nonnull @NonNull Long id) {
-        return !isNull(find(id));
+        return nonNull(find(id));
     }
 
     @Override
     public boolean isExists(@Nonnull @NonNull Gender entity) {
-        return !isNull(findByField(entity.getGenderName()));
+        return nonNull(findByField(entity.getGenderName()));
     }
 }

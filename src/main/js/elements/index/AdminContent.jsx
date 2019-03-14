@@ -7,15 +7,18 @@ import UserProfileMainPage            from "../users/profile/UserProfileMainPage
 import Products                       from "../products/Products";
 import Dishes                         from "../dishes/Dishes";
 import TextPropType                   from "../../utils/TextPropType";
+import UserDishService                from "../../services/UserDishService";
 
 class AdminContent extends React.Component {
     constructor(props) {
         super(props);
+        this.userDishService = new UserDishService();
         this.state = {
             header: this.props.text.general.tabAdmin,
             currentTab: 'tabAdmin',
             currentUser: this.props.user
         };
+        this.onDishSelect = this.onDishSelect.bind(this);
         this.onLangSelect = this.onLangSelect.bind(this);
         this.onNavLinkClick = this.onNavLinkClick.bind(this);
     }
@@ -26,6 +29,17 @@ class AdminContent extends React.Component {
 
     onNavLinkClick(lastTab) {
         this.setState({currentTab: lastTab, header: this.props.text.general[lastTab]});
+    }
+
+    onDishSelect(dishId) {
+        console.log(dishId);
+        const userId = this.props.user.userId;
+        console.log(userId);
+        if (dishId && userId) {
+            this.userDishService.addDishToUser({dishId: dishId, userId: userId}, () => {}, error => {console.warn("Error with adding dish to user " + error)});
+        } else {
+            console.warn("userId or dishId is not correct number");
+        }
     }
 
     render() {
@@ -43,7 +57,7 @@ class AdminContent extends React.Component {
                 <div className='container'>
                     <Route exact path="/users" render={ () => { return <AdminUserPage text={ this.props.text }/>} }/>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ true } numberOfRecords={ 10 }/>} }/>
-                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true }/>} }/>
+                    <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect }/>} }/>
                     <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
                 </div>
             </div>

@@ -1,36 +1,47 @@
 import React                              from 'react';
 import { Button, Col, Modal, Row, Table } from "react-materialize";
 import PropTypes                          from "prop-types";
-import DishService                        from '../../../services/DishService'
 import UserService                        from "../../../services/UserService";
 import UserProfileEditView                from "./UserProfileEditView";
 import TextPropType                       from "../../../utils/TextPropType";
-import Dishes                             from "../../dishes/Dishes";
+import UserDishService                    from "../../../services/UserDishService";
+import ProfileDishView                    from "../../dishes/ProfileDishView";
 
 class UserProfileMainPage extends React.Component {
     constructor(props) {
         super(props);
-        this.dishService = new DishService();
+        this.userDishService = new UserDishService();
         this.userService = new UserService();
 
         this.state = {
             user: this.props.user,
             lastCalculatedEnergy: this.props.user.energy,
+
             currentPage: 0,
             totalPages: 0,
-            numberOfRecords: 10,
+            numberOfRecords: 5,
             dishList: [],
+            search: '',
+
             showDishes: false
         };
         this.reloadDishes();
         this.onUpdateButtonClick = this.onUpdateButtonClick.bind(this);
         this.onUpdateUser = this.onUpdateUser.bind(this);
+        this.onDishSelect = this.onDishSelect.bind(this);
+        this.onDishSearch = this.onDishSearch.bind(this);
+        this.onPageChange = this.onPageChange.bind(this);
     }
 
     reloadDishes() {
-        this.dishService.getDishes({currentPage: this.state.currentPage, name: '', numberOfRecords: this.state.numberOfRecords},
-                                   result => this.setState({dishList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
-                                   error => console.log(error));
+        this.userDishService.getDishesForUser({
+                                                  search: this.state.search,
+                                                  currentPage: this.state.currentPage,
+                                                  numberOfRecords: this.state.numberOfRecords,
+                                                  userId: this.props.user.userId
+                                              },
+                                              result => this.setState({dishList: result.content, currentPage: result.currentPage, totalPages: result.totalPages}),
+                                              error => console.log(error));
     }
 
     onUpdateButtonClick(user) {
@@ -46,6 +57,28 @@ class UserProfileMainPage extends React.Component {
         //     //CalculatorService.calculate({}, ()=>{}, ()=>{});
         //     this.setState({user: user});
         // }, (error) => {console.log(error)})
+    }
+
+    onDishSelect(dishId) {
+        this.userDishService.deleteDishFromUser({dishId: dishId, userId: this.props.user.userId}, () => {
+                                                    console.log("removing dish: " + dishId + " from user: " + this.props.user.userId);
+                                                    this.reloadDishes();
+                                                },
+                                                error => {
+                                                    console.warn(error + "");
+                                                });
+    }
+
+    onDishSearch(value) {
+        this.setState({search: value, currentPage: 0, totalPages: 0}, () => {
+            this.reloadDishes();
+        });
+    }
+
+    onPageChange(pageNumber) {
+        if (pageNumber) {
+            this.setState({currentPage: pageNumber}, this.reloadDishes);
+        }
     }
 
     render() {
@@ -87,7 +120,14 @@ class UserProfileMainPage extends React.Component {
                     </Row>
                 </Col>
                 <Col s={ 8 }>
-                    <Dishes editable={ false } text={ this.props.text } numberOfRecords={ 5 }/>
+                    <ProfileDishView text={ this.props.text }
+                                     dishList={ this.state.dishList }
+                                     currentPage={ this.state.currentPage }
+                                     onDishSelect={ this.onDishSelect }
+                                     onPageChange={ this.onPageChange }
+                                     onDishSearch={ this.onDishSearch }
+                                     totalPages={ this.state.totalPages }
+                    />
                 </Col>
             </Row>
         </div>

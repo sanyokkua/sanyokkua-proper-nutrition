@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Repository
 @Transactional
@@ -103,7 +104,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
 
     private void createProductsForDish(@NonNull @Nonnull Dish entity) {
         Dish byUniqueField = findByField((entity.getDishName().toUpperCase()));
-        if (!isNull(byUniqueField)) {
+        if (nonNull(byUniqueField)) {
             List<Product> batchLists = entity.getDishProducts();
             String createProductsSql = "insert into pp_app.dish_products (amount, dish_dish_id, product_product_id) VALUES (?,?,?)";
             jdbcTemplate.batchUpdate(createProductsSql, new BatchPreparedStatementSetter() {
@@ -151,12 +152,12 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
 
     @Override
     public boolean isExistsId(@Nonnull @NonNull Long id) {
-        return !isNull(find(id));
+        return nonNull(find(id));
     }
 
     @Override
     public boolean isExists(@Nonnull @NonNull Dish entity) {
-        return !isNull(find(entity));
+        return nonNull(find(entity));
     }
 
     private Optional<Dish> queryForDish(@NonNull String findDishByIdSql, Object param) {
@@ -208,7 +209,7 @@ public class DishRepository implements CrudRepository<Dish>, CrudExtensions<Dish
             if (isNull(pageable)) {
                 throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
             }
-            String whereClause = !isNull(where) ? where : "";
+            String whereClause = nonNull(where) ? where : "";
             String countQuery = "select count(1) as row_count " + from + whereClause;
             int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
 

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Service
 @Slf4j
@@ -77,10 +78,10 @@ public class ProductTypeService implements DBService<ProductType> {
     @Override
     public boolean isExists(@Nonnull @NonNull ProductType entity) {
         boolean result = false;
-        if (!isNull(entity.getProdTypeId())) {
+        if (nonNull(entity.getProdTypeId())) {
             result = productTypeJpaRepository.isExistsId(entity.getProdTypeId());
         } else if (StringUtils.isNotBlank(entity.getProdTypeName())) {
-            result = !isNull(productTypeJpaRepository.findByField(entity.getProdTypeName()));
+            result = nonNull(productTypeJpaRepository.findByField(entity.getProdTypeName()));
         }
         return result;
     }

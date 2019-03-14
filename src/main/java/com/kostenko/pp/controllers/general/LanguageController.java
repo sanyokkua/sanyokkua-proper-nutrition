@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @RestController
 public class LanguageController {
@@ -38,7 +38,7 @@ public class LanguageController {
         File file = new ClassPathResource("./translations/").getFile();
         if (file.isDirectory()) {
             String[] list = file.list();
-            if (!isNull(list)) {
+            if (nonNull(list)) {
                 return Stream.of(list).map(fileName -> StringUtils.remove(fileName, ".json")).collect(Collectors.toList());
             }
         }

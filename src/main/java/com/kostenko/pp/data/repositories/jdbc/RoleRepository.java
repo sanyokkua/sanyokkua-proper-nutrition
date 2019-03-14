@@ -20,7 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Repository
 @Transactional
@@ -106,11 +106,11 @@ public class RoleRepository implements CrudRepository<Role>, CrudExtensions<Role
 
     @Override
     public boolean isExistsId(@Nonnull @NonNull Long id) {
-        return !isNull(find(id));
+        return nonNull(find(id));
     }
 
     @Override
     public boolean isExists(@Nonnull @NonNull Role entity) {
-        return !isNull(findByField(entity.getRoleName()));
+        return nonNull(findByField(entity.getRoleName()));
     }
 }

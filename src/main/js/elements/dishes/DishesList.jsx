@@ -35,13 +35,13 @@ class DishesList extends React.Component {
 
     render() {
         return <div>
-            <Collapsible popout className="white">
+            <Collapsible accordion className="white">
                 { this.isDishListExists() ? (this.props.dishList.map(dish => {
                     return <CollapsibleItem key={ dish.dishId } header={ <Table>
                         <tbody>
                         <tr>
                             <td className="left-align">{ dish.name }</td>
-                            <td className="right-align">{ dish.totalEnergy }</td>
+                            <td className="right-align">{ dish.energy.toFixed(2) }</td>
                         </tr>
                         </tbody>
                     </Table>
@@ -80,8 +80,8 @@ class DishesList extends React.Component {
                                             modalTrigger={ <Button large={ true } waves='green' className='green darken-2'>{ this.props.text.dishes.buttonEdit } </Button> }
                                 />
                             </Col>
-                        </Row>) : null
-                        }
+                        </Row>) : null }
+                        { this.props.onDishSelect ? <Button floating className='green' waves='light' onClick={ () => this.props.onDishSelect(dish.dishId) } icon='favorite'/> : null }
                     </CollapsibleItem>
                 })) : (null) }
             </Collapsible>
@@ -96,10 +96,12 @@ DishesList.propTypes = {
     dishList: PropTypes.array.isRequired,
     totalPages: PropTypes.number.isRequired,
     activePage: PropTypes.number.isRequired,
+
     onPageChange: PropTypes.func.isRequired,
     onDishEdit: PropTypes.func.isRequired,
     onDishDelete: PropTypes.func.isRequired,
-    onDishCreate: PropTypes.func.isRequired
+    onDishCreate: PropTypes.func.isRequired,
+    onDishSelect: PropTypes.func
 };
 
 export default DishesList;

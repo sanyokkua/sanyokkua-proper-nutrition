@@ -1,35 +1,30 @@
 import axios from 'axios';
 import Utils from '../utils/Utils'
 
-export default class UserService {
+export default class UserDishService {
     constructor() {
         this.token = $("meta[name='_csrf']").attr("content");
         this.header = $("meta[name='_csrf_header']").attr("content");
     }
 
-    static emailIsInUse(email, success, fail) {
+    addDishToUser(dishAddParam, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-
-    }
-
-    createUser(user, success, fail) {
-        Utils.checkDefaultCallbacks(success, fail);
-        axios.post('/users', user, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
+        axios.post('/user/dishes', dishAddParam, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
              .then(() => {
                  success();
              })
              .catch(error => fail(error));
     }
 
-    getUsers(loadParams, success, fail) {
+    getDishesForUser(loadParams, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.get('/users', {
+        axios.get('/user/dishes', {
                  headers: {[this.header]: this.token},
                  params: {
                      searchString: loadParams.search,
                      page: loadParams.currentPage,
                      recordsPerPage: loadParams.numberOfRecords,
-                     roleId: loadParams.currentRole
+                     userId: loadParams.userId
                  }
              })
              .then(response => {
@@ -46,19 +41,11 @@ export default class UserService {
              .catch(error => fail(error));
     }
 
-    updateUser(user, success, fail) {
+    deleteDishFromUser(dishAddParam, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
-        axios.put('/users/' + user.userId, user, {headers: {[this.header]: this.token}})
-             .then(() => {
-                 success();
-             })
-             .catch(error => fail(error));
-    }
-
-    deleteUser(user, success, fail) {
-        Utils.checkDefaultCallbacks(success, fail);
-        axios.delete('/users/' + user.userId, {
-                 headers: {[this.header]: this.token}
+        axios.delete('/user/dishes', {
+                 headers: {[this.header]: this.token},
+                 data: dishAddParam
              })
              .then(() => {
                  success();

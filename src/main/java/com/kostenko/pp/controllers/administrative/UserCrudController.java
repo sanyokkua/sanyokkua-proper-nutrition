@@ -2,13 +2,10 @@ package com.kostenko.pp.controllers.administrative;
 
 import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.PageableSearch;
-import com.kostenko.pp.data.pojos.Dish;
 import com.kostenko.pp.data.pojos.User;
 import com.kostenko.pp.data.services.implementation.RoleService;
-import com.kostenko.pp.data.services.implementation.UserDishService;
 import com.kostenko.pp.data.services.implementation.UserService;
 import com.kostenko.pp.presentation.ResultPage;
-import com.kostenko.pp.presentation.json.pojos.JsonDish;
 import com.kostenko.pp.presentation.json.pojos.JsonRole;
 import com.kostenko.pp.presentation.json.pojos.JsonUser;
 import com.kostenko.pp.security.PasswordEncoder;
@@ -26,30 +23,26 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.kostenko.pp.data.services.implementation.UserDishService.SEARCH;
-import static com.kostenko.pp.data.services.implementation.UserDishService.USER;
 import static com.kostenko.pp.data.services.implementation.UserService.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @RestController
-public class UserCrudController implements RestCrudController<JsonUser, UserParams> {
+public class UserCrudController implements RestCrudController<JsonUser, AdminUserParams> {
     private final UserService userService;
-    private final UserDishService userDishService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserCrudController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull UserDishService userDishService, @NonNull @Nonnull RoleService roleService, @NonNull PasswordEncoder passwordEncoder) {
+    public UserCrudController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
-        this.userDishService = userDishService;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/users")
     @Override
-    public ResultPage<JsonUser> findAll(UserParams params) {
+    public ResultPage<JsonUser> findAll(AdminUserParams params) {
         PageableSearch.SearchParams<User> searchParams = new PageableSearch.SearchParams<>();
         searchParams.add(EMAIL, params.getSearchString(), true)
                     .add(RECORDS, params.getRecordsPerPage(), true)
@@ -69,7 +62,7 @@ public class UserCrudController implements RestCrudController<JsonUser, UserPara
         User entityForCreation = jsonEntity.mapToUser();
         entityForCreation.setPassword(passwordEncoder.encode(entityForCreation.getPassword()));
         User user = userService.create(entityForCreation);
-        if (!isNull(user)) {
+        if (nonNull(user)) {
             log.info("Created user: {}", user.toString());
             return JsonUser.mapToJsonUser(user);
         }
@@ -92,7 +85,7 @@ public class UserCrudController implements RestCrudController<JsonUser, UserPara
             entityForUpdating.setPassword(passwordEncoder.encode(entityForUpdating.getPassword()));
         }
         User user = userService.update(entityForUpdating);
-        if (!isNull(user)) {
+        if (nonNull(user)) {
             log.info("Updated user: {}", user.toString());
             return JsonUser.mapToJsonUser(user);
         }
@@ -104,18 +97,6 @@ public class UserCrudController implements RestCrudController<JsonUser, UserPara
     public ResponseEntity delete(@PathVariable @Nonnull @NonNull Long id) {
         userService.delete(id);
         return ResponseEntity.ok("Removed");
-    }
-
-    @GetMapping("/user/dishes")
-    public ResultPage<JsonDish> getDishes(UserParams params) {
-        Long userId = params.getUserId();
-        PageableSearch.SearchParams<User> searchParams = new PageableSearch.SearchParams<>();
-        searchParams.add(SEARCH, params.getSearchString(), true)
-                    .add(RECORDS, params.getRecordsPerPage(), true)
-                    .add(PAGE, params.getPage(), true)
-                    .add(USER, !isNull(userId) ? userId : null, false);
-        Page<Dish> page = userDishService.findAll(searchParams);
-        return ResultPage.getResultPage(page, JsonDish::mapFromDish);
     }
 
     @GetMapping("/roles")

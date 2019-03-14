@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Repository
@@ -83,8 +84,8 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
 
     public class UserDishSearchBuilder implements SearchBuilder<Dish> {
         private final String select = "select d.dish_id, d.name ";
-        private final String from = "from pp_app.dish d, pp_app.appuser u ";
-        private String where = null;
+        private final String from = "from pp_app.dish d, pp_app.user_dishes u ";
+        private String where = "where d.dish_id = u.dish_id ";
         private Pageable pageable;
 
         @Override
@@ -98,7 +99,7 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
             if (isNull(pageable)) {
                 throw new IllegalArgumentException("Pageable is null. You should call begin method with not null pageable");
             }
-            String whereClause = !isNull(where) ? where : "";
+            String whereClause = nonNull(where) ? where : "";
             String countQuery = "select count(1) as row_count " + from + whereClause;
             int total = jdbcTemplate.queryForObject(countQuery, (rs, rowNum) -> rs.getInt(1));
 
@@ -108,7 +109,7 @@ public class UserDishesRepository implements ExtendedSearch<Dish, SearchBuilder<
         }
 
         public UserDishSearchBuilder addUser(Long userId) {
-            if (!isNull(userId) && userId >= 0) {
+            if (nonNull(userId) && userId >= 0) {
                 if (StringUtils.isBlank(where)) {
                     where = "where u.user_id = " + userId + " ";
                 } else {

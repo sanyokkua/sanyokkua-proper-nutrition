@@ -70,7 +70,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
         createAdditionalUsers();
     }
 
-    private void createAdditionalUsers(){
+    private void createAdditionalUsers() {
         Gender male = genderRepository.findByField(UserGenders.MALE.getGenderName());
         Gender female = genderRepository.findByField(UserGenders.FEMALE.getGenderName());
         Role adminRole = roleRepository.findByField(UserRoles.ADMIN.getRoleName());

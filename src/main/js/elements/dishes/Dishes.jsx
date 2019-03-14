@@ -86,10 +86,13 @@ class Dishes extends React.Component {
                             dishList={ this.state.dishList }
                             totalPages={ this.state.totalPages }
                             activePage={ this.state.currentPage }
+
                             onPageChange={ this.onPageChange }
                             onDishCreate={ this.onDishCreate }
                             onDishEdit={ this.onDishEdit }
                             onDishDelete={ this.onDishDelete }
+                            onDishSelect={ this.props.onDishSelect }
+
                 />
             </CardPanel>
         </div>
@@ -99,7 +102,8 @@ class Dishes extends React.Component {
 Dishes.propTypes = {
     editable: PropTypes.bool.isRequired,
     text: PropTypes.oneOfType([TextPropType]).isRequired,
-    numberOfRecords: PropTypes.number
+    numberOfRecords: PropTypes.number,
+    onDishSelect: PropTypes.func
 };
 
 export default Dishes;
