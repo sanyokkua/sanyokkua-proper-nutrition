@@ -103,6 +103,7 @@ const TextPropType = PropTypes.shape({
                                                                           validationErrorWeight: PropTypes.string.isRequired,
                                                                           validationErrorLogin: PropTypes.string.isRequired,
                                                                           validationErrorEmail: PropTypes.string.isRequired,
+                                                                          validationErrorEmailExists: PropTypes.string.isRequired,
                                                                           validationErrorPassword: PropTypes.string.isRequired,
                                                                           validationErrorPasswordConfirm: PropTypes.string.isRequired,
                                                                           validationErrorPasswordAndConfirmDiff: PropTypes.string.isRequired,
@@ -115,7 +116,20 @@ const TextPropType = PropTypes.shape({
                                                                     tableHeaderEmail: PropTypes.string.isRequired,
                                                                     tableHeaderRole: PropTypes.string.isRequired,
                                                                     tableHeaderActions: PropTypes.string.isRequired,
-                                                                    tableActionDelete: PropTypes.string.isRequired
+                                                                    tableActionDelete: PropTypes.string.isRequired,
+                                                                    genderSelect: PropTypes.string.isRequired,
+                                                                    ADMIN: PropTypes.string.isRequired,
+                                                                    MANAGER: PropTypes.string.isRequired,
+                                                                    USER: PropTypes.string.isRequired,
+                                                                    MALE: PropTypes.string.isRequired,
+                                                                    FEMALE: PropTypes.string.isRequired,
+                                                                    headerRegistration: PropTypes.string.isRequired,
+                                                                    headerLogin: PropTypes.string.isRequired,
+                                                                    fieldEmail: PropTypes.string.isRequired,
+                                                                    fieldPassword: PropTypes.string.isRequired,
+                                                                    buttonLogin: PropTypes.string.isRequired,
+                                                                    buttonCancel: PropTypes.string.isRequired,
+                                                                    buttonRegister: PropTypes.string.isRequired
                                                                 }).isRequired
                                      });
 export default TextPropType;

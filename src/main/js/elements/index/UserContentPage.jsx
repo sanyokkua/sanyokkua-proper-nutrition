@@ -55,7 +55,7 @@ class UserContentPage extends React.Component {
                 <div className='container'>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ false } numberOfRecords={ 10 }/>} }/>
                     <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ false } onDishSelect={ this.onDishSelect } currentUser={ this.state.currentUser }/>} }/>
-                    <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.props.user }/>} }/>
+                    <Route exact path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.props.user }/>} }/>
                 </div>
             </div>
         </HashRouter>

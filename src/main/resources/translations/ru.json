@@ -94,6 +94,7 @@
         "validationSuccessWeight": "Вес коректный",
         "validationSuccessLogin": "Логин коректный",
         "validationSuccessEmail": "Электронная почта коректна",
+        "validationErrorEmailExists": "Почта уже существует",
         "validationSuccessPassword": "Пароль коректный",
         "validationSuccessPasswordConfirm": "Подтверждение пароля коректо",
         "validationErrorAge": "Возраст не коректен",
@@ -113,6 +114,19 @@
         "tableHeaderEmail": "Почта",
         "tableHeaderRole": "Тип",
         "tableHeaderActions": "Действия",
-        "tableActionDelete": "Удалить"
+        "tableActionDelete": "Удалить",
+        "genderSelect": "Выберите пол",
+        "ADMIN": "Администратор",
+        "MANAGER": "Менеджер",
+        "USER": "Пользователь",
+        "MALE": "Мужчина",
+        "FEMALE": "Женщина",
+        "headerRegistration": "Регистрация",
+        "headerLogin": "Логин",
+        "fieldEmail": "Почта",
+        "fieldPassword": "Пароль",
+        "buttonLogin": "Войти",
+        "buttonCancel": "Отмена",
+        "buttonRegister": "Зарегистрироваться"
     }
 }

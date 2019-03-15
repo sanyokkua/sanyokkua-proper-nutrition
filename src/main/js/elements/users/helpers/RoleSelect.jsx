@@ -14,17 +14,16 @@ class RoleSelect extends React.Component {
         this.onRoleSelected = this.onRoleSelected.bind(this);
     }
 
-    onRoleSelected(roleId) {
+    onRoleSelected(event, roleId) {
         this.props.onRoleSelected(roleId);
     }
 
     render() {
-        const roleListHasValues = this.props.rolesList && this.props.rolesList.length > 0;
-        const selectDefaultValue = roleListHasValues && this.props.defaultValue ? this.props.defaultValue : this.props.rolesList[0].roleId;
-        return roleListHasValues ? (
-            <Input s={ 6 } type='select' label={ this.props.text.admin.roleSelect } defaultValue={ selectDefaultValue } onChange={ (event, value) => this.onRoleSelected(value) }>
-                { this.props.rolesList.map((role) => <option key={ role.roleId } value={ role.roleId }>{ role.roleName }</option>) }
-            </Input>) : null;
+        const isNotEmpty = this.props.rolesList && this.props.rolesList.length > 0;
+        const defaultValue = isNotEmpty && this.props.defaultValue ? this.props.defaultValue : this.props.rolesList[0].roleId;
+        return isNotEmpty ? <Input s={ 6 } type='select' label={ this.props.text.admin.roleSelect } defaultValue={ defaultValue } onChange={ this.onRoleSelected }>
+            { this.props.rolesList.map((role) => <option key={ role.roleId } value={ role.roleId }>{ this.props.text.admin[role.roleName] }</option>) }
+        </Input> : null;
     }
 }
 

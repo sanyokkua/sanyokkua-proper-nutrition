@@ -101,6 +101,7 @@
         "validationErrorWeight": "Weight is invalid",
         "validationErrorLogin": "Login is invalid",
         "validationErrorEmail": "Email is invalid",
+        "validationErrorEmailExists": "Email is already exists",
         "validationErrorPassword": "Password is invalid",
         "validationErrorPasswordConfirm": "Password Confirm is invalid",
         "validationErrorPasswordAndConfirmDiff": "Password and Confirm password is not equal",
@@ -113,6 +114,19 @@
         "tableHeaderEmail": "Email",
         "tableHeaderRole": "Role",
         "tableHeaderActions": "Actions",
-        "tableActionDelete": "Delete"
+        "tableActionDelete": "Delete",
+        "genderSelect": "Select gender",
+        "ADMIN": "Admin user",
+        "MANAGER": "Manager user",
+        "USER": "User",
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "headerRegistration": "Registration",
+        "headerLogin": "Login",
+        "fieldEmail": "Email",
+        "fieldPassword": "Password",
+        "buttonLogin": "Login",
+        "buttonCancel": "Cancel",
+        "buttonRegister": "Register"
     }
 }

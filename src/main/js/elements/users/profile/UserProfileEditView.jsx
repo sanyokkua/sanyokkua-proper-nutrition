@@ -2,7 +2,6 @@ import React                       from 'react';
 import { Button, Col, Input, Row } from 'react-materialize';
 import PropTypes                   from "prop-types";
 import Utils                       from "../../../utils/Utils";
-import UserService                 from "../../../services/UserService";
 import TextPropType                from "../../../utils/TextPropType"
 import CalculatorService           from "../../../services/CalculatorService";
 
@@ -15,11 +14,6 @@ class UserProfileEditView extends React.Component {
         this.state = {
             isValid: false,
             fields: {
-                email: {
-                    isValid: userIsDefined,
-                    value: !userIsDefined ? null : this.props.user.email,
-                    error: null
-                },
                 password: {
                     isValid: userIsDefined,
                     value: null,
@@ -54,7 +48,6 @@ class UserProfileEditView extends React.Component {
             isEditingCurrentUser: userIsDefined,
             passwordsIsSame: true,
         };
-        this.onEmailChange = this.onEmailChange.bind(this);
         this.onAgeChange = this.onAgeChange.bind(this);
         this.onHeightChange = this.onHeightChange.bind(this);
         this.onWeightChange = this.onWeightChange.bind(this);
@@ -99,28 +92,12 @@ class UserProfileEditView extends React.Component {
     generalUpdateState(value, fieldName, invalidText, validatorFunc, callback) {
         let isValid = validatorFunc(value);
         if (!this.state.isEditingCurrentUser) {
-            if (isValid && "email" === fieldName) {
-                UserService.emailIsInUse(value, (isInUse) => {
-                    isValid &= !isInUse;
-                    let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-                    this.updateState(fieldName, result, callback);
-                }, () => {
-                    isValid = false;
-                    let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-                    this.updateState(fieldName, result, callback);
-                });
-            } else {
-                let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
-                this.updateState(fieldName, result, callback);
-            }
+            let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
+            this.updateState(fieldName, result, callback);
         } else {
             let result = {isValid: isValid, value: value, error: !isValid ? invalidText : null};
             this.updateState(fieldName, result, callback);
         }
-    }
-
-    onEmailChange(event, value) {
-        this.generalUpdateState(value, "email", this.props.text.userProfile.validationErrorEmail, Utils.isValidEmail);
     }
 
     onAgeChange(event, value) {
@@ -204,12 +181,7 @@ class UserProfileEditView extends React.Component {
             <Row>
                 <Col s={ 6 }>
                     <div>
-                        <Input required validate type="email" defaultValue={ this.props.user.email }
-                               label={ this.props.text.userProfile.inputEmail }
-                               success={ this.state.fields.email.isValid ? this.props.text.userProfile.validationSuccessEmail : null }
-                               onChange={ this.onEmailChange }
-                        />
-                        <span className="red-text"> { this.state.fields.email.error } </span>
+                        <Input type="email" disabled defaultValue={ this.props.user.email } label={ this.props.text.userProfile.inputEmail }/>
                     </div>
                     <div>
                         <Input required validate type="number" min="1" defaultValue={ this.props.user.age }

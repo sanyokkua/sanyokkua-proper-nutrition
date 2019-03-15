@@ -94,6 +94,7 @@
         "validationSuccessWeight": "Вага коректний",
         "validationSuccessLogin": "Логін коректний",
         "validationSuccessEmail": "Електронна пошта коректний",
+        "validationErrorEmailExists": "Пошта вже існує",
         "validationSuccessPassword": "Пароль коректний",
         "validationSuccessPasswordConfirm": "Підтвердження пароля КОРЕКТ",
         "validationErrorAge": "Вік КОРЕКТ",
@@ -113,6 +114,19 @@
         "tableHeaderEmail": "Пошта",
         "tableHeaderRole": "Тип",
         "tableHeaderActions": "Дii",
-        "tableActionDelete": "Видалити"
+        "tableActionDelete": "Видалити",
+        "genderSelect": "Оберiть стать",
+        "ADMIN": "Адмiнiстратор",
+        "MANAGER": "Менеджер",
+        "USER": "Користувач",
+        "MALE": "Чоловiк",
+        "FEMALE": "Жiнка",
+        "headerRegistration": "Реєстрація",
+        "headerLogin": "Логін",
+        "fieldEmail": "Пошта",
+        "fieldPassword": "Пароль",
+        "buttonLogin": "Увійти",
+        "buttonCancel": "Скасувати",
+        "buttonRegister": "Зареєструватися"
     }
 }

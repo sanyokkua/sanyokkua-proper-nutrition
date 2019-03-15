@@ -37,7 +37,6 @@ class AdminContent extends React.Component {
         console.log(userId);
         if (dishId && userId) {
             this.userDishService.addDishToUser({dishId: dishId, userId: userId}, () => {}, error => {console.warn("Error with adding dish to user " + error)});
-
         } else {
             console.warn("userId or dishId is not correct number");
         }

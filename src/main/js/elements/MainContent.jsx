@@ -25,6 +25,7 @@ class MainContent extends React.Component {
     }
 
     onUserLoggedIn(user) {
+        console.log("MainContent.onLoginSuccess: " + user ? JSON.stringify(user) : null);
         if (user) {
             this.setState({currentUser: user, userPermissions: Permissions.getPermission(user.permissionsId)});
         } else {

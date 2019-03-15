@@ -55,7 +55,7 @@ class ManagerContent extends React.Component {
                 <div className='container'>
                     <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ true } numberOfRecords={ 10 }/>} }/>
                     <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ true } onDishSelect={ this.onDishSelect } currentUser={ this.state.currentUser }/>} }/>
-                    <Route path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
+                    <Route exact path="/profile" render={ () => { return <UserProfileMainPage text={ this.props.text } user={ this.state.currentUser }/>} }/>
                 </div>
             </div>
         </HashRouter>

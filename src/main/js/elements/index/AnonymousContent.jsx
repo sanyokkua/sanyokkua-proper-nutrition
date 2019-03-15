@@ -7,6 +7,7 @@ import Dishes                         from "../dishes/Dishes";
 import TextPropType                   from "../../utils/TextPropType";
 import CalculatorTab                  from "../calculator/CalculatorTab";
 import Login                          from "../users/Login";
+import Registration                   from "../users/Registration";
 
 class AnonymousContent extends React.Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class AnonymousContent extends React.Component {
     }
 
     onLoginSuccess(userId) {
+        console.log("AnonymousContent.onLoginSuccess: " + userId ? JSON.stringify(userId) : null);
         if (userId) {
             this.props.onUserLoggedIn(userId);
         }
@@ -36,6 +38,10 @@ class AnonymousContent extends React.Component {
 
     render() {
         const languages = this.props.langList.map(lang => {return <NavItem key={ lang } onClick={ () => {this.onLangSelect(lang)} }>{ lang }</NavItem>});
+        const loginRegister = [
+            <Login key={ "login" } text={ this.props.text } loginButtonTrigger={ <a className='light-blue darken-2'> { this.props.text.admin.headerLogin }</a> } onLoginSuccess={ this.onLoginSuccess }/>,
+            <Registration key={ "registration" } text={ this.props.text } loginButtonTrigger={ <a className='light-blue darken-2'> { this.props.text.admin.headerRegistration }</a> } onLoginSuccess={ this.onLoginSuccess }/>,
+        ];
         return <HashRouter>
             <div>
                 <Navbar className='light-blue darken-2' brand={ this.state.header } right>
@@ -43,10 +49,10 @@ class AnonymousContent extends React.Component {
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabDishes') } to='/dishes'>{ this.props.text.general.tabDishes }</NavLink></li>
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabCalculator') } to='/calculator'>{ this.props.text.general.tabCalculator }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
-                    <li><Login text={ this.props.text } loginButtonTrigger={ <a> { "Login" }</a> } onLoginSuccess={ this.onLoginSuccess }/></li>
+                    <li><Dropdown trigger={ <a> { this.props.text.admin.headerLogin } </a> }>{ loginRegister }</Dropdown></li>
                 </Navbar>
                 <div className='container'>
-                    <Route path="/products" render={ () => {return <Products text={ this.props.text } editable={ false } numberOfRecords={ 10 }/>} }/>
+                    <Route exact path="/products" render={ () => {return <Products text={ this.props.text } editable={ false } numberOfRecords={ 10 }/>} }/>
                     <Route path="/dishes" render={ () => {return <Dishes text={ this.props.text } editable={ false }/>} }/>
                     <Route path="/calculator" render={ () => {return <CalculatorTab text={ this.props.text }/>} }/>
                 </div>

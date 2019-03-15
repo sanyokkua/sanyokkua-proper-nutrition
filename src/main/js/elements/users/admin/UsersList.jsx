@@ -1,7 +1,7 @@
 import React                                                     from 'react';
 import { Button, CardPanel, Col, Input, Pagination, Row, Table } from "react-materialize";
 import PropTypes                                                 from "prop-types";
-import RoleSelect                                                from "./RoleSelect";
+import RoleSelect                                                from "../helpers/RoleSelect";
 import SearchForm                                                from "../../common/SearchForm";
 import TextPropType                                              from "../../../utils/TextPropType";
 import Utils                                                     from "../../../utils/Utils";

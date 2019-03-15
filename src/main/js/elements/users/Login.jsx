@@ -24,8 +24,8 @@ class Login extends React.Component {
         console.log("Email: " + this.state.email);
         console.log("Password: " + this.state.password);
         LoginService.login({email: this.state.email, password: this.state.password}, user => {
-            console.log("User logged in; UserId: " + user.userId);
-            $('.modal').modal('close');
+            console.log("Login.onLoginSuccess: " + user ? JSON.stringify(user) : null);
+            $('#loginModal').modal('close');
             this.props.onLoginSuccess(user);
         }, error => {
             this.setState({errorMessage: error});
@@ -36,6 +36,7 @@ class Login extends React.Component {
         if (value) {
             this.setState({email: value}, this.onLoginAndPasswordValidate);
         } else {
+            this.setState({email: value}, this.onLoginAndPasswordValidate);
             console.warn("Email is empty");
         }
     }
@@ -44,6 +45,7 @@ class Login extends React.Component {
         if (value) {
             this.setState({password: value}, this.onLoginAndPasswordValidate);
         } else {
+            this.setState({password: value}, this.onLoginAndPasswordValidate);
             console.warn("Password is empty");
         }
     }
@@ -57,14 +59,14 @@ class Login extends React.Component {
     }
 
     render() {
-        return <Modal header={ "Login" } trigger={ this.props.loginButtonTrigger } actions={
+        return <Modal id="loginModal" header={ this.props.text.admin.headerLogin } trigger={ this.props.loginButtonTrigger } actions={
             <div>
-                <Button waves="light" className="green darken-2" disabled={ !this.state.isReadyForLogin } onClick={ this.onLogin }>{ "Login" }</Button>
-                <Button flat modal="close" waves="light">{ "Cancel" }</Button>
+                <Button waves="light" className="green darken-2" disabled={ !this.state.isReadyForLogin } onClick={ this.onLogin }>{ this.props.text.admin.buttonLogin }</Button>
+                <Button flat modal="close" waves="light">{ this.props.text.admin.buttonCancel }</Button>
             </div>
         }>
-            <Row><Input required s={ 6 } label={ "Email" } onChange={ this.onEmailTextChange } validate type="email"/></Row>
-            <Row><Input required s={ 6 } label={ "Password" } onChange={ this.onPasswordTextChange } type="password"/></Row>
+            <Row><Input required s={ 6 } label={ this.props.text.admin.fieldEmail } onChange={ this.onEmailTextChange } validate type="email"/></Row>
+            <Row><Input required s={ 6 } label={ this.props.text.admin.fieldPassword } onChange={ this.onPasswordTextChange } type="password"/></Row>
             <Row><span className="red-text"> { this.state.errorMessage } </span></Row>
         </Modal>
     }

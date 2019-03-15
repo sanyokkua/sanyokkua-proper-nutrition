@@ -2,7 +2,9 @@ package com.kostenko.pp.controllers.administrative;
 
 import com.kostenko.pp.controllers.extensions.RestCrudController;
 import com.kostenko.pp.data.PageableSearch;
+import com.kostenko.pp.data.pojos.Gender;
 import com.kostenko.pp.data.pojos.User;
+import com.kostenko.pp.data.services.implementation.GenderService;
 import com.kostenko.pp.data.services.implementation.RoleService;
 import com.kostenko.pp.data.services.implementation.UserService;
 import com.kostenko.pp.presentation.ResultPage;
@@ -31,12 +33,14 @@ import static java.util.Objects.nonNull;
 public class UserCrudController implements RestCrudController<JsonUser, AdminUserParams> {
     private final UserService userService;
     private final RoleService roleService;
+    private final GenderService genderService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserCrudController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @NonNull PasswordEncoder passwordEncoder) {
+    public UserCrudController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @NonNull @Nonnull GenderService genderService, @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
+        this.genderService = genderService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -102,6 +106,11 @@ public class UserCrudController implements RestCrudController<JsonUser, AdminUse
     @GetMapping("/roles")
     public List<JsonRole> getRoles() {
         return roleService.findAll().stream().map(JsonRole::mapFrom).collect(Collectors.toList());
+    }
+
+    @GetMapping("/genders")
+    public List<Gender> getGenders() {
+        return genderService.findAll();
     }
 
 }

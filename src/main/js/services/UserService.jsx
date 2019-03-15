@@ -9,7 +9,35 @@ export default class UserService {
 
     static emailIsInUse(email, success, fail) {
         Utils.checkDefaultCallbacks(success, fail);
+        this.token = $("meta[name='_csrf']").attr("content");
+        this.header = $("meta[name='_csrf_header']").attr("content");
+        axios.get('/email', {
+                 headers: {[this.header]: this.token},
+                 params: {
+                     email: email,
+                 }
+             })
+             .then(response => {
+                 let isInUse = response.data;
+                 success(isInUse);
+             })
+             .catch(error => fail(error));
+    }
 
+    static register(user, success, fail) {
+        Utils.checkDefaultCallbacks(success, fail);
+        this.token = $("meta[name='_csrf']").attr("content");
+        this.header = $("meta[name='_csrf_header']").attr("content");
+        axios.post('/registration', user, {headers: {[this.header]: this.token, 'Content-Type': 'application/json; charset=utf-8'}})
+             .then(response => {
+                 let user = response.data;
+                 success(user);
+             })
+             .catch(error => {
+                        console.warn(error);
+                        fail(error.response + '');
+                    }
+             );
     }
 
     createUser(user, success, fail) {

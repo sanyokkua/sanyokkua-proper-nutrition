@@ -1,19 +1,16 @@
 package com.kostenko.pp.controllers.administrative;
 
-import com.kostenko.pp.data.pojos.Role;
 import com.kostenko.pp.data.pojos.User;
-import com.kostenko.pp.data.services.implementation.RoleService;
 import com.kostenko.pp.data.services.implementation.UserService;
 import com.kostenko.pp.presentation.json.pojos.JsonUser;
+import com.kostenko.pp.security.LoginUtils;
 import com.kostenko.pp.security.PasswordEncoder;
-import com.kostenko.pp.security.Permissions;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,13 +23,13 @@ import java.util.Objects;
 @Controller
 public class LoginController {
     private final UserService userService;
-    private final RoleService roleService;
+    private final LoginUtils loginUtils;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public LoginController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @Nonnull @NonNull PasswordEncoder passwordEncoder) {
+    public LoginController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull LoginUtils loginUtils, @Nonnull @NonNull PasswordEncoder passwordEncoder) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.loginUtils = loginUtils;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -60,28 +57,7 @@ public class LoginController {
             //throw new IllegalArgumentException("Password is not matching");
         }
         JsonUser jsonUser = JsonUser.mapToJsonUser(fromDb);
-        jsonUser.setPermissionsId(getPermission(fromDb.getRoleId()).getPermissionId());
+        jsonUser.setPermissionsId(loginUtils.getPermission(fromDb.getRoleId()).getPermissionId());
         return ResponseEntity.ok(jsonUser);
-    }
-
-    private Permissions getPermission(@PathVariable @NonNull @Nonnull Long roleId) {
-        Role byId = roleService.findById(roleId);
-        Permissions permission = Permissions.ANONYMOUS;
-        if (!Objects.isNull(byId)) {
-            switch (byId.getRoleName()) {
-                case "ADMIN":
-                    permission = Permissions.ADMIN;
-                    break;
-                case "MANAGER":
-                    permission = Permissions.MANAGER;
-                    break;
-                case "USER":
-                    permission = Permissions.USER;
-                    break;
-                default:
-                    permission = Permissions.ANONYMOUS;
-            }
-        }
-        return permission;
     }
 }
