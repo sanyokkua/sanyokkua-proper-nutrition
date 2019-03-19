@@ -10,6 +10,7 @@ import com.kostenko.pp.security.PasswordEncoder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.PropertySource;
@@ -34,7 +35,7 @@ public class StartupCommandLineRunner implements CommandLineRunner {
     public String adminUserEmail;
 
     @Autowired
-    public StartupCommandLineRunner(@NonNull RoleRepository roleRepository, @NonNull GenderRepository genderRepository, @NonNull UserRepository userRepository, @NonNull PasswordEncoder encoder) {
+    public StartupCommandLineRunner(@NonNull RoleRepository roleRepository, @NonNull GenderRepository genderRepository, @NonNull UserRepository userRepository, @NonNull @Qualifier(value = "passwordEncoderPbkdf") PasswordEncoder encoder) {
         this.roleRepository = roleRepository;
         this.genderRepository = genderRepository;
         this.userRepository = userRepository;

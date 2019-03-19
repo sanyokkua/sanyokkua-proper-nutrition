@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 
-@Component
+@Component(value = "passwordEncoderPbkdf")
 public class PasswordEncoder {
     private final Pbkdf2PasswordEncoder passwordEncoder = new Pbkdf2PasswordEncoder();
 

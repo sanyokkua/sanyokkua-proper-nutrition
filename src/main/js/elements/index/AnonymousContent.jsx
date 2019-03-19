@@ -50,6 +50,7 @@ class AnonymousContent extends React.Component {
                     <li><NavLink onClick={ () => this.onNavLinkClick('tabCalculator') } to='/calculator'>{ this.props.text.general.tabCalculator }</NavLink></li>
                     <li><Dropdown trigger={ <a> { this.props.currentLanguage }</a> }>{ languages }</Dropdown></li>
                     <li><Dropdown trigger={ <a> { this.props.text.admin.headerLogin } </a> }>{ loginRegister }</Dropdown></li>
+                    <NavItem href='/logout'>{ this.props.text.general.tabLogout }</NavItem> {/*TODO:*/}
                 </Navbar>
                 <div className='container'>
                     <Route exact path="/products" render={ () => {return <Products text={ this.props.text } editable={ false } numberOfRecords={ 10 }/>} }/>

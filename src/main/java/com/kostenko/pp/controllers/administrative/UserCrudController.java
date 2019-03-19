@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class UserCrudController implements RestCrudController<JsonUser, AdminUse
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserCrudController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @NonNull @Nonnull GenderService genderService, @NonNull PasswordEncoder passwordEncoder) {
+    public UserCrudController(@Nonnull @NonNull UserService userService, @NonNull @Nonnull RoleService roleService, @NonNull @Nonnull GenderService genderService, @NonNull @Qualifier(value = "passwordEncoderPbkdf") PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
         this.genderService = genderService;

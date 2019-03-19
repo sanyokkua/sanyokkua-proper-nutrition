@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class RegistrationController {
     private final LoginUtils loginUtils;
 
     @Autowired
-    public RegistrationController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull PasswordEncoder passwordEncoder, @Nonnull @NonNull LoginUtils loginUtils) {
+    public RegistrationController(@Nonnull @NonNull UserService userService, @Nonnull @NonNull @Qualifier(value = "passwordEncoderPbkdf")PasswordEncoder passwordEncoder, @Nonnull @NonNull LoginUtils loginUtils) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.loginUtils = loginUtils;
